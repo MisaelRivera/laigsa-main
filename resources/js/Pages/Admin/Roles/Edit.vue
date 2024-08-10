@@ -1,25 +1,28 @@
 <script setup>
-    import { Link } from '@inertiajs/vue3';
+    import { Link, Head, useForm, usePage } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    import { useMessages } from '@/composables/messages';
-    const { getMessage } = useMessages();
+    import InputLabel from '@/Components/InputLabel.vue';
+    import TextInput from '@/Components/TextInput.vue';
     const props = defineProps({
-        roles: Object,
+        role: Object,
     });
-    import Table from '@/Components/Table.vue';
-    import TableRow from '@/Components/TableRow.vue';
-    import TableHeaderCell from '@/Components/TableHeaderCell.vue';
-    import TableDataCell from '@/Components/TableDataCell.vue';
+    const page = usePage();
+    const form = useForm({
+        name: props.role.name,
+    });
+    const handleSubmit = () => {
+        try{
+            form.put(route('roles.update', props.role.id));
+        } catch (e) {
+            console.log(e)
+        }
+    };
 </script>
 <template>
+    <Head title="Manage roles"/>
     <AuthenticatedLayout>
         <div class="flex h-screen px-4">
             <div class="w-2/12 mt-2 bg-indigo-500 rounded h-4/5 py-2">
-                <a-alert 
-                    v-if="getMessage()"
-                    :message="getMessage()"
-                    type="success"
-                    closable/>
                 <nav class="mt-10">
                     <ul class="list-none">
                         <li 
@@ -55,41 +58,27 @@
             </div>
             <div class="w-9/12 p-5">
                 <div class="flex justify-between">
-                    <h1>Roles index page</h1>
                     <Link 
-                        :href="route('roles.create')"
+                        :href="route('roles.index')"
                         class="py-2 px-3 text-white font-semibold bg-indigo-500 hover:bg-indigo-700 rounded">
-                        New role
+                        Back
                     </Link>
                 </div>
                 <div class="mt-6">
-                    <Table>
-                        <template #header>
-                            <TableRow>
-                                <TableHeaderCell>ID</TableHeaderCell>
-                                <TableHeaderCell>Name</TableHeaderCell>
-                                <TableHeaderCell>Actions</TableHeaderCell>
-                            </TableRow>
-                        </template>
-                        <template #default>
-                            <TableRow v-for="role in roles" :key="roles.id" class="border-b">
-                                <TableDataCell>{{ role.id }}</TableDataCell>
-                                <TableDataCell>{{ role.name }}</TableDataCell>
-                                <TableDataCell class="space-x-4">
-                                    <Link :href="route('roles.edit', role.id)" class="text-green-400 hover:text-green-600">
-                                        Edit
-                                    </Link>
-                                    <Link 
-                                        :href="route('roles.destroy', role.id)" 
-                                        as="button" 
-                                        method="delete"
-                                        class="text-red-400 hover:text-red-600">
-                                        Delete
-                                    </Link>
-                                </TableDataCell>
-                            </TableRow>
-                        </template>
-                    </Table>
+                    <form @submit.prevent="handleSubmit">
+                        <div>
+                            <label for="name">Name</label>
+                            <input 
+                                type="text"
+                                name="name"
+                                id="name"
+                                class="w-full block mt-1"
+                                v-model="form.name"
+                                required
+                                />
+                        </div>
+                        <button class="rounded bg-blue-500 text-white py-2.5 px-4 mt-2">Edit</button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -35,11 +35,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         });
     });
     Route::resource('/users', UserController::class);
-   Route::prefix('/roles')->group(function () {
-        Route::get('/', [RoleController::class, 'index'])->name('roles.index');
-        Route::get('/create', [RoleController::class, 'create'])->name('roles.create');
-        Route::post('/', [RoleController::class, 'store'])->name('roles.store');
-   });
+    Route::resource('/roles', RoleController::class);
     Route::resource('/permissions', PermissionController::class);
 });
 

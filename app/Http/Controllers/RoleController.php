@@ -49,24 +49,31 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
-        //
+       return Inertia::render('Admin/Roles/Edit', [
+        'role' => $role
+       ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CreateRoleRequest $request, Role $role)
     {
-        //
+        $role->update($request->validated());
+        return to_route('roles.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+        $roleName = $role->name;
+        $role->delete();
+        $request->session()->flash('message', "Role $roleName successfully deleted!");
+        return to_route('roles.index');
     }
 }
