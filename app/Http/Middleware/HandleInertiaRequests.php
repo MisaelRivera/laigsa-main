@@ -37,6 +37,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'message' => $request->session()->get('message')
+            ],
+            'imgUrl' => [
+                'logo' => asset('img/logo.png'),
+                'bg' => asset('img/background.jpg'),
             ]
         ];
     }
