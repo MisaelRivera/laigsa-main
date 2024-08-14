@@ -117,11 +117,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/parameters')->group(function () {
         Route::get('/', [ParametersController::class, 'index'])->name('parameters.index');
         Route::get('/create', [ParametersController::class, 'create'])->name('parameters.create');
-        Route::get('/{id}/show', [ParametersController::class, 'show'])->name('parameters.show');
+        Route::get('/{parameter}/show', [ParametersController::class, 'show'])->name('parameters.show');
         Route::post('/', [ParametersController::class, 'store']);
-        Route::get('/{id}/edit', [ParametersController::class, 'edit']);
+        Route::get('/{parameter}/edit', [ParametersController::class, 'edit'])->name('parameters.edit');
         Route::put('/{id}', [ParametersController::class, 'update']);
-        Route::delete('/{id}', [ParametersController::class, 'destroy']);
+        Route::delete('/{parameter}', [ParametersController::class, 'destroy'])->name('parameters.destroy');
     });
 });
 

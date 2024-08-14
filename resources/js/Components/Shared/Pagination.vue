@@ -1,6 +1,7 @@
 <script setup>
     import { ref, computed } from 'vue';
     import { Link } from '@inertiajs/vue3';
+    import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
     const props = defineProps({
         paginationInfo: {
             type: Object
@@ -34,10 +35,11 @@
     
 </script>
 <template>
-    <div class="px-2 py-2 bg-red-300 flex items-center">
-        <Link :href="paginationInfo.first_page_url">
-            <i class="fas fa-caret-left" 
-            v-if="paginationInfo.current_page > 1"></i>
+    <div class="px-2 py-2 flex items-center">
+        <Link 
+            :href="paginationInfo.first_page_url"
+            v-if="paginationInfo.current_page > 1">
+            <LeftOutlined />
         </Link>
         <Link 
             class="bg-blue-400 py-1 px-2 mx-1 rounded text-white"
@@ -47,9 +49,9 @@
             {{ paginationInfo.links[i].label }}
         </Link>
         <Link 
-            v-if="paginationInfo.current < paginationInfo.last_page"
+            v-if="paginationInfo.current_page < paginationInfo.last_page"
             :href="paginationInfo.last_page_url">
-            <i class="fas fa-caret-right"></i>
+            <RightOutlined />
         </Link>
     </div>
 </template>

@@ -1,27 +1,22 @@
 <script setup>
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    const props = defineProps({
-        parameter: {
-            type: Object
-        }
-    });
     const form = useForm({
-        parametro: props.parameter.parametro,
+        parametro: null,
     });
-    console.log(props.parameter);
-    const handleUpdateSubmit = () => {
-        form.put(`/parameters/${props.parameter.id}`);
+    const handleCreateSubmit = () => {
+        console.log(form);
+        form.post('/parameters');
     };
 </script>
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-4/12 p-5 rounded-lg bg-gray-100">
-            <h2>Edita el parametro</h2>
+            <h2>Crea un nuevo parametro</h2>
             <a-form
                 layout="vertical"
                 :model="form"
-                @finish="handleUpdateSubmit">
+                @finish="handleCreateSubmit">
                 <div class="mb-4">
                     <a-form-item 
                         label="Parametro"
@@ -32,8 +27,8 @@
                             class="rounded h-8"/>
                     </a-form-item>
                 </div>
-                <button class="rounded bg-blue-400 text-white py-2 px-4">
-                    Editar
+                <button class="rounded bg-green-400 text-white py-2 px-4">
+                    Crear
                 </button>
             </a-form>
         </div>
