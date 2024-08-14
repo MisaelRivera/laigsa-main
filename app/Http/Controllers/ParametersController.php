@@ -13,7 +13,7 @@ class ParametersController extends Controller
     {
         $parameters = Parameter::paginate(40);
         return Inertia::render('parameters/Index', [
-            'parametersProp' => $parameters
+            'parametersProp' => $parameters,
         ]);
     }
 

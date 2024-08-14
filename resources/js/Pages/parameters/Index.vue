@@ -1,30 +1,16 @@
 <script setup>
-    import { ref, h } from 'vue';
+    import { Link } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import IndexTitle from '@/Components/Shared/IndexTitle.vue';
+    import Pagination from '@/Components/Shared/Pagination.vue';
     const props = defineProps({
-        parametersProp: Object
+        parametersProp: Object,
     }); 
+
     const { getMessage } = useMessages();
-    const parameters = props.parametersProp.data.map((item) =>  {
-        const len = item.parametro.length;
-        
-        return { parameter: item.parametro,
-             longitud: h('div', {
-                    class: ['w-8', 'h-8', 'rounded-full', {'bg-blue-400': len < 15, 'bg-red-500': len >= 15}],
-                }) };
-    });
-    const columns = [
-        {
-            title: 'Parametro',
-            dataIndex: 'parameter'
-        },
-        {
-            title: 'longitud',
-            dataIndex: 'longitud',
-        }
-    ];
-    console.log(parameters);
+    const parameters = props.parametersProp.data;
+    console.log(props.parametersProp);
 </script>
 <template>
     <AuthenticatedLayout>
@@ -34,28 +20,34 @@
                 v-if="getMessage()"
                 :message="getMessage()">
             </a-alert>
-            <!--<table class="border">
+            <div class="flex justify-between items-center">
+                <IndexTitle 
+                    title="Parametros"
+                    :add-link="route('parameters.create')"
+                    :own-link="route('parameters.index')"/>
+                
+                <div></div>
+                <Pagination 
+                    :pagination-info="parametersProp"/>
+            </div>
+            <table class="borde w-full">
                 <thead>
-                    <tr>
-                        <th class="py-2 px-4 border"></th>
-                        <th class="py-2 px-4 border"></th>
+                    <tr class="bg-slate-100">
+                        <th class="py-2.5 px-5 border text-left">Parametro</th>
+                        <th class="py-2.5 px-5 border">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="parameter in parameters">
-                        <td class="py-2 px-4 border">
+                    <tr 
+                        v-for="parameter in parameters"
+                        class="bg-slate-50">
+                        <td class="py-2.5 px-5 border">
                             {{ parameter.parametro }}
                         </td>
-                        <td class="py-2 px-4 border">
-                            <button class="bg-blue-400 text-white py-2 px-4 rounded">Editar</button>
-                        </td>
+                        <td class="py-2.5 px-5 border"></td>
                     </tr>
                 </tbody>
-            </table>-->
-            <a-table 
-                bordered 
-                :data-source="parameters"
-                :columns="columns"/>
+            </table>
         </div>
     </AuthenticatedLayout>
 </template>
