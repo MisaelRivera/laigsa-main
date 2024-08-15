@@ -5,17 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ParameterStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Parameter;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Inertia\Inertia;
 
 class ParametersController extends Controller
 {
     //
-    public function index ()
+    public function index (Request $request)
     {
-        $parameters = Parameter::paginate(40);
+        $parameters = Parameter::query()
+            ->when($request->query('filter'), function (Builder $query, $filter) {
+            $query->where('parametro', 'like', '%' . $filter . '%');
+        })->paginate(10);
         return Inertia::render('parameters/Index', [
             'parametersProp' => $parameters,
         ]);
+    }
+
+    public function filter ()
+    {
+        $parameters = Parameter::when($request->query('filter'), function (Builder $query, $filter) {
+                $query->where('parametro', 'like', '%' . $filter . '%');
+            })
+            ->paginate(10);
+        return response()->json($parameters);           
     }
 
     public function create ()

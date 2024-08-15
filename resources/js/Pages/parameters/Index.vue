@@ -1,23 +1,24 @@
 <script setup>
     import { ref } from 'vue';
-    import { Link } from '@inertiajs/vue3';
+    import { Link, router } from '@inertiajs/vue3';
     import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
-import axios from 'axios';
+
     const props = defineProps({
         parametersProp: Object,
     }); 
-
+    console.log(props.parametersProp);
+    const paginationInfo = ref(props.parametersProp);
     const { getMessage } = useMessages();
     const parameters = ref(props.parametersProp.data);
-    const paramFilter = ref(null);
-    const handleFilter = async(ev) => {
+    const handleFilter = (ev) => {
         const value = ev.target.value;
-        const res = await axios.get(`/parameters/get?value=${value}`);
-        parameters.value = res.data;
+        router.get('/parameters', {filter: value}, {
+            preserveState: true
+        });
     };
 </script>
 <template>
@@ -35,7 +36,7 @@ import axios from 'axios';
                     :own-link="route('parameters.index')"/>
                 
                 <Pagination 
-                    :pagination-info="parametersProp"/>
+                    :pagination-info="paginationInfo"/>
                 <div class="w-40 mb-4">
                     <label for="filtro">Filtro</label>
                     <input 
@@ -43,7 +44,6 @@ import axios from 'axios';
                         id="filtro"
                         name="parametro"
                         class="h-8 w-40 rounded"
-                        v-model="paramFilter"
                         @input="handleFilter">
                 </div>
             </div>
