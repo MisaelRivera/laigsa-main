@@ -31,6 +31,11 @@
                             v-model:value="form.parametro"
                             class="rounded h-8"/>
                     </a-form-item>
+                    <p 
+                        class="text-red-500"
+                        v-if="form.errors.parametro">
+                        {{ form.errors.parametro }}
+                    </p>
                 </div>
                 <button class="rounded bg-blue-400 text-white py-2 px-4">
                     Editar

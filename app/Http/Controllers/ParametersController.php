@@ -13,12 +13,17 @@ class ParametersController extends Controller
     //
     public function index (Request $request)
     {
-        $parameters = Parameter::query()
-            ->when($request->query('filter'), function (Builder $query, $filter) {
-            $query->where('parametro', 'like', '%' . $filter . '%');
-        })->paginate(10);
+        $filters = $request->only('byParameter');
+        $listings = Parameter::orderByDesc('id')
+        ->when(
+            $filters['byParameter'] ?? false, 
+            fn ($query, $filter) => $query->where('parametro', 'like', '%' . $filter . '%')
+        )->paginate(10)
+        ->withQueryString();
+
         return Inertia::render('parameters/Index', [
-            'parametersProp' => $parameters,
+            'parametersProp' => $listings,
+            'filters' => $filters
         ]);
     }
 
@@ -54,6 +59,13 @@ class ParametersController extends Controller
         $parameter->update($request->validated());
         $request->session()->flash('message', "Se ha editado el parametro $parameter->parametro correctamente");
         return redirect()->route('parameters.index');
+    }
+
+    public function destroy (Parameter $parameter)
+    {
+        $name = $parameter->parametro;
+        $parameter->delete();
+        return redirect()->route('parameters.index')->with('message', "Se ha eliminado el parametro $name correctamente");
     }
 
 }

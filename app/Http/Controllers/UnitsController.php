@@ -77,8 +77,7 @@ class UnitsController extends Controller
         $unit = Unit::find($id);
         $unitName = $unit->nombre;
         $unit->delete();
-        $request->session()->flash('message', "Se ha eliminado la unidad $unitName correctamente.");
-        return redirect()->route('units.index');
+        return redirect()->route('units.index')->with('message', "Se ha eliminado la unidad $unitName correctamente.");
     }
 
     public function changePage (Request $request)

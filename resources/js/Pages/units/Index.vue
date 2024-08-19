@@ -4,7 +4,6 @@
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import { usePage, Link, useForm } from '@inertiajs/vue3';
     import { Alert, Modal } from 'ant-design-vue';
-    import UnitsLayout from '@/Layouts/singleCrud/UnitsLayout.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
     const props = defineProps({
         unitsProp: Object,
@@ -30,12 +29,12 @@
         deleteUnit.name = name;
         deleteModalOpen.value = true;
     }; 
-    const handleDelete = () => {
-        deleteUnit.delete(route('units.destroy', deleteUnit.id), {
+    const handleDelete = (id) => {
+        deleteUnit.delete(route('units.destroy', id), {
             onSuccess: async() => {
                 deleteModalOpen.value = false;
                 const data = await axios.get('/units/get-units');
-                units.value = data.data;
+                units.value = data.data.data;
             }
         });
     };
@@ -43,9 +42,7 @@
     const handleChangePage = async (pageArg) => {
         page.value = pageArg;
         let unitsResults = await axios.get('/units/change-page?page=' + pageArg);
-        console.log(unitsResults);
         units.value = unitsResults.data;
-        console.log(units.value);
     };
 
     const handleFilterByUnit = async(ev, type) => {
@@ -57,7 +54,29 @@
 </script>
 <template>
     <AuthenticatedLayout>
-        <UnitsLayout>
+        <div class="w-10/12 mx-auto">
+            <div class="flex justify-between items-center">
+                <IndexTitle 
+                    title="Parametros"
+                    :add-link="route('parameters.create')"
+                    :own-link="route('parameters.index')"/>
+                
+                <Pagination 
+                    :links="parametersProp.links"/>
+                <div 
+                    class="flex items-center">
+                    <div class="w-40 mb-4 mr-3">
+                        <label for="filtro">Filtro</label>
+                        <input 
+                            type="text"
+                            id="filtro"
+                            name="filter"
+                            class="h-8 w-40 rounded"
+                            v-model="filters.byParameter"
+                            @input="handleFilter">
+                    </div>
+                </div>
+            </div>
             <Alert
                 type="success"
                 v-if="pageUse.props.flash.message"
@@ -113,12 +132,12 @@
                     </tr>
                 </tbody>
             </table>    
-        </UnitsLayout>
-        <Modal 
-            v-model:open="deleteModalOpen"
-            title="Eliminar unidad"
-            @ok="() => handleDelete(deleteUnit.id)">
-                <p>Seguro que deseas borrar la unidad {{ deleteUnit.name }}?</p>
-        </Modal>
+            <Modal 
+                v-model:open="deleteModalOpen"
+                title="Eliminar unidad"
+                @ok="() => handleDelete(deleteUnit.id)">
+                    <p>Seguro que deseas borrar la unidad {{ deleteUnit.name }}?</p>
+            </Modal>
+        </div>
     </AuthenticatedLayout>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
-    import { ref } from 'vue';
-    import { Link, router } from '@inertiajs/vue3';
+    import { ref, reactive } from 'vue';
+    import { Link, useForm, router } from '@inertiajs/vue3';
     import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -9,15 +9,37 @@
 
     const props = defineProps({
         parametersProp: Object,
+        filters: Object
     }); 
-    console.log(props.parametersProp);
-    const paginationInfo = ref(props.parametersProp);
+    const isDeleteModalVisible = ref(false);
+    const deleteParameter = useForm({
+        id: null,
+        parametro: null
+    });
+    console.log(props.parametersProp.links[0]);
     const { getMessage } = useMessages();
-    const parameters = ref(props.parametersProp.data);
     const handleFilter = (ev) => {
+        console.log(props.parametersProp.links);
         const value = ev.target.value;
-        router.get('/parameters', {filter: value}, {
-            preserveState: true
+        router.visit(route('parameters.index', { byParameter: value }), {
+            preserveState: true,
+            method: 'get'
+        });
+    };
+
+    const handleOpenDeleteModal = (parameter) => {
+        isDeleteModalVisible.value = true;
+        deleteParameter.id = parameter.id;
+        deleteParameter.parametro = parameter.parametro;
+    };
+
+    const handleDelete = () => {
+        deleteParameter.delete(`/parameters/${deleteParameter.id}`, {
+            onSuccess: async() => {
+                isDeleteModalVisible.value = false;
+                /*const data = await axios.get('/units/get-units');
+                units.value = data.data.data;*/
+            }
         });
     };
 </script>
@@ -36,15 +58,19 @@
                     :own-link="route('parameters.index')"/>
                 
                 <Pagination 
-                    :pagination-info="paginationInfo"/>
-                <div class="w-40 mb-4">
-                    <label for="filtro">Filtro</label>
-                    <input 
-                        type="text"
-                        id="filtro"
-                        name="parametro"
-                        class="h-8 w-40 rounded"
-                        @input="handleFilter">
+                    :links="parametersProp.links"/>
+                <div 
+                    class="flex items-center">
+                    <div class="w-40 mb-4 mr-3">
+                        <label for="filtro">Filtro</label>
+                        <input 
+                            type="text"
+                            id="filtro"
+                            name="filter"
+                            class="h-8 w-40 rounded"
+                            v-model="filters.byParameter"
+                            @input="handleFilter">
+                    </div>
                 </div>
             </div>
             <table class="borde w-full">
@@ -56,7 +82,7 @@
                 </thead>
                 <tbody>
                     <tr 
-                        v-for="parameter in parameters"
+                        v-for="parameter in parametersProp.data"
                         class="bg-slate-50">
                         <td class="py-2.5 px-5 border">
                             {{ parameter.parametro }}
@@ -68,13 +94,18 @@
                             <Link :href="route('parameters.show', parameter.id)">
                                 <EyeOutlined />
                             </Link>
-                            <Link :href="route('parameters.destroy', parameter.id)">
-                                <DeleteOutlined />
-                            </Link>
+                            <DeleteOutlined 
+                                @click="() => handleOpenDeleteModal(parameter)"/>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <a-modal
+            v-model:open="isDeleteModalVisible"
+            title="Eliminar parametro"
+            @ok="handleDelete">
+            <p>Seguro que deseas borrar el parametro {{ deleteParameter.parametro }}?</p>
+        </a-modal>
     </AuthenticatedLayout>
 </template>

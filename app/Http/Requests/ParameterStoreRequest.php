@@ -26,4 +26,11 @@ class ParameterStoreRequest extends FormRequest
             'parametro' => ['required', Rule::unique('parametros', 'parametro')->ignore($this->parameter)]
         ];
     }
+
+    public function messages(): array {
+        return [
+            'parametro.required' => 'Ingrese el parametro',
+            'parametro.unique' => 'El parametro ya existe'
+        ];
+    }
 }
