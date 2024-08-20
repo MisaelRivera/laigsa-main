@@ -9,12 +9,13 @@ use Inertia\Inertia;
 class UnitsController extends Controller
 {
     //
-    public function index ()
+    public function index (Request $request)
     {
+        $filters = $request->only('byUnit');
         $units = Unit::orderBy('id', 'desc')
-            ->limit(40)
-            ->get();
-        return Inertia::render('units/Index', ['unitsProp' => $units, 'totalItemsProp' => Unit::count()]);
+            ->paginate(10)
+            ->withQueryString();
+        return Inertia::render('units/Index', ['units' => $units, 'filters' => $filters]);
     }
 
     public function get ()

@@ -9,13 +9,15 @@ use Inertia\Inertia;
 class MethodsController extends Controller
 {
     //
-    public function index ()
+    public function index (Request $request)
     {
-        $methods = Method::orderBy('id_metodo', 'desc')->limit(40)
-            ->get();
+        $filters = $request->only('byMethod');
+        $methods = Method::orderBy('id_metodo', 'desc')
+            ->paginate(10)
+            ->withQueryString();
         $data = [
-            'methodsProp' => $methods,
-            'totalItemsProp' => Method::count()
+            'methods' => $methods,
+            'filters' => $filters
         ];
 
 
@@ -51,23 +53,40 @@ class MethodsController extends Controller
         return redirect()->route('methods.index');
     }
 
-    public function show (Request $request)
+    public function show (Method $method)
     {
-
+        return Inertia::render('methods/Show', [
+            'method' => $method,
+            'backUrl' => url()->previous()
+        ]);
     }
 
-    public function edit ()
+    public function edit (Method $method)
     {
-
+        return Inertia::render('methods/Edit', [
+            'method' => $method,
+            'backUrl' => url()->previous()
+        ]);
     }
 
-    public function update (Request $request)
+    public function update (Request $request, Method $method)
     {
-
+        $newMethod = $request->validate([
+            'nombre' => 'required|string|min:3'
+        ]);
+        $method->update($newMethod);
+        $name = $method->nombre;
+        return redirect()
+            ->route('methods.index')
+            ->with('message', "Se ha editado correctamente el metodo $name");
     }
 
-    public function destroy (Request $request)
+    public function destroy (Method $method)
     {
-        
+        $name = $method->nombre;
+        $method->delete();
+        return redirect()
+            ->route('methods.index')
+            ->with('message', "Se ha eliminado el metodo $name");
     }
 }

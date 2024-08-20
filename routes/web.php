@@ -93,7 +93,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/units')->group(function () {
         Route::get('/get-units', [UnitsController::class, 'get']);
         Route::get('/', [UnitsController::class, 'index'])->name('units.index');
-        Route::get('/create', [UnitsController::class, 'create']);
+        Route::get('/create', [UnitsController::class, 'create'])
+            ->name('units.create');
         Route::post('/', [UnitsController::class, 'store']);
         Route::get('/change-page', [UnitsController::class, 'changePage']);
         Route::get('/filter', [UnitsController::class, 'filter']);
@@ -105,13 +106,23 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('/methods')->group(function () {
         Route::get('/', [MethodsController::class, 'index'])->name('methods.index');
-        Route::get('/create', [MethodsController::class, 'create']);
-        Route::post('/', [MethodsController::class, 'store']);
+        Route::get('/create', [MethodsController::class, 'create'])->name('methods.create');
+        Route::post('/', [MethodsController::class, 'store'])->name('methods.store');
+        Route::get('/{method:id_metodo}/show', [MethodsController::class, 'show'])->name('methods.show');
+        Route::get('/{method:id_metodo}/edit', [MethodsController::class, 'edit'])->name('methods.edit');
+        Route::put('/{method:id_metodo}', [MethodsController::class, 'update'])->name('methods.update');
+        Route::delete('/{method:id_metodo}', [MethodsController::class, 'destroy'])->name('methods.destroy');
         Route::get('/change-page', [MethodsController::class, 'changePage']);
     });
 
     Route::prefix('/lcps')->group(function () {
         Route::get('/', [LcpController::class, 'index'])->name('lcps.index');
+        Route::get('/create', [LcpController::class, 'create'])->name('lcps.create');
+        Route::post('/', [LcpController::class, 'store'])->name('lcps.store');
+        Route::get('/{lcp}/show', [LcpController::class, 'show'])->name('lcps.show');
+        Route::get('/{lcp}/edit', [LcpController::class, 'edit'])->name('lcps.edit');
+        Route::put('/{lcp}', [LcpController::class, 'update'])->name('lcps.update');
+        Route::delete('/{lcp}', [LcpController::class, 'destroy'])->name('lcps.destroy');
     });
 
     Route::prefix('/parameters')->group(function () {

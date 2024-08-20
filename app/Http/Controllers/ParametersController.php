@@ -14,7 +14,7 @@ class ParametersController extends Controller
     public function index (Request $request)
     {
         $filters = $request->only('byParameter');
-        $listings = Parameter::orderByDesc('id')
+        $parameters = Parameter::orderByDesc('id')
         ->when(
             $filters['byParameter'] ?? false, 
             fn ($query, $filter) => $query->where('parametro', 'like', '%' . $filter . '%')
@@ -22,7 +22,7 @@ class ParametersController extends Controller
         ->withQueryString();
 
         return Inertia::render('parameters/Index', [
-            'parametersProp' => $listings,
+            'parametersProp' => $parameters,
             'filters' => $filters
         ]);
     }
@@ -46,6 +46,15 @@ class ParametersController extends Controller
         $parametro = Parameter::create($request->validated());
         $request->session()->flash('message', 'Se ha creado el parametro ' . $parametro->parametro . ' correctamente.');
         return redirect()->route('parameters.index');
+    }
+
+    public function show (Request $request, Parameter $parameter)
+    {
+        $backUrl = url()->previous();
+        return Inertia::render('parameters/Show', [
+            'parameter' => $parameter,
+            'backUrl' => $backUrl
+        ]);
     }
 
     public function edit (Parameter $parameter)

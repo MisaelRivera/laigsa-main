@@ -2,24 +2,29 @@
     import { useForm } from '@inertiajs/vue3';
     import { Form, FormItem, Input } from 'ant-design-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
+    import ShowTitle from '@/Components/Shared/ShowTitle.vue';
+
+    const props = defineProps({
+        method: Object,
+        backUrl: String,
+    });
 
     const formState = useForm({
-        nombre: null
+        id: props.method.id_metodo,
+        nombre: props.method.nombre
     });
 
     const handleFinish = () => {
-        formState.post('/methods');
+        formState.put(`/methods/${formState.id}`);
     };
 </script>
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-8/12 p-4">
             <div class="flex justify-between">
-                <CreateTitle 
-                    title="Crear metodo"
-                    back-link="/methods"
-                    own-link="/methods/create"/>
+                <ShowTitle 
+                    title="Editar metodo"
+                    :back-url="backUrl"/>
                 </div>
                 <Form 
                     layout="vertical"
@@ -32,7 +37,9 @@
                         <Input
                             v-model:value="formState.nombre"/>
                     </FormItem>
-                    <button class="bg-green-500 text-white rounded py-2 px-4 mt-2">Crear</button>
+                    <button class="bg-blue-500 text-white rounded py-2 px-4 mt-2">
+                        Editar
+                    </button>
                 </Form>
         </div>
     </AuthenticatedLayout>

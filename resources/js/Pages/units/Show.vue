@@ -14,8 +14,7 @@
             class="mx-auto rounded-lg p-4 w-8/12 bg-slate-200 border-slate-700">
             <ShowTitle 
                 title="Detalles del parametro"
-                :back-url="backUrl"/>
-            <h2 class="ml-6">Parametro {{ parameter.parametro }}</h2>
+                :back-link="backUrl"/>
         </div>
     </AuthenticatedLayout>
 </template>

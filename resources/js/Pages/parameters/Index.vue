@@ -37,8 +37,6 @@
         deleteParameter.delete(`/parameters/${deleteParameter.id}`, {
             onSuccess: async() => {
                 isDeleteModalVisible.value = false;
-                /*const data = await axios.get('/units/get-units');
-                units.value = data.data.data;*/
             }
         });
     };
@@ -76,7 +74,7 @@
             <table class="borde w-full">
                 <thead>
                     <tr class="bg-slate-100">
-                        <th class="py-2.5 px-5 border text-left">Parametro</th>
+                        <th class="py-2.5 px-5 border text-left w-10/12">Parametro</th>
                         <th class="py-2.5 px-5 border">Acciones</th>
                     </tr>
                 </thead>
@@ -87,14 +85,15 @@
                         <td class="py-2.5 px-5 border">
                             {{ parameter.parametro }}
                         </td>
-                        <td class="py-2.5 px-5 border">
+                        <td class="py-2.5 px-5 border text-center">
                             <Link :href="route('parameters.edit', parameter.id)">
-                                <EditOutlined />
+                                <EditOutlined class="text-white p-1 rounded-full mr-2 bg-blue-500"/>
                             </Link>
                             <Link :href="route('parameters.show', parameter.id)">
-                                <EyeOutlined />
+                                <EyeOutlined class="text-white p-1 rounded-full mr-2 bg-sky-500"/>
                             </Link>
                             <DeleteOutlined 
+                                class="text-white p-1 rounded-full mr-2 bg-red-500"
                                 @click="() => handleOpenDeleteModal(parameter)"/>
                         </td>
                     </tr>

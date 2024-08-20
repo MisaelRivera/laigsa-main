@@ -9,7 +9,7 @@
     import Pagination from '@/Components/Shared/Pagination.vue';
     const { getMessage } = useMessages();
     const props = defineProps({
-        methods: {
+        lcps: {
             type: Object
         },
 
@@ -19,32 +19,26 @@
         Errors: Object
     });
 
-    const deleteMethod = useForm({
+    const deleteLcp = useForm({
         id: null,
-        nombre: null
+        valor: null
     }),
     isDeleteModalVisible = ref(false);
 
     const handleShowDeleteModal = (id, name) => {
-        deleteMethod.id = id;
-        deleteMethod.nombre = name;
+        deleteLcp.id = id;
+        deleteLcp.valor = name;
         isDeleteModalVisible.value = true;
     };
 
-    const handleDeleteMethod = () => {
-        deleteMethod.delete(`/methods/${deleteMethod.id}`, {
+    const handleDeleteLcp = () => {
+        deleteLcp.delete(`/lcps/${deleteLcp.id}`, {
             onSuccess: () => {
                 isDeleteModalVisible.value = false;
             }
         });
     };
 
-    const handleChangePage = async (pageArg) => {
-        page.value = pageArg;
-        let methodsResults = await axios.get('/methods/change-page?page=' + pageArg);
-        methods.value = methodsResults.data;
-        console.log(methods.value);
-    };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -56,38 +50,38 @@
             <div class="flex justify-between">
                 <IndexTitle 
                     title="Metodos"
-                    own-link="/methods"
-                    add-link="/methods/create"/>
+                    own-link="/lcps"
+                    add-link="/lcps/create"/>
                 <Pagination 
-                    :links="methods.links"/>
+                    :links="lcps.links"/>
                 <div></div>
             </div>
             <table class="border mt-4 w-full">
                 <thead>
                     <tr class="bg-slate-100">
-                        <th class="border py-2 px-4">Metodo</th>
+                        <th class="border py-2 px-4">LCP</th>
                         <th class="border py-2 px-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr 
-                        v-for="method in methods.data"
+                        v-for="lcp in lcps.data"
                         class="bg-slate-50">
-                        <td class="border py-2 px-4">{{ method.nombre }}</td>
+                        <td class="border py-2 px-4">{{ lcp.nombre }}</td>
                         <td class="border py-2 px-4 text-center">
                             <Link 
-                                :href="route('methods.edit', method)">
+                                :href="route('lcps.edit', lcp)">
                                 <EditOutlined 
                                     class="bg-blue-500 p-1 text-white rounded-full mr-2"/>
                             </Link>
                             <Link 
-                                :href="route('methods.show', method)">
+                                :href="route('lcps.show', lcp)">
                                 <EyeOutlined 
                                     class="bg-sky-500 p-1 text-white rounded-full"/>
                             </Link>
                             <DeleteOutlined 
                                 class="bg-red-500 p-1 text-white rounded-full ml-2"
-                                @click="() => handleShowDeleteModal(method.id_metodo, method.nombre)" />
+                                @click="() => handleShowDeleteModal(lcp.id_metodo, lcp.nombre)" />
                         </td>
                     </tr>
                 </tbody>
@@ -97,7 +91,7 @@
             v-model:open="isDeleteModalVisible"
             @ok="handleDeleteMethod"
             :title="`Eliminar metodo`">
-            <p>{{ `Seguro que deseas eliminar el metodo ${deleteMethod.nombre}?` }}</p>
+            <p>{{ `Seguro que deseas eliminar el metodo ${deleteMethod.valor}?` }}</p>
         </Modal>
     </AuthenticatedLayout>
 </template>
