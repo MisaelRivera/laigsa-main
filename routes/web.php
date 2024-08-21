@@ -118,7 +118,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/lcps')->group(function () {
         Route::get('/', [LcpController::class, 'index'])->name('lcps.index');
         Route::get('/create', [LcpController::class, 'create'])->name('lcps.create');
-        Route::post('/', [LcpController::class, 'store'])->name('lcps.store');
+        Route::post('/{parameter}', [LcpController::class, 'store'])->name('lcps.store');
         Route::get('/{lcp}/show', [LcpController::class, 'show'])->name('lcps.show');
         Route::get('/{lcp}/edit', [LcpController::class, 'edit'])->name('lcps.edit');
         Route::put('/{lcp}', [LcpController::class, 'update'])->name('lcps.update');

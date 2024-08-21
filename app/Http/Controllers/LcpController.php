@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lcp;
+use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,7 +19,7 @@ class LcpController extends Controller
         return Inertia::render('lcps/Index', [
             'filters' => $filters,
             'lcps' => $lcps,
-        ]);
+        ]); 
     }
 
     public function create ()
@@ -26,9 +27,16 @@ class LcpController extends Controller
         return Inertia::render('lcps/Create');
     }
 
-    public function store (Request $request)
+    public function store (Request $request, Parameter $parameter)
     {
-
+        $validated = $request->validate([
+            'valor' => 'required',
+            'id_parametro' => 'required'
+        ]);
+        $parameter->lcps()->save(new Lcp($validated));
+        return redirect()
+            ->route('parameters.show', $parameter)
+            ->with('message', 'Se ha agregado un lpc al parametro ' . $parameter->parametro);
     }
 
     public function show (Lcp $lcp)

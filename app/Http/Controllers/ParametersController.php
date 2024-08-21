@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ParameterStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Parameter;
+use App\Models\LCP;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Inertia\Inertia;
 
@@ -48,12 +49,15 @@ class ParametersController extends Controller
         return redirect()->route('parameters.index');
     }
 
-    public function show (Request $request, Parameter $parameter)
+    public function show (Parameter $parameter)
     {
         $backUrl = url()->previous();
+        $lcps = LCP::where('id_parametro', $parameter->id)->get();
+        
         return Inertia::render('parameters/Show', [
             'parameter' => $parameter,
-            'backUrl' => $backUrl
+            'backUrl' => $backUrl,
+            'lcps' => $lcps
         ]);
     }
 
@@ -74,7 +78,9 @@ class ParametersController extends Controller
     {
         $name = $parameter->parametro;
         $parameter->delete();
-        return redirect()->route('parameters.index')->with('message', "Se ha eliminado el parametro $name correctamente");
+        return redirect()
+            ->route('parameters.index')
+            ->with('message', "Se ha eliminado el parametro $name correctamente");
     }
 
 }

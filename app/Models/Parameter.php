@@ -52,4 +52,9 @@ class Parameter extends Model
         return $this->belongsToMany(Samples::class, 'muestras_parametros', 'id_parametro', 'id_muestra');
     }
 
+    public function lcps ()
+    {
+        return $this->hasMany(Lcp::class, 'id_parametro', 'id');
+    }
+
 }

@@ -8,7 +8,7 @@
 </script>
 
 <template>
-     <Link :href="url">
+     <Link :href="url" replace>
         <EyeIcon class="text-blue-400 h-4 w-4"/>
     </Link>
 </template>
