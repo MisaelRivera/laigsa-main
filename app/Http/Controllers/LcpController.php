@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lcp;
 use App\Models\Parameter;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class LcpController extends Controller
@@ -57,7 +58,24 @@ class LcpController extends Controller
 
     public function update (Request $request, Lcp $lcp)
     {
-
+        $validatedLcp = $request->validate([
+            'edit_valor' => 'required',
+            'edit_id_parametro' => 'required'
+        ]);
+        if ($validatedLcp['edit_valor'] === $lcp->valor) {
+            throw ValidationException::withMessages(['edit_valor' => 'Se ingreso el mismo valor']);
+        }
+        $parameter = Parameter::findOrFail($lcp->id_parametro);
+        $newLcp = new Lcp([
+            'valor' => $validatedLcp['edit_valor'],
+            'id_parametro' => $validatedLcp['edit_id_parametro'],
+        ]);
+        $lcp->obsoleto = 1;
+        $lcp->save();
+        $parameter->lcps()->save($newLcp);
+        return redirect()
+            ->route('parameters.show',$parameter)
+            ->with('message', 'El Lcp ha sido actualizado correctamente');
     }
 
     public function destroy (Lcp $lcp)

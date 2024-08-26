@@ -1,7 +1,7 @@
 <script setup>
     import { ref, reactive } from 'vue';
     import { Link, useForm, router } from '@inertiajs/vue3';
-    import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
+    import { EyeOutlined, DeleteOutlined, EditOutlined, CopyrightCircleOutlined } from '@ant-design/icons-vue';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
@@ -95,6 +95,10 @@
                             <DeleteOutlined 
                                 class="text-white p-1 rounded-full mr-2 bg-red-500"
                                 @click="() => handleOpenDeleteModal(parameter)"/>
+                            <Link :href="route('parameters.combination', parameter.id)">
+                                <CopyrightCircleOutlined 
+                                    class="text-white p-1 rounded-full bg-cyan-600"/>
+                            </Link>
                         </td>
                     </tr>
                 </tbody>

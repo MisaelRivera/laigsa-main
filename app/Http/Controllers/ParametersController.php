@@ -6,6 +6,8 @@ use App\Http\Requests\ParameterStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Parameter;
 use App\Models\LCP;
+use App\Models\Method;
+use App\Models\Unit;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Inertia\Inertia;
 
@@ -52,13 +54,61 @@ class ParametersController extends Controller
     public function show (Parameter $parameter)
     {
         $backUrl = url()->previous();
-        $lcps = LCP::where('id_parametro', $parameter->id)->get();
+        $lcps = LCP::where('id_parametro', $parameter->id)
+            ->where('obsoleto', 0)
+            ->get();
         
         return Inertia::render('parameters/Show', [
             'parameter' => $parameter,
             'backUrl' => $backUrl,
-            'lcps' => $lcps
+            'lcps' => $lcps,
         ]);
+    }
+
+    public function parameterCombination (Parameter $parameter)
+    {
+        return Inertia::render('parameters/ParameterCombination', [
+            'parameter' => $parameter,
+            'methods' => Method::where('obsoleto', 0)->get()->map(function ($item) {
+                return [
+                    'label' => $item->nombre,
+                    'value' => $item->nombre,
+                    'key' => $item->id
+                ];
+            }),
+            'units' => Unit::where('obsoleto', 0)->get()->map(function ($item) {
+                return [
+                    'label' => $item->nombre,
+                    'value' => $item->nombre,
+                    'key' => $item->id
+                ];
+            }),
+            'lcps' => LCP::where('obsoleto', 0)->where('id_parametro', $parameter->id)->get()->map(function ($item) {
+                return [
+                    'label' => $item->valor,
+                    'value' => $item->valor,
+                    'key' => $item->id
+                ];
+            })
+        ]);
+    }
+
+    public function parameterCombinationStore (Request $request, Parameter $parameter)
+    {
+        $validated = $request->validate([
+            'unidad' => 'required',
+            'metodo' => 'required',
+            'lcp' => 'required',
+        ], 
+        [
+           'unidad.required' => 'Ingrese la unidad', 
+           'metodo.required' => 'Ingrese el metodo', 
+           'lcp.required' => 'Ingrese el lcp', 
+        ]);
+
+        $idUnidad = Unit::select(['id'])->where('id_parametro', $parameter->id)
+            ->where('unidad', $validated['unidad'])->first();
+        dd($idUnidad);
     }
 
     public function edit (Parameter $parameter)

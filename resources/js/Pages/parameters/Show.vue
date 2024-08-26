@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, reactive, computed } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import { DeleteOutlined, EditOutlined, HistoryOutlined } from '@ant-design/icons-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -16,16 +16,33 @@
         valor: null,
    });
 
-   const isEditAvailable = ref(false);
+   const editState = useForm({
+        edit_id_parametro: props.parameter.id,
+        edit_valor: null,
+   });
+
+
+   const isOpenEditModal = ref(false);
 
    const handleCreateLcp = (id) => {
         formState.id_parametro = id;
         formState.post(route('lcps.store', props.parameter));
    };
 
-    const handleToggleEdition = () => {
-        isEditAvailable.value = true;
-        console.log('Triggered');
+
+    const handleOpenEditModal = (lcp) => {
+        editState.edit_id_parametro = lcp.id;
+        editState.edit_valor = lcp.valor;
+        isOpenEditModal.value = true;
+    };
+
+    const handleEditLcp = () => {
+        editState.put(route('lcps.update', editState.edit_id_parametro), {
+            onSuccess : () => {
+                isOpenEditModal.value = false;
+            }
+        });
+        
     };
 </script>
 <template>
@@ -76,22 +93,12 @@
                                 class="bg-slate-50"
                                 v-for="lcp in lcps">
                                 <td class="py-2 px-4 border border-slate-700">
-                                    <input 
-                                        v-if="isEditAvailable"
-                                        class="py-2 px-4 rounded-md border">
-                                        
-                                    <span v-else>
-                                        {{ lcp.valor }}
-                                    </span>
+                                    {{ lcp.valor }}
                                 </td>
                                 <td class="py-2 px-4 border border-slate-700">
                                     <EditOutlined 
-                                        v-if="isEditAvailable"
-                                        class="bg-blue-500 text-white p-1 rounded-full"/>
-                                    <HistoryOutlined 
-                                        class="bg-yellow-400 text-white p-1 rounded-full"
-                                        v-else
-                                        @click="handleToggleEdition"/>
+                                        class="bg-blue-500 text-white p-1 rounded-full"
+                                        @click="() => handleOpenEditModal(lcp)"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -99,5 +106,28 @@
                 </a-col>
             </a-row>
         </div>
+        <a-modal
+            title="Editar lcp"
+            v-model:open="isOpenEditModal"
+            :ok-button-props="{hidden: true}">
+            <a-form
+                :model="editState"
+                layout="vertical"
+                @finish="handleEditLcp">
+                <a-form-item
+                    label="Valor"
+                    name="edit_valor"
+                    >
+                    <a-input
+                        v-model:value="editState.edit_valor"/>
+                    <p 
+                        class="text-red-500"
+                        v-if="editState.errors.edit_valor">
+                        {{ editState.errors.edit_valor }}
+                    </p>
+                </a-form-item>
+                <button class="btn btn-primary"> Editar</button>
+            </a-form> 
+        </a-modal>
     </AuthenticatedLayout>
 </template>
