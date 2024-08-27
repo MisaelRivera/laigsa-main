@@ -16,10 +16,8 @@
         id: null,
         parametro: null
     });
-    console.log(props.parametersProp.links[0]);
     const { getMessage } = useMessages();
     const handleFilter = (ev) => {
-        console.log(props.parametersProp.links);
         const value = ev.target.value;
         router.visit(route('parameters.index', { byParameter: value }), {
             preserveState: true,

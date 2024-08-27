@@ -101,6 +101,12 @@ const isVisibleServiciosAguas = ref(false),
                             </li>
                             <li 
                                 class="text-center text-sm">
+                                <Link :href="route('rules.index')">
+                                    Normas
+                                </Link>
+                            </li>
+                            <li 
+                                class="text-center text-sm">
                                 <Link :href="route('units.index')">
                                     Unidades
                                 </Link>

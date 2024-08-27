@@ -12,7 +12,9 @@ use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\LcpController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\MethodsController;
+use App\Http\Controllers\ParameterCombinationController;
 use App\Http\Controllers\ParametersController;
+use App\Http\Controllers\RulesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -137,6 +139,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [ParametersController::class, 'update']);
         Route::delete('/{parameter}', [ParametersController::class, 'destroy'])->name('parameters.destroy');
     });
+
+    Route::resource('rules', RulesController::class);
 });
 
 
