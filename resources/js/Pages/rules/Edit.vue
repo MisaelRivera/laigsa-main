@@ -2,21 +2,27 @@
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
-    defineProps({
+    const props = defineProps({
+
+        rule: {
+            type: Object,
+        },
+
         page: {
             type: String
         }
     });
     const form = useForm({
-        norma: null,
-        tipo: null,
-        descripcion: null,
-        cesavedac: false,
-        aguas: true,
+        norma: props.rule.norma,
+        tipo: props.rule.tipo,
+        descripcion: props.rule.descripcion,
+        cesavedac: props.rule.cesavedac,
+        aguas: props.rule.aguas,
     });
     const handleCreateSubmit = () => {
         form.post('/rules');
     };
+    console.log(props.page);
 </script>
 <template>
     <AuthenticatedLayout>
@@ -24,7 +30,7 @@
             <CreateTitle 
                 title="Crear una nueva norma"
                 :back-link="route('rules.index', { page: page })"
-                :own-link="route('rules.create', { page: page })"/>
+                :own-link="route('rules.edit', { rule: props.rule, page: page })"/>
             <a-form
                 layout="vertical"
                 :model="form"
@@ -100,8 +106,8 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-                <button class="rounded bg-green-400 text-white py-2 px-4">
-                    Crear
+                <button class="rounded bg-blue-400 text-white py-2 px-4">
+                    Edit
                 </button>
             </a-form>
         </div>

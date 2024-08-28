@@ -1,46 +1,48 @@
 <script setup>
-    import { ref } from 'vue';
+     import { ref } from 'vue';
     import { router, useForm, Link } from '@inertiajs/vue3';
     import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons-vue';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
+
     const props = defineProps({
-        rules: {
+        parametersCombinations: {
             type: Object,
         },
         filters: Object
     });
     const isDeleteModalVisible = ref(false);
-    const deleteRule = useForm({
+    const deleteParameterCombination = useForm({
         id: null,
-        norma: null
+        alias: null
     });
 
 
     const { getMessage } = useMessages();
     const handleFilter = (ev) => {
         const value = ev.target.value;
-        router.visit(route('rules.index', { byRule: value }), {
+        router.visit(route('parameters-combinations.index', { byAlias: value }), {
             preserveState: true,
             method: 'get'
         });
     };
 
-    const handleOpenDeleteModal = (rule) => {
+    const handleOpenDeleteModal = (parameterCombination) => {
         isDeleteModalVisible.value = true;
-        deleteRule.id = rule.id;
-        deleteRule.norma = rule.norma;
+        deleteParameterCombination.id = parameterCombination.id;
+        deleteParameterCombination.alias = parameterCombination.alias;
     };
 
     const handleDelete = () => {
-        deleteRule.delete(`/rules/${deleteRule.id}?page=${props.rules.current_page}`, {
+        deleteParameterCombination.delete(`/parameters-combinations/${deleteParameterCombination.id}?page=${props.parametersCombinations.current_page}`, {
             onSuccess: async() => {
                 isDeleteModalVisible.value = false;
             }
         });
     };
+    console.log(props.parametersCombinations);
 </script>
 <template>
     <AuthenticatedLayout>
@@ -52,12 +54,13 @@
             </a-alert>
             <div class="flex justify-between items-center">
                 <IndexTitle 
-                    title="Normas"
-                    :add-link="route('rules.create', { page: rules.current_page })"
-                    :own-link="route('rules.index')"/>
+                    title="Combinaciones de parametros"
+                    :add-link="route('parameters-combinations.create', { page: parametersCombinations ?  parametersCombinations.current_page:'' })"
+                    :own-link="route('parameters-combinations.index')"/>
                 
                 <Pagination 
-                    :links="rules.links"/>
+                    v-if="parametersCombinations"
+                    :links="parametersCombinations.links"/>
                 <div 
                     class="flex items-center">
                     <div class="w-40 mb-4 mr-3">
@@ -67,7 +70,7 @@
                             id="filtro"
                             name="filter"
                             class="h-8 w-40 rounded"
-                            v-model="filters.byRule"
+                            v-model="filters.byAlias"
                             @input="handleFilter">
                     </div>
                 </div>
@@ -75,27 +78,27 @@
             <table class="borde w-full">
                 <thead>
                     <tr class="bg-slate-100">
-                        <th class="py-2.5 px-5 border text-left w-10/12">Parametro</th>
+                        <th class="py-2.5 px-5 border text-left w-10/12">Alias</th>
                         <th class="py-2.5 px-5 border">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr 
-                        v-for="rule in rules.data"
+                        v-for="parameterCombination in parametersCombinations.data"
                         class="bg-slate-50">
                         <td class="py-2.5 px-5 border">
-                            {{ rule.norma }}
+                            {{ parameterCombination.alias }}
                         </td>
                         <td class="py-2.5 px-5 border text-center">
-                            <Link :href="`/rules/${rule.id}/edit?page=${rules.current_page}`">
+                            <Link :href="`/parameters-combinations/${parameterCombination.id}/edit?page=${parametersCombinations.current_page}`">
                                 <EditOutlined class="text-white p-1 rounded-full mr-2 bg-blue-500"/>
                             </Link>
-                            <Link :href="route('rules.show', { id: rule.id, page: rules.current_page})">
+                            <Link :href="route('parameters-combinations.show', { id: parameterCombination.id, page: parametersCombinations.current_page})">
                                 <EyeOutlined class="text-white p-1 rounded-full mr-2 bg-sky-500"/>
                             </Link>
                             <DeleteOutlined 
                                 class="text-white p-1 rounded-full mr-2 bg-red-500"
-                                @click="() => handleOpenDeleteModal(rule)"/>
+                                @click="() => handleOpenDeleteModal(parameterCombination)"/>
                         </td>
                     </tr>
                 </tbody>
@@ -103,9 +106,9 @@
         </div>
         <a-modal
             v-model:open="isDeleteModalVisible"
-            title="Eliminar norma"
+            title="Eliminar combinacion de parametro"
             @ok="handleDelete">
-            <p>Seguro que deseas borrar la norma {{ deleteRule.norma }}?</p>
+            <p>Seguro que deseas borrar la combinacion de parametro {{ deleteParameterCombination.alias }}?</p>
         </a-modal>
     </AuthenticatedLayout>
 </template>

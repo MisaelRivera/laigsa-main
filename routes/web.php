@@ -130,8 +130,6 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/parameters')->group(function () {
         Route::get('/', [ParametersController::class, 'index'])->name('parameters.index');
         Route::get('/filter', [ParametersController::class, 'filter'])->name('parameters.filter');
-        Route::get('/{parameter}/combination', [ParametersController::class, 'parameterCombination'])->name('parameters.combination');
-        Route::post('/{parameter}/combination', [ParametersController::class, 'parameterCombinationStore'])->name('parameters.combination_store');
         Route::get('/create', [ParametersController::class, 'create'])->name('parameters.create');
         Route::get('/{parameter}/show', [ParametersController::class, 'show'])->name('parameters.show');
         Route::post('/', [ParametersController::class, 'store']);
@@ -141,6 +139,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('rules', RulesController::class);
+    Route::resource('parameters-combinations', ParameterCombinationController::class);
+    Route::get('/parameters-combinations/{parameter}/get-lcps', [ParameterCombinationController::class, 'getLCPs']);
 });
 
 

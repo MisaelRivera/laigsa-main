@@ -93,10 +93,6 @@
                             <DeleteOutlined 
                                 class="text-white p-1 rounded-full mr-2 bg-red-500"
                                 @click="() => handleOpenDeleteModal(parameter)"/>
-                            <Link :href="route('parameters.combination', parameter.id)">
-                                <CopyrightCircleOutlined 
-                                    class="text-white p-1 rounded-full bg-cyan-600"/>
-                            </Link>
                         </td>
                     </tr>
                 </tbody>

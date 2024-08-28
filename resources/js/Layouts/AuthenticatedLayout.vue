@@ -127,6 +127,10 @@ const isVisibleServiciosAguas = ref(false),
                                 class="text-center text-sm">
                                 <Link :href="route('parameters.index')">Parametros</Link>
                             </li>
+                            <li 
+                                class="text-center text-sm">
+                                <Link :href="route('parameters-combinations.index')">Combinacion de parametros</Link>
+                            </li>
                         </template>
                     </Dropdown>
                 </li>

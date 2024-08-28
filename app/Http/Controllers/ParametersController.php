@@ -18,7 +18,7 @@ class ParametersController extends Controller
     {
         $filters = $request->only('byParameter');
         $parameters = Parameter::orderByDesc('id')
-        ->when(
+            ->when(
             $filters['byParameter'] ?? false, 
             fn ($query, $filter) => $query->where('parametro', 'like', '%' . $filter . '%')
         )->paginate(10)
