@@ -78,14 +78,22 @@
             <table class="borde w-full">
                 <thead>
                     <tr class="bg-slate-100">
-                        <th class="py-2.5 px-5 border text-left w-10/12">Alias</th>
-                        <th class="py-2.5 px-5 border">Acciones</th>
+                        <th class="py-2.5 px-5 border text-left">Parametro</th>
+                        <th class="py-2.5 px-5 border text-left">LCP</th>
+                        <th class="py-2.5 px-5 border text-left w-64">Alias</th>
+                        <th class="py-2.5 px-5 border w-36">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr 
                         v-for="parameterCombination in parametersCombinations.data"
                         class="bg-slate-50">
+                        <td class="py-2.5 px-5 border">
+                            {{ parameterCombination.parametro.parametro }}
+                        </td>
+                        <td class="py-2.5 px-5 border">
+                            {{ parameterCombination.lcp.valor }}
+                        </td>
                         <td class="py-2.5 px-5 border">
                             {{ parameterCombination.alias }}
                         </td>

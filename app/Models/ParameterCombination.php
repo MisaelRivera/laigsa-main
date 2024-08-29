@@ -9,6 +9,8 @@ class ParameterCombination extends Model
 {
     use HasFactory;
     protected $table = "combinaciones_parametros";
+    protected $guarded = [];
+    public $timestamps = false;
 
     public function parametro ()
     {
@@ -22,7 +24,7 @@ class ParameterCombination extends Model
 
     public function metodo ()
     {
-        return $this->belongsTo(Parameter::class, 'id_parametro', 'id');
+        return $this->belongsTo(Method::class, 'id_metodo', 'id_metodo');
     }
 
     public function lcp ()

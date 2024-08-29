@@ -1,6 +1,7 @@
 <script setup>
     import { ref, computed } from 'vue';
     import { useForm } from '@inertiajs/vue3';
+    import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
         parameters: {
@@ -17,11 +18,14 @@
 
     });
 
+    const { getError } = useMessages();
+
     const formState = useForm({
         unidad: '',
         metodo: '',
         parametro: '',
         clasificacion: null,
+        lcp: '',
         alias: '',
     });
 
@@ -44,6 +48,7 @@
         lcps.value = res.data;
         console.log(res);
     };
+    console.log(getError());
 </script>
 <template>
     <AuthenticatedLayout>

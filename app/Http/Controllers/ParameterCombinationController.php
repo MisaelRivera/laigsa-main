@@ -9,6 +9,7 @@ use App\Models\Method;
 use App\Models\Parameter;
 use App\Models\LCP;
 use App\Models\ParameterCombination;
+use Illuminate\Validation\ValidationException;
 
 class ParameterCombinationController extends Controller
 {
@@ -18,7 +19,9 @@ class ParameterCombinationController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only('byAlias');
-        $parametersCombinations = ParameterCombination::orderByDesc('id')
+        $parametersCombinations = ParameterCombination::with(['parametro', 'lcp'])
+            ->where('obsoleto', 0)
+            ->orderByDesc('id')
             ->when(
             $filters['byAlias'] ?? false, 
             fn ($query, $filter) => $query->where('alias', 'like', '%' . $filter . '%')
@@ -104,8 +107,31 @@ class ParameterCombinationController extends Controller
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
         ]);
+        $parameter = Parameter::where('parametro', $validatedData['parametro'])->firstOrFail();
+        $parameter->load('lcps');
+        $lcpsArr = $parameter->lcps()->pluck('valor')->toArray();
+        if (!in_array($validatedData['lcp'], $lcpsArr)) {
+            throw ValidationException::withMessages(['lcp' => 'El lcp ingresado no pertenece a ese parametro']);
+        }
+        $lcp = LCP::where('id_parametro', $parameter->id)
+            ->where('valor', $validatedData['lcp'])
+            ->firstOrFail();
+        $method = Method::where('nombre', $validatedData['metodo'])
+            ->firstOrFail();
+        $unit = Unit::where('nombre', $validatedData['unidad'])
+            ->firstOrFail();
+        ParameterCombination::create([
+            'id_parametro' => $parameter->id,
+            'id_lcp' => $lcp->id,
+            'id_unidad' => $unit->id,
+            'id_metodo' => $method->id_metodo,
+            'clasificacion' => $validatedData['clasificacion'],
+            'alias' => $validatedData['alias'],
+        ]);
 
-        
+        return redirect()
+            ->route('parameters-combinations.index')
+            ->with('message', 'Se ha creado una combinacion del parametro ' . $parameter->parametro . ' correctamente');
     }
 
     /**
@@ -119,9 +145,37 @@ class ParameterCombinationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $parameterCombination = ParameterCombination::findOrFail($id);
+        $parameterCombination->load('parametro', 'lcp', 'unidad', 'metodo');
+        return Inertia::render('parameters_combinations/Edit', [
+            'parameterCombination' => $parameterCombination,
+            'parameters' => Parameter::with(['lcps'])
+                ->get()
+                ->map(function ($item) {
+                return [
+                    'label' => $item->parametro,
+                    'value' => $item->parametro,
+                    'key' => $item->id,
+                    'lcps' => $item->lcps
+                ];
+            }),
+            'methods' => Method::where('obsoleto', 0)->get()->map(function ($item) {
+                return [
+                    'label' => $item->nombre,
+                    'value' => $item->nombre,
+                    'key' => $item->id
+                ];
+            }),
+            'units' => Unit::where('obsoleto', 0)->get()->map(function ($item) {
+                return [
+                    'label' => $item->nombre,
+                    'value' => $item->nombre,
+                    'key' => $item->id
+                ];
+            }),
+        ]); 
     }
 
     /**
@@ -129,7 +183,53 @@ class ParameterCombinationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validatedData = $request->validate([
+            'parametro' => 'required|exists:parametros,parametro',
+            'unidad' => 'required|exists:unidades,nombre',
+            'metodo' => 'required|exists:metodos,nombre',
+            'lcp' => 'required|exists:lcps,valor',
+            'clasificacion' => 'required',
+            'alias' => 'required',
+        ], [
+            'parametro.required' => 'Ingrese el parametro',
+            'parametro.exists' => 'El parametro ingresado no existe',
+            'unidad.required' => 'Ingrese la unidad',
+            'unidad.exists' => 'La unidad ingresada no existe',
+            'metodo.required' => 'Ingrese el metodo',
+            'metodo.exists' => 'El metodo ingresado no existe',
+            'lcp.required' => 'Elija el lcp',
+            'lcp.exists' => 'El lcp ingresado no existe',
+            'clasificacion.required' => 'Elija la clasificacion',
+            'alias.required' => 'Ingrese el alias',
+        ]);
+        $parameter = Parameter::where('parametro', $validatedData['parametro'])->firstOrFail();
+        $parameter->load('lcps');
+        $lcpsArr = $parameter->lcps()->pluck('valor')->toArray();
+        if (!in_array($validatedData['lcp'], $lcpsArr)) {
+            throw ValidationException::withMessages(['lcp' => 'El lcp ingresado no pertenece a ese parametro']);
+        }
+        $oldParameterCombination = ParameterCombination::findOrFail($id);
+        $oldParameterCombination->obsoleto = 1;
+        $oldParameterCombination->update();
+        $lcp = LCP::where('id_parametro', $parameter->id)
+            ->where('valor', $validatedData['lcp'])
+            ->firstOrFail();
+        $method = Method::where('nombre', $validatedData['metodo'])
+            ->firstOrFail();
+        $unit = Unit::where('nombre', $validatedData['unidad'])
+            ->firstOrFail();
+        ParameterCombination::create([
+            'id_parametro' => $parameter->id,
+            'id_lcp' => $lcp->id,
+            'id_unidad' => $unit->id,
+            'id_metodo' => $method->id_metodo,
+            'clasificacion' => $validatedData['clasificacion'],
+            'alias' => $validatedData['alias'],
+        ]);
+
+        return redirect()
+            ->route('parameters-combinations.index')
+            ->with('message', 'Se ha editado una combinacion del parametro ' . $parameter->parametro . ' correctamente');
     }
 
     /**
