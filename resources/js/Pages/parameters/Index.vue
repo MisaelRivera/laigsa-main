@@ -19,7 +19,7 @@
     const { getMessage } = useMessages();
     const handleFilter = (ev) => {
         const value = ev.target.value;
-        router.visit(route('parameters.index', { byParameter: value }), {
+        router.visit(route('parameters.index', { byParameter: encodeURIComponent(value) }), {
             preserveState: true,
             method: 'get'
         });

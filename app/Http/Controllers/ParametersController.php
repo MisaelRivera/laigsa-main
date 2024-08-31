@@ -19,11 +19,11 @@ class ParametersController extends Controller
         $filters = $request->only('byParameter');
         $parameters = Parameter::orderByDesc('id')
             ->when(
-            $filters['byParameter'] ?? false, 
-            fn ($query, $filter) => $query->where('parametro', 'like', '%' . $filter . '%')
-        )->paginate(10)
-        ->withQueryString();
-
+                $filters['byParameter'] ?? false, 
+                fn ($query, $filter) => $query->where('parametro', 'like', '%' . urldecode($filter) . '%')
+            )->paginate(10)
+            ->withQueryString();
+        $filters['byParameter'] = urldecode($filters['byParameter']);
         return Inertia::render('parameters/Index', [
             'parametersProp' => $parameters,
             'filters' => $filters
