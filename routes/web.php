@@ -141,6 +141,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('rules', RulesController::class);
     Route::resource('parameters-combinations', ParameterCombinationController::class);
     Route::get('/parameters-combinations/{parameter}/get-lcps', [ParameterCombinationController::class, 'getLCPs']);
+    Route::get('/parameters-combinations/{parameterCombination}/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
+        ->name('parameters-combinations.add_param_combination');
 });
 
 

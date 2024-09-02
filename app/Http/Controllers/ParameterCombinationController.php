@@ -7,9 +7,11 @@ use Inertia\Inertia;
 use App\Models\Unit;
 use App\Models\Method;
 use App\Models\Parameter;
+use App\Models\Rule;
 use App\Models\LCP;
 use App\Models\ParameterCombination;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class ParameterCombinationController extends Controller
 {
@@ -142,6 +144,15 @@ class ParameterCombinationController extends Controller
         //
     }
 
+    public function addParamCombination (ParameterCombination $parameterCombination, Rule $rule)
+    {
+        DB::table('normas_combinaciones_parametros_aguas')
+            ->insert([
+                'id_combinacion_parametro' => $parameterCombination->id,
+                'id_norma' => $rule->id
+            ]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -235,8 +246,11 @@ class ParameterCombinationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(ParameterCombination $parameters_combination)
     {
-        //
+        $parameters_combination->delete();
+        return redirect()
+            ->route('parameters-combinations.index')
+            ->with('message', 'Se ha eliminado una combinacion de parametro correctamente');
     }
 }

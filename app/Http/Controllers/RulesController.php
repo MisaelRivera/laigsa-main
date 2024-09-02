@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ParameterCombination;
 use App\Models\Rule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -49,8 +50,17 @@ class RulesController extends Controller
 
     public function show (Rule $rule)
     {
+        $parametersCombinations = ParameterCombination::all()->map(function ($item) {
+            return [
+                'label' => $item->alias,
+                'value' => $item->alias,
+                'key' => $item->id
+            ];
+        });
+        $rule->load('parametersCombinations.parametro');
         return Inertia::render('rules/Show', [
-            'rule' => $rule
+            'rule' => $rule,
+            'parametersCombinations' => $parametersCombinations
         ]);
     }
 

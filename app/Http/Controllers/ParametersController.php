@@ -23,7 +23,9 @@ class ParametersController extends Controller
                 fn ($query, $filter) => $query->where('parametro', 'like', '%' . urldecode($filter) . '%')
             )->paginate(10)
             ->withQueryString();
-        $filters['byParameter'] = urldecode($filters['byParameter']);
+        if (isset($filters['byParameter'])) {
+            $filters['byParameter'] = urldecode($filters['byParameter']);
+        }
         return Inertia::render('parameters/Index', [
             'parametersProp' => $parameters,
             'filters' => $filters
@@ -91,24 +93,6 @@ class ParametersController extends Controller
                 ];
             })
         ]);
-    }
-
-    public function parameterCombinationStore (Request $request, Parameter $parameter)
-    {
-        $validated = $request->validate([
-            'unidad' => 'required',
-            'metodo' => 'required',
-            'lcp' => 'required',
-        ], 
-        [
-           'unidad.required' => 'Ingrese la unidad', 
-           'metodo.required' => 'Ingrese el metodo', 
-           'lcp.required' => 'Ingrese el lcp', 
-        ]);
-
-        $idUnidad = Unit::select(['id'])->where('id_parametro', $parameter->id)
-            ->where('unidad', $validated['unidad'])->first();
-        dd($idUnidad);
     }
 
     public function edit (Parameter $parameter)

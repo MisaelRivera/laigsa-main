@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import { useForm, usePage, Link } from '@inertiajs/vue3';
+    import { useForm, usePage, Link, router } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons-vue';
     import { Alert, Col, Row, Form, FormItem, Input, Modal } from 'ant-design-vue';
@@ -45,6 +45,14 @@
         methods.value = methodsResults.data;
         console.log(methods.value);
     };
+
+    const handleFilter = (ev) => {
+        const value = ev.target.value;
+        router.visit(route('methods.index', { byMethod: encodeURIComponent(value) }), {
+            preserveState: true,
+            method: 'get'
+        });
+    };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -60,7 +68,19 @@
                     add-link="/methods/create"/>
                 <Pagination 
                     :links="methods.links"/>
-                <div></div>
+                <div 
+                    class="flex items-center">
+                    <div class="w-40 mb-4 mr-3">
+                        <label for="filtro">Filtro</label>
+                        <input 
+                            type="text"
+                            id="filtro"
+                            name="filter"
+                            class="h-8 w-40 rounded"
+                            v-model="filters.byMethod"
+                            @input="handleFilter">
+                    </div>
+                </div>
             </div>
             <table class="border mt-4 w-full">
                 <thead>

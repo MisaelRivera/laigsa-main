@@ -25,4 +25,9 @@ class Rule extends Model
     public $timestamps = false;
 
     use HasFactory;
+
+    public function parametersCombinations ()
+    {
+        return $this->belongsToMany(ParameterCombination::class, 'normas_combinaciones_parametros_aguas', 'id_combinacion_parametro', 'id_norma');
+    }
 }

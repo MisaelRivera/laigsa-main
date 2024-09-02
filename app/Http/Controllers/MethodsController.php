@@ -13,8 +13,15 @@ class MethodsController extends Controller
     {
         $filters = $request->only('byMethod');
         $methods = Method::orderBy('id_metodo', 'desc')
-            ->paginate(10)
+            ->when(
+                $filters['byMethod'] ?? false, 
+                fn ($query, $filter) => $query->where('nombre', 'like', '%' . urldecode($filter) . '%')
+            )->paginate(10)
             ->withQueryString();
+        if (isset($filters['byMethod'])) {
+            $filters['byMethod'] = urldecode($filters['byMethod']);
+        }
+
         $data = [
             'methods' => $methods,
             'filters' => $filters
