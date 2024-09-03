@@ -144,13 +144,25 @@ class ParameterCombinationController extends Controller
         //
     }
 
-    public function addParamCombination (ParameterCombination $parameterCombination, Rule $rule)
+    public function addParamCombination (Request $request, Rule $rule)
     {
+       $validatedData =  $request->validate([
+            'alias' => 'required|exists:combinaciones_parametros,alias'
+        ],
+        [
+            'alias.required' => 'Elija un alias',
+            'alias.exists' => 'El parametro ingresado no existe'        
+        ]);
+        $parameterCombination = ParameterCombination::where('alias', $validatedData['alias'])->first();
         DB::table('normas_combinaciones_parametros_aguas')
             ->insert([
                 'id_combinacion_parametro' => $parameterCombination->id,
                 'id_norma' => $rule->id
             ]);
+
+        return redirect()
+            ->route('rules.show', ['rule' => $rule->id])
+            ->with('message', 'Se ha agregado un parametro correctamente a la norma ' . $rule->norma);
     }
 
     /**

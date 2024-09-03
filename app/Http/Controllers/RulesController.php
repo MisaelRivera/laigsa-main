@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ParameterCombination;
 use App\Models\Rule;
+use App\Models\RuleParameterCombinationWater;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -57,7 +58,9 @@ class RulesController extends Controller
                 'key' => $item->id
             ];
         });
-        $rule->load('parametersCombinations.parametro');
+        $rule->parametersCombinations = RuleParameterCombinationWater::with(['parametro', 'unidad', 'metodo'])
+            ->where('id_norma', $rule->id)
+            ->get();
         return Inertia::render('rules/Show', [
             'rule' => $rule,
             'parametersCombinations' => $parametersCombinations

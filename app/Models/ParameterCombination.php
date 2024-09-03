@@ -36,4 +36,6 @@ class ParameterCombination extends Model
     {
         return $this->belongsToMany(Rule::class, 'normas_combinaciones_parametros_aguas', 'id_norma', 'id_combinacion_parametro');
     }
+
+    
 }

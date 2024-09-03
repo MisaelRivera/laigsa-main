@@ -89,7 +89,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('/samples')->group(function () {
-        Route::get('/create-water/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
+        Route::get('/cre/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
     });
 
     Route::prefix('/units')->group(function () {
@@ -141,7 +141,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('rules', RulesController::class);
     Route::resource('parameters-combinations', ParameterCombinationController::class);
     Route::get('/parameters-combinations/{parameter}/get-lcps', [ParameterCombinationController::class, 'getLCPs']);
-    Route::get('/parameters-combinations/{parameterCombination}/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
+    Route::post('/parameters-combinations/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
         ->name('parameters-combinations.add_param_combination');
 });
 
