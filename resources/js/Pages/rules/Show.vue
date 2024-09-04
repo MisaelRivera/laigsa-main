@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
+    import { DeleteOutlined } from '@ant-design/icons-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
         rule: {
@@ -24,6 +25,11 @@
     const handleOpenAddParameterCombinationModal = () => {
         isAddModalOpen.value = true;
     };
+
+    const isDeleteModalOpen = ref(false);
+    const deleteForm = useForm({
+        id: null,
+    });
     const handleAddParameterCombination = () => {
        addingForm.post(route('parameters-combinations.add_param_combination',  props.rule.id));
        isAddModalOpen.value = false;
@@ -32,6 +38,20 @@
 
     const filterOption = (input, option) => {
         return option.value.toUpperCase().indexOf(input.toUpperCase()) >= 0;
+    };
+
+    const handleOpenDeleteItem = (parameterCombination) => {
+        isDeleteModalOpen.value = true;
+        deleteForm.id = parameterCombination.id;
+    };
+
+    const handleDelete = () => {
+        try {
+            deleteForm.delete(route('parameters-combinations.remove_param_combination', deleteForm.id));
+            isDeleteModalOpen.value = false;
+        } catch (e) {
+            console.log(e);
+        }
     };
 </script>
 <template>
@@ -54,6 +74,9 @@
                     v-for="parameterCombination in rule.parametersCombinations">
                     <p class="text-sm text-center">
                         {{ parameterCombination.parametro.parametro }}
+                        <DeleteOutlined 
+                            class="text-white bg-red-500 py-0.5 px-1 rounded-full text-xs"
+                            @click="() => handleOpenDeleteItem(parameterCombination)"/>
                     </p>
                     <p class="text-sm text-center">
                         {{ parameterCombination.unidad.nombre }}
@@ -82,6 +105,17 @@
                 <button class="btn btn-success mt-12">
                     Agregar
                 </button>
+            </form>
+        </a-modal>
+        <a-modal
+            v-model:open="isDeleteModalOpen"
+            title="Eliminar parametro"
+            :ok-button-props="{ hidden: true }"
+            :cancel-button-props="{ hidden: true }">
+            <form
+                @submit.prevent="handleDelete">
+                <p>Seguro que deseas remover este parametro?</p>
+                <button class="btn btn-danger">Eliminar</button>
             </form>
         </a-modal>
     </AuthenticatedLayout>

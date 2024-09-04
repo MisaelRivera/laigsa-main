@@ -165,6 +165,25 @@ class ParameterCombinationController extends Controller
             ->with('message', 'Se ha agregado un parametro correctamente a la norma ' . $rule->norma);
     }
 
+    public function removeParamCombination ($id)
+    {
+        $ruleParameterCombination = DB::table('normas_combinaciones_parametros_aguas')
+            ->where('id', $id)
+            ->first();
+        if (!$ruleParameterCombination) {
+            throw ValidationException::withMessages(['norma_combinacion' => 'La combinacion que intenta remover no existe']);
+        } else {
+            $rule = Rule::findOrFail($ruleParameterCombination->id);
+            DB::table('normas_combinaciones_parametros_aguas')
+                ->where('id', $id)
+                ->delete();
+            return redirect()
+                ->route('rules.show', $rule->id)
+                ->with('message', 'Se ha removido la combinacion  del parametro correctamente!');
+        }
+
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

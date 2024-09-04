@@ -143,6 +143,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/parameters-combinations/{parameter}/get-lcps', [ParameterCombinationController::class, 'getLCPs']);
     Route::post('/parameters-combinations/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
         ->name('parameters-combinations.add_param_combination');
+    Route::delete('/parameters-combinations/{id}/remove-param-combination', [ParameterCombinationController::class, 'removeParamCombination'])
+        ->name('parameters-combinations.remove_param_combination');
 });
 
 
