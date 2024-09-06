@@ -1,6 +1,6 @@
 <script setup>
     import { Link } from '@inertiajs/vue3';
-    import { EyeIcon } from '@heroicons/vue/24/solid';
+    import { EyeOutlined } from '@ant-design/icons-vue';
 
     defineProps({
         url: String,
@@ -9,6 +9,6 @@
 
 <template>
      <Link :href="url" replace>
-        <EyeIcon class="text-blue-400 h-4 w-4"/>
+        <EyeOutlined class="text-blue-400 h-4 w-4"/>
     </Link>
 </template>

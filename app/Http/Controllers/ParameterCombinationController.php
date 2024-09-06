@@ -173,7 +173,7 @@ class ParameterCombinationController extends Controller
         if (!$ruleParameterCombination) {
             throw ValidationException::withMessages(['norma_combinacion' => 'La combinacion que intenta remover no existe']);
         } else {
-            $rule = Rule::findOrFail($ruleParameterCombination->id);
+            $rule = Rule::findOrFail($ruleParameterCombination->id_norma);
             DB::table('normas_combinaciones_parametros_aguas')
                 ->where('id', $id)
                 ->delete();

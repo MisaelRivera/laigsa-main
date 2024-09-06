@@ -47,6 +47,7 @@
 
     const handleDelete = () => {
         try {
+            console.log(deleteForm.id);
             deleteForm.delete(route('parameters-combinations.remove_param_combination', deleteForm.id));
             isDeleteModalOpen.value = false;
         } catch (e) {

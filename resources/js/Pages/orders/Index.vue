@@ -2,7 +2,7 @@
     import { ref, reactive } from 'vue';
     import { usePage } from '@inertiajs/vue3';
     import { Alert } from 'ant-design-vue';
-    import AdminLayout from '@/Layouts/AdminLayout.vue';
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowLink from '@/Components/Shared/ShowLink.vue';
     import Dropdown from '@/Components/Dropdown.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
@@ -56,7 +56,7 @@
     };
 </script>
 <template>
-    <AdminLayout>
+    <AuthenticatedLayout>
         <div class="w-11/12 mx-auto mt-3">
             <div class="w-8/12 mx-auto flex justify-between">
                 <IndexTitle 
@@ -282,5 +282,5 @@
 
             </div>
         </div>
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>

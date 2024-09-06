@@ -1,7 +1,7 @@
 <script setup>
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
-    import AdminLayout from '@/Layouts/AdminLayout.vue';
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import { Row, Col, Input, InputNumber, Select, SelectOption, Form, FormItem, AutoComplete, Textarea, Checkbox } from 'ant-design-vue';
     import { ArrowLeftOutlined } from '@ant-design/icons-vue';
     const props = defineProps({
@@ -45,7 +45,7 @@
 
 </script>
 <template>
-    <AdminLayout>
+    <AuthenticatedLayout>
         <div class="w-7/12 mx-auto my-2">
             <h1 class="text-center text-green-700 text-2xl"> 
                 <a href="/orders">
@@ -73,6 +73,7 @@
                                 :rules="[{required: true, message: 'Introduce el folio'}]">
                                 <Input 
                                     v-model:value="formState.folio"
+                                    class="h-8 border-slate-300 rounded-md"
                                     placeholder="Folio"/>
                             </FormItem>
                         </Col>
@@ -84,6 +85,7 @@
                                 name="numero_cotizacion">
                                 <Input 
                                     v-model:value="formState.numero_cotizacion"
+                                    class="h-8 border-slate-300 rounded-md"
                                     placeholder="Numero cotizacion"/>
                             </FormItem>
                         </Col>
@@ -143,7 +145,8 @@
                                 label="Fecha de recepcion"
                                 name="fecha_recepcion">
                                 <Input 
-                                    type="date" 
+                                    type="date"
+                                    class="h-8 border-slate-300 rounded-md" 
                                     v-model:value="formState.fecha_recepcion"/>
                             </FormItem>
                         </Col>
@@ -154,7 +157,8 @@
                                 label="Hora de recepcion"
                                 name="hora_recepcion">
                                 <Input 
-                                    type="time" 
+                                    type="time"
+                                    class="h-8 border-slate-300 rounded-md" 
                                     v-model:value="formState.hora_recepcion"/>
                             </FormItem>
                         </Col>
@@ -165,7 +169,8 @@
                                 label="Termometro no."
                                 name="numero_termometro">
                                 <Input 
-                                    v-model:value="formState.numero_termometro"/>
+                                    v-model:value="formState.numero_termometro"
+                                    class="h-8 border-slate-300 rounded-md"/>
                             </FormItem>
                         </Col>
                         <Col :span="5" :offset="1">
@@ -173,7 +178,8 @@
                                 label="Temperatura °C"
                                 name="temperatura">
                                 <Input 
-                                    v-model:value="formState.temperatura"/>
+                                    v-model:value="formState.temperatura"
+                                    class="h-8 border-slate-300 rounded-md"/>
                             </FormItem>
                         </Col>
                     </Row>
@@ -198,5 +204,5 @@
                 </Form>
             </div>
         </div>
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>

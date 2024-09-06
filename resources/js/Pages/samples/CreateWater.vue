@@ -3,7 +3,7 @@
     import { Alert, Radio, Checkbox, RadioGroup, Textarea, Button, FormItem, Input, InputNumber } from 'ant-design-vue';
     import { router, usePage } from '@inertiajs/vue3';
     import { createRange } from '@/helpers/time_helper.js';
-    import AdminLayout from '@/Layouts/AdminLayout.vue';
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import CustomInput from '@/Components/Shared/CustomInput.vue';
 
@@ -120,7 +120,7 @@
 </script>
 
 <template>
-    <AdminLayout>
+    <AuthenticatedLayout>
         <div class="w-8/12 mx-auto mt-3">
             <CreateTitle
                 title="Crear muestras"
@@ -443,5 +443,5 @@
             </form>
         </div>
         
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>

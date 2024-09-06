@@ -4,7 +4,7 @@
     import { Alert, Modal } from 'ant-design-vue';
     import EditLink from '@/Components/Shared/EditLink.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
-    import AdminLayout from '@/Layouts/AdminLayout.vue';  
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';  
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import CustomInput from '@/Components/Shared/CustomInput.vue';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
@@ -49,7 +49,7 @@
 </script>
 
 <template>
-    <AdminLayout>
+    <AuthenticatedLayout>
         <div class="w-11/12 mx-auto mt-8">
             <div class="w-8/12 mx-auto">
                 <CreateTitle 
@@ -331,5 +331,5 @@
             <h3>Esta seguro de que desea eliminar la orden MFQ-{{ order.folio }} junto con todas sus muestras?</h3>
             
         </Modal>
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>

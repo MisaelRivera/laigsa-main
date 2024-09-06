@@ -10,12 +10,22 @@ use Inertia\Inertia;
 
 class RulesController extends Controller
 {
-    public function index ()
+    public function index (Request $request)
     {
-        $rules = Rule::where('obsoleto', 0)->paginate(5);
+        $filters = $request->only('byRule');
+        $rules = Rule::where('obsoleto', 0)
+            ->orderBy('id')
+            ->when(
+                $filters['byRule'] ?? false,
+                fn ($query, $filter) => $query->where('norma', 'like', '%' . urldecode($filter) . '%')
+            )->paginate(5)
+            ->withQueryString();
+        if (isset($filters['byRule'])) {
+            $filters['byRule'] = urldecode($filters['byRule']);
+        }
         return Inertia::render('rules/Index', [
             'rules' => $rules,
-            'filters' => ['byRule' => '']
+            'filters' => $filters
         ]);
     }
 

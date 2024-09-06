@@ -22,6 +22,7 @@
     const { getMessage } = useMessages();
     const handleFilter = (ev) => {
         const value = ev.target.value;
+        console.log(value);
         router.visit(route('rules.index', { byRule: value }), {
             preserveState: true,
             method: 'get'
