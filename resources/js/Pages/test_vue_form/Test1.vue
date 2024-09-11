@@ -1,9 +1,11 @@
 <script setup>
     import { ref } from 'vue';
+    import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const inEnglish = ref(false);
     const handleSubmit = async (form$, formData) =>{
-        console.log(form$.requestData);
+        const formState = useForm(form$.requestData);
+        formState.post('/vue-form-tests/test1');
     };
 </script>
 <template>

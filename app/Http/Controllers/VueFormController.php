@@ -11,4 +11,8 @@ class VueFormController extends Controller
     {
         return Inertia::render('test_vue_form/Test1');
     }
+
+    public function test1Store(Request $request) {
+        dd($request->all());
+    }
 }
