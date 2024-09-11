@@ -4,6 +4,8 @@ import '../css/app.css';
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import Antd from 'ant-design-vue';
+import Vueform from '@vueform/vueform'
+import vueformConfig from './../../vueform.config'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
@@ -16,6 +18,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(Antd)
+            .use(Vueform, vueformConfig)
             .use(ZiggyVue)
             .mount(el);
     },

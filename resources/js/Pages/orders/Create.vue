@@ -75,6 +75,7 @@
                                     v-model:value="formState.folio"
                                     class="h-8 border-slate-300 rounded-md"
                                     placeholder="Folio"/>
+                                <p v-if="formState.errors.folio">{{ formState.errors.folio }}</p>
                             </FormItem>
                         </Col>
                         <Col 
@@ -195,7 +196,9 @@
                             <Checkbox v-model:checked="formState.cesavedac">Cesavedac</Checkbox>
                         </Col>
                         <Col :span="15">
-                            <Checkbox v-model:checked="formState.area_recepcion_muestras_limpia">Se realizó desinfección en el areá de recepción después de recibir la última muestra.</Checkbox>
+                            <Checkbox v-model:checked="formState.area_recepcion_muestras_limpia">
+                                Se realizó desinfección en el areá de recepción después de recibir la última muestra.
+                            </Checkbox>
                         </Col>
                     </Row>
                     <button class="bg-green-600 text-white py-2 px-4 rounded">

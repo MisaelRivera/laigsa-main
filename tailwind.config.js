@@ -8,6 +8,9 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
+        './vueform.config.js', // or where `vueform.config.js` is located. Change `.js` to `.ts` if required.
+        './node_modules/@vueform/vueform/themes/tailwind/**/*.vue',
+        './node_modules/@vueform/vueform/themes/tailwind/**/*.js',
     ],
 
     theme: {
@@ -18,5 +21,8 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        require('@vueform/vueform/tailwind'),
+    ],
 };

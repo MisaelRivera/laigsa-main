@@ -15,6 +15,7 @@ use App\Http\Controllers\MethodsController;
 use App\Http\Controllers\ParameterCombinationController;
 use App\Http\Controllers\ParametersController;
 use App\Http\Controllers\RulesController;
+use App\Http\Controllers\VueFormController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -145,6 +146,10 @@ Route::middleware('auth')->group(function () {
         ->name('parameters-combinations.add_param_combination');
     Route::delete('/parameters-combinations/{id}/remove-param-combination', [ParameterCombinationController::class, 'removeParamCombination'])
         ->name('parameters-combinations.remove_param_combination');
+    
+    Route::prefix('/vue-form-tests')->group(function () {
+        Route::get('/test1', [VueFormController::class, 'test1'])->name('vue_form_test.test1');
+    });
 });
 
 

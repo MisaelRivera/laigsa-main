@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderStoreRequest;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -79,23 +80,9 @@ class OrdersController extends Controller
         return response()->json($clients);
     }
 
-    public function store (Request $request)
+    public function store (OrderStoreRequest $request)
     {
-        $order = $request->validate([
-            'folio' => 'required|unique:ordenes,folio|integer',
-            'numero_muestras' => 'required|integer|min:0|max:30',
-            'aguas_alimentos' => 'required|string',
-            'cliente' => 'required|exists:clientes,cliente',
-            'fecha_recepcion' => 'nullable|date',
-            'hora_recepcion' => 'nullable',
-            'numero_cotizacion' => 'nullable',
-            'numero_termometro' => 'nullable',
-            'temperatura' => 'nullable',
-            'observaciones' => 'nullable',
-            'aguas_alimentos' => ['required', Rule::in(['Aguas', 'Alimentos'])],
-            'cesavedac' => 'required|boolean',
-            'area_recepcion_muestras_limpia' => 'required|boolean',
-        ]);
+        $order = $request->validated();
 
         $client = Client::where('cliente', $order['cliente'])->first();
        $order['direccion_muestreo'] = $client->direccion_muestreo;

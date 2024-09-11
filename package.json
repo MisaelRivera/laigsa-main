@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "@ant-design/icons-vue": "^7.0.1",
+        "@vueform/vueform": "^1.10.6",
         "ant-design-vue": "^4.2.3",
         "date-fns": "^3.6.0"
     }

@@ -55,6 +55,12 @@ const isVisibleServiciosAguas = ref(false),
                                 </Link>
                             </li>
                             <li 
+                                class="text-center text-sm">
+                                <Link :href="route('vue_form_test.test1')">
+                                    Vue form
+                                </Link>
+                            </li>
+                            <li 
                                 class="text-center text-sm"
                                 @click="isVisibleServiciosAlimentos = true">
                                 Análisis de alimentos
