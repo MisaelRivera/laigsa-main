@@ -1,7 +1,6 @@
 <script setup>
     import { ref, reactive } from 'vue';
     import { Link, useForm, router } from '@inertiajs/vue3';
-    import { EyeOutlined, DeleteOutlined, EditOutlined, CopyrightCircleOutlined } from '@ant-design/icons-vue';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
@@ -42,11 +41,11 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-10/12 mx-auto">
-            <a-alert
+            <!--<a-alert
                 type="success"
                 v-if="getMessage()"
                 :message="getMessage()">
-            </a-alert>
+            </a-alert>-->
             <div class="flex justify-between items-center">
                 <IndexTitle 
                     title="Parametros"
@@ -85,24 +84,24 @@
                         </td>
                         <td class="py-2.5 px-5 border text-center">
                             <Link :href="route('parameters.edit', parameter.id)">
-                                <EditOutlined class="text-white p-1 rounded-full mr-2 bg-blue-500"/>
+                                <i class="fas fa-edit text-white p-2 text-xs rounded-full mr-2 bg-blue-500"/>
                             </Link>
                             <Link :href="route('parameters.show', parameter.id)">
-                                <EyeOutlined class="text-white p-1 rounded-full mr-2 bg-sky-500"/>
+                                <i class="fas fa-eye text-white p-2 text-xs rounded-full mr-2 bg-sky-500"/>
                             </Link>
-                            <DeleteOutlined 
-                                class="text-white p-1 rounded-full mr-2 bg-red-500"
+                            <i 
+                                class="fas fa-trash text-white p-2 text-xs rounded-full mr-2 bg-red-500"
                                 @click="() => handleOpenDeleteModal(parameter)"/>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <a-modal
+        <!--<a-modal
             v-model:open="isDeleteModalVisible"
             title="Eliminar parametro"
             @ok="handleDelete">
             <p>Seguro que deseas borrar el parametro {{ deleteParameter.parametro }}?</p>
-        </a-modal>
+        </a-modal>-->
     </AuthenticatedLayout>
 </template>

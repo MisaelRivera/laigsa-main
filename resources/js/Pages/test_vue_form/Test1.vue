@@ -3,7 +3,6 @@
     import { useForm } from '@inertiajs/vue3';
     import { createRange } from '@/helpers/time_helper';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { message } from 'ant-design-vue';
     const props = defineProps({
         errors: Object,
         samplesNumber: Number
@@ -18,7 +17,7 @@ import { message } from 'ant-design-vue';
             console.log(props.errors);
             samplesNumberErr.value = '';
         } else {
-            samplesNumberErr.value = 'Llena el formulario de todas las muestras'
+            samplesNumberErr.value = 'Llena el formulario de todas las muestras';
         }
     };
     
@@ -62,46 +61,38 @@ import { message } from 'ant-design-vue';
                         Crear
                     </ButtonElement>
                 </Vueform>
-                <a-alert
-                    v-if="samplesNumberErr"
-                    :message="samplesNumberErr"
-                    type="error"/>
                 <Vueform 
                     :endpoint="false"
                     @submit="handleSubmit"
                     :columns="{container:12, wrapper: 12}">
-                    <a-tabs 
-                        v-model:activeKey="activeKey"
-                        class="col-span-12">
-                            <a-tab-pane
-                                v-for="i in createRange(0, samplesNumber)"
-                                :key="i.toString()"
-                                :tab="`Tab ${i + 1}` ">
-                                <ObjectElement
-                                    :name="i"
-                                    parent="samples">
-                                    <TextElement 
-                                        name="tipo_muestra"
-                                        before="Tipo de muestra"
-                                        :columns="{container: 6, wrapper:12}"
-                                        rules="required">
-                                    <template #after="scope">
-                                        <StaticElement 
-                                            v-if="errors[`samples.${i}.tipo_muestra`]" 
-                                            :content="errors[`samples.${i}.tipo_muestra`]"
-                                            :attrs="{ class: 'text-red-500'}"/>
-                                    </template>
-                                </TextElement>
+                    <ListElement
+                        name="samples2">
+                        <template #default="{index}">
+                            <ObjectElement
+                                :name="index"
+                                parent="samples">
                                 <TextElement 
-                                    name="identificacion_muestra"
-                                    before="Identificacion de la muestra"
-                                    :columns="{container: 6, wrapper:12}"/>
-                                <TextareaElement
-                                    name="caracteristicas"
-                                    before="Caracteristicas"/>
-                                </ObjectElement>
-                            </a-tab-pane>
-                    </a-tabs>
+                                    name="tipo_muestra"
+                                    before="Tipo de muestra"
+                                    :columns="{container: 6, wrapper:12}"
+                                    rules="required">
+                                <template #after="scope">
+                                    <StaticElement 
+                                        v-if="errors[`samples.${index}.tipo_muestra`]" 
+                                        :content="errors[`samples.${index}.tipo_muestra`]"
+                                        :attrs="{ class: 'text-red-500'}"/>
+                                </template>
+                            </TextElement>
+                            <TextElement 
+                                name="identificacion_muestra"
+                                before="Identificacion de la muestra"
+                                :columns="{container: 6, wrapper:12}"/>
+                            <TextareaElement
+                                name="caracteristicas"
+                                before="Caracteristicas"/>
+                            </ObjectElement>
+                        </template>
+                    </ListElement>
                     <ButtonElement
                         name="submit" submits>
                         Crear

@@ -1,7 +1,6 @@
 <script setup>
     import { ref, reactive } from 'vue';
     import { usePage } from '@inertiajs/vue3';
-    import { Alert } from 'ant-design-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowLink from '@/Components/Shared/ShowLink.vue';
     import Dropdown from '@/Components/Dropdown.vue';
@@ -82,7 +81,7 @@
                     
                 </div>
             </div>
-            <Alert 
+            <!--<Alert 
                 :message="usePageCons.props.flash.error"
                 v-if="usePageCons.props.flash.error"
                 type="error"
@@ -92,7 +91,7 @@
                 v-if="usePageCons.props.flash.message"
                 class="mb-2"
                 type="success"
-                closable/>
+                closable/>-->
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 bg-gray-50">
                     <tr>

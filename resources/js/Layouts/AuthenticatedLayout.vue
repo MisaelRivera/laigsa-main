@@ -158,4 +158,5 @@ const isVisibleServiciosAguas = ref(false),
             <slot></slot>
         </div>
     </main>
+    <notifications />
 </template>

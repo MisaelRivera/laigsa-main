@@ -3,11 +3,11 @@ import '../css/app.css';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
-import Antd from 'ant-design-vue';
 import Vueform from '@vueform/vueform'
 import vueformConfig from './../../vueform.config'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import Notifications from '@kyvg/vue3-notification';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -17,7 +17,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(Antd)
+            .use(Notifications)
             .use(Vueform, vueformConfig)
             .use(ZiggyVue)
             .mount(el);

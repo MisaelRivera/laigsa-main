@@ -4,16 +4,20 @@
     const form = useForm({
         parametro: null,
     });
-    const handleCreateSubmit = () => {
-        console.log(form);
-        form.post('/parameters');
+    const handleCreateSubmit = async(form$, FormData) => {
+        /*console.log(form$.requestData.parametro);
+        form.post('/parameters');*/
+    };
+
+    const handleError = (error, details, form$) => {
+        console.log(details);
     };
 </script>
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-4/12 p-5 rounded-lg bg-gray-100">
             <h2>Crea un nuevo parametro</h2>
-            <a-form
+            <!--<a-form
                 layout="vertical"
                 :model="form"
                 @finish="handleCreateSubmit">
@@ -35,7 +39,22 @@
                 <button class="rounded bg-green-400 text-white py-2 px-4">
                     Crear
                 </button>
-            </a-form>
+            </a-form>-->
+            <Vueform
+                :endpoint="false"
+                @submit="handleCreateSubmit"
+                :display-errors="false"
+                @error="handleError">
+                <TextElement 
+                    name="parametro"
+                    before="Parametro"
+                    rules="required"/>
+                <ButtonElement
+                    submits
+                    name="submit">
+                    Crear
+                </ButtonElement>
+            </Vueform>
         </div>
     </AuthenticatedLayout>
 </template>

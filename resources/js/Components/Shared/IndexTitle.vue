@@ -1,6 +1,5 @@
 <script setup>
     import { Link } from '@inertiajs/vue3';
-    import { PlusOutlined } from '@ant-design/icons-vue';
     defineProps({
         title: {
             type: String,
@@ -27,9 +26,8 @@
         </Link>
         <Link 
             v-if="addLink"
-            :href="addLink"
-            class="text-white bg-green-300 rounded-full text-4xl px-2 w-12 h-12 ml-3 flex justify-center items-center">
-            <PlusOutlined/>
+            :href="addLink">
+            <i class="fas fa-plus p-3 rounded-full bg-green-400 text-white"></i>
         </Link>
     </div>
 </template>

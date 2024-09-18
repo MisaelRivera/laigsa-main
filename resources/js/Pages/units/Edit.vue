@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import AdminLayout from '@/Layouts/AdminLayout.vue';
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import { useForm, } from '@inertiajs/vue3';
     import { Form, FormItem, Input, Row, Col, Alert } from 'ant-design-vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
@@ -18,7 +18,7 @@
     
 </script>
 <template>
-    <AdminLayout>
+    <AuthenticatedLayout>
         <div class="w-6/12 mx-auto mt-4 bg-slate-50 py-3">
             <Row>
                 <Col :span="18" :offset="3">
@@ -59,5 +59,5 @@
                 </Row>
             </Form>
         </div>
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>
