@@ -1,6 +1,8 @@
 <script setup>
     import { useForm } from '@inertiajs/vue3';
+    import { useNotification } from "@kyvg/vue3-notification";
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    const { notify }  = useNotification();
     const form = useForm({
         parametro: null,
     });
@@ -12,6 +14,10 @@
     const handleError = (error, details, form$) => {
         console.log(details);
     };
+    notify({
+        title: "Authorization",
+        text: "You have been logged in!",
+    });
 </script>
 <template>
     <AuthenticatedLayout>
