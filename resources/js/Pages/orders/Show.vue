@@ -1,19 +1,26 @@
 <script setup>
     import { ref, reactive } from 'vue';
     import { usePage, router } from '@inertiajs/vue3';
-    import { Alert, Modal } from 'ant-design-vue';
     import EditLink from '@/Components/Shared/EditLink.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';  
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import CustomInput from '@/Components/Shared/CustomInput.vue';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
-
+    import { Notivue, Notification, push } from 'notivue';
+    import { useMessages } from '@/composables/messages';
     const props = defineProps({
         order: Object,
     });
 
-    const page = usePage();
+    const { getMessage, getError } = useMessages();
+    if (getMessage()) {
+        push.success(getMessage());
+    }
+
+    if (getError()) {
+        push.error(getError());
+    }
 
     const numeroMuestras = ref('');
     const openDeleteOrderModal = ref(false);
@@ -190,16 +197,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <Alert 
-                    :message="page.props.flash.error"
-                    v-if="page.props.flash.error"
-                    type="error"
-                    closable/>
-                <Alert 
-                    :message="page.props.flash.message"
-                    v-if="page.props.flash.message"
-                    type="success"
-                    closable/>
                 <div class="flex items-center">
                     <section class="grid grid-cols-12 gap-2 w-5/12">
                         <CustomInput 
@@ -321,15 +318,8 @@
                 </div>
             </div>
         </div>
-        <Modal
-            :open="openDeleteOrderModal"
-            :ok-button-props="{type: 'default', innerText: 'Borrar', class: 'bg-red-500 text-white'}"
-            :cancel-button-props="{innerText: 'Cerrar'}"
-            title="Eliminar orden"
-            @cancel="openDeleteOrderModal = false"
-            @ok="() =>handleDeleteOrderModal(order.id)">
-            <h3>Esta seguro de que desea eliminar la orden MFQ-{{ order.folio }} junto con todas sus muestras?</h3>
-            
-        </Modal>
+        <Notivue v-slot="item">
+            <Notification :item="item" />
+        </Notivue>
     </AuthenticatedLayout>
 </template>

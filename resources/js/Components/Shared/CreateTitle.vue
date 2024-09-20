@@ -1,6 +1,5 @@
 <script setup>
     import { Link } from '@inertiajs/vue3';
-    import { ArrowLeftOutlined } from '@ant-design/icons-vue';
     defineProps({
         title: {
             type: String,
@@ -22,7 +21,7 @@
             v-if="backLink"
             :href="backLink"
             class="text-2xl mb-1 mr-2">
-            <ArrowLeftOutlined />
+            <i class="fas fa-arrow-left"></i>
         </Link>
         <Link 
             :href="ownLink">

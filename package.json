@@ -17,9 +17,9 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "@kyvg/vue3-notification": "^3.3.0",
         "@vueform/vueform": "^1.10.6",
         "date-fns": "^3.6.0",
+        "notivue": "^2.4.5",
         "vue": "^3.5.6"
     }
 }

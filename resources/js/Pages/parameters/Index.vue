@@ -41,11 +41,6 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-10/12 mx-auto">
-            <!--<a-alert
-                type="success"
-                v-if="getMessage()"
-                :message="getMessage()">
-            </a-alert>-->
             <div class="flex justify-between items-center">
                 <IndexTitle 
                     title="Parametros"

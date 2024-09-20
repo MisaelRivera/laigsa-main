@@ -10,6 +10,9 @@
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import IndexFilter from '@/Components/Shared/IndexFilter.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
+    import { Notivue, Notification, push } from 'notivue';
+    import { useMessages } from '@/composables/messages';
+    const { getMessage } = useMessages();
 
     const props = defineProps(
         {
@@ -53,6 +56,12 @@
         orders.value = ordersResults.data;
         console.log(orders.value);
     };
+
+    if (getMessage()) {
+        push.success(getMessage());
+    }
+
+
 </script>
 <template>
     <AuthenticatedLayout>
@@ -278,7 +287,11 @@
                 </tbody>
             </table>
             <div class="flex justify-center mt-8">
+                <button @click="push.success('Something good has been pushed!')">Push</button>
 
+                <Notivue v-slot="item">
+                    <Notification :item="item" />
+                </Notivue>
             </div>
         </div>
     </AuthenticatedLayout>

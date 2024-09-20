@@ -3,7 +3,7 @@
     import axios from 'axios';
     import { Head, router } from '@inertiajs/vue3';
     import { AutoComplete, Button, Textarea, Checkbox, Input, Form, Select, SelectOption, FormItem, Row, Col, InputNumber } from 'ant-design-vue';
-    import AdminLayout from '@/Layouts/AdminLayout.vue';
+    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import CustomInput from '@/Components/Shared/CustomInput.vue';
 
@@ -52,7 +52,7 @@
 </script>
 
 <template>
-    <AdminLayout>
+    <AuthenticatedLayout>
         <div class="w-8/12 mx-auto mt-3">
             <CreateTitle 
                 title="Editar Orden"
@@ -196,5 +196,5 @@
                     </button>
                 </Form>
         </div>
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>
