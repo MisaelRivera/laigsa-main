@@ -56,7 +56,7 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('/contacto', 'contact')->name('contact');
     Route::get('/testing-eloquent', 'testingEloquent');
     Route::get('/filters', 'filters');
-    Route::get('/logout', 'logout');
+    Route::delete('/logout', 'logout')->name('logout');
 });
 
 Route::middleware('auth')->group(function () {
@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('/samples')->group(function () {
-        Route::get('/cre/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
+        Route::get('/create/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
     });
 
     Route::prefix('/units')->group(function () {

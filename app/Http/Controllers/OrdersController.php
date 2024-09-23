@@ -84,10 +84,8 @@ class OrdersController extends Controller
     {
         $order = $request->validated();
 
-        $client = Client::where('cliente', $order['cliente'])->first();
+        $client = Client::where('id', $order['id_cliente'])->first();
        $order['direccion_muestreo'] = $client->direccion_muestreo;
-       unset($order['cliente']);
-       $order['id_cliente'] = $client->id;
 
         $order = Order::create($order);
         $folio = $request->input('folio');

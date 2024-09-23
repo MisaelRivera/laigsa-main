@@ -90,6 +90,14 @@
                             <TextareaElement
                                 name="caracteristicas"
                                 before="Caracteristicas"/>
+                            <SelectElement
+                                name="aguas_alimentos"
+                                before="Aguas o alimentos"
+                                :items="[
+                                    { value: null, label: 'Elija una opcion' },
+                                    { value: 'Aguas', label: 'Aguas' },
+                                    { value: 'Alimentos', label: 'Alimentos' },
+                                ]"/>
                             </ObjectElement>
                         </template>
                     </ListElement>

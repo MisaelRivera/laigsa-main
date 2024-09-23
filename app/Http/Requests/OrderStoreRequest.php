@@ -26,7 +26,7 @@ class OrderStoreRequest extends FormRequest
             'folio' => 'required|unique:ordenes,folio|integer',
             'numero_muestras' => 'required|integer|min:0|max:30',
             'aguas_alimentos' => 'required|string',
-            'cliente' => 'required|exists:clientes,cliente',
+            'id_cliente' => 'required|exists:clientes,id',
             'fecha_recepcion' => 'nullable|date',
             'hora_recepcion' => 'nullable',
             'numero_cotizacion' => 'nullable',

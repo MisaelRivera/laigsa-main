@@ -146,8 +146,12 @@ const isVisibleServiciosAguas = ref(false),
                     </Link>
                 </li>
                 <li class="text-green-600 text-md">
-                    <Link :href="route('login')" class="text-sm">
-                        Login
+                    <Link 
+                        :href="route('logout')" 
+                        as="button" 
+                        method="delete" 
+                        class="text-sm">
+                        Logout
                     </Link>
                 </li>
             </ul>
