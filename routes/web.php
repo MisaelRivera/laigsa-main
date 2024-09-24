@@ -16,6 +16,7 @@ use App\Http\Controllers\ParameterCombinationController;
 use App\Http\Controllers\ParametersController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\VueFormController;
+use App\Http\Controllers\WaterSamplesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -89,8 +90,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/filter', [OrdersController::class, 'filter']);
     });
 
-    Route::prefix('/samples')->group(function () {
-        Route::get('/create/{folio}/{numero_muestras}/{inicio_muestras}', [SamplesController::class, 'createWater'])->name('samples.create_water');
+    Route::controller(WaterSamplesController::class)->group(function () {
+        Route::prefix('/water_samples')->group(function () {
+            Route::get('/create/{folio}/{numero_muestras}/{inicio_muestras}', 'create')
+                ->name('water_samples.create');
+            Route::post('/', 'store')
+                ->name('water_samples.store');
+            Route::delete('/{waterSample}', 'destroy')
+                ->name('water_samples.destroy');
+        });
     });
 
     Route::prefix('/units')->group(function () {

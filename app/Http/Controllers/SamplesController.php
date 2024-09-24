@@ -27,4 +27,11 @@ class SamplesController extends Controller
 
         }
     }
+
+    
+
+    public function destroy ($id)
+    {
+
+    }
 }

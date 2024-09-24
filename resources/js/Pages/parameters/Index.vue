@@ -18,7 +18,7 @@
     const { getMessage } = useMessages();
     const handleFilter = (ev) => {
         const value = ev.target.value;
-        router.visit(route('parameters.index', { byParameter: encodeURIComponent(value) }), {
+        router.visit(route('parameters.index', { parameter: encodeURIComponent(value) }), {
             preserveState: true,
             method: 'get'
         });
@@ -57,8 +57,8 @@
                             type="text"
                             id="filtro"
                             name="filter"
-                            class="h-8 w-40 rounded"
-                            v-model="filters.byParameter"
+                            class="h-8 w-40 rounded border px-3"
+                            v-model="filters.parameter"
                             @input="handleFilter">
                     </div>
                 </div>

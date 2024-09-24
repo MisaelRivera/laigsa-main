@@ -1,7 +1,7 @@
 <script setup>
     import { onClickOutside } from '@vueuse/core';
     import { ref } from 'vue';
-    const emit = defineEmits(['closeFrom']);
+    const emit = defineEmits(['closeFrom', 'ok']);
     const props = defineProps({
         size: {
             type: String,
@@ -16,6 +16,10 @@
             type: Object
         },
 
+        cancelButtonProps: {
+            type: Object
+        },
+
         modelValue: {
             required: true,
         },
@@ -25,8 +29,13 @@
             default: true,
         }
     });
+
     const handleTimesClick = () => {
         emit('closeFrom');
+    };
+
+    const handleOkClick = () => {
+        emit('ok');
     };
 
     const target = ref(null);
@@ -40,7 +49,7 @@
             class="h-screen w-screen bg-black/40 flex absolute inset-0 z-10 justify-center items-center"
             v-if="modelValue">
             <div 
-                class="bg-slate-100 rounded-lg h-[500px] w-[500px] relative"
+                class="bg-slate-100 rounded-lg h-fit w-[500px] relative"
                 ref="target">
                 <div class="bg-blue-600 rounded-ss-lg rounded-se-lg py-3 px-4 text-white font-semibold">
                     <h2>{{ title }}</h2>
@@ -52,6 +61,20 @@
                 </span>
                 <div class="p-5">
                     <slot/>
+                </div>
+                <div class="flex justify-between p-2">
+                    <button 
+                        class="py-2 px-4 rounded-md"
+                        @click="handleOkClick"
+                        v-bind="okButtonProps">
+                        {{ okButtonProps && okButtonProps.text ? okButtonProps.text:'Aceptar' }}
+                    </button>
+                    <button 
+                        class="py-2 px-4 rounded-md"
+                        v-bind="cancelButtonProps"
+                        @click="handleTimesClick">
+                        {{ cancelButtonProps && cancelButtonProps.text ? cancelButtonProps.text:'Cancelar' }}
+                    </button>
                 </div>
             </div>
         </div>

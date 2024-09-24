@@ -1,40 +1,27 @@
 <script setup>
     import { ref, reactive } from 'vue';
-    import { usePage } from '@inertiajs/vue3';
+    import { router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowLink from '@/Components/Shared/ShowLink.vue';
     import Dropdown from '@/Components/Dropdown.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
     import CircleSwitch from '@/Components/Shared/CircleSwitch.vue';
-    import { Head, Link } from '@inertiajs/vue3';
+    import { Head } from '@inertiajs/vue3';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
-    import IndexFilter from '@/Components/Shared/IndexFilter.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
+    import IndexFilter from '@/Components/Shared/IndexFilter.vue';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
-    const { getMessage } = useMessages();
+    const { getMessage, getError } = useMessages();
 
     const props = defineProps(
         {
             ordersProp: {
                 required: true,
             },
-
-            totalItems: {
-                type: Number,
-                required: true,
-            },
+            filters: Object
         }
     );    
-
-    const totalItems = ref(props.totalItems);
-    const page = ref(1);
-    const pages = ref(10);
-    const items = ref(40);
-
-    const usePageCons = usePage();
-
-    const orders = ref(props.ordersProp);
 
     const filters = reactive({
         client: '',
@@ -42,23 +29,20 @@
         cesavedac: false,
     });
 
-    const filter = async (filterType, filterValue) => {
-        filters[filterType] = filterValue;
-        console.log(filterType);
-        console.log(filterValue);
-        let filteredOrders = await axios.post('/orders/filter', filters);
-        orders.value = filteredOrders.data.data;
-    };
-    
-    const handleChangePage = async (pageArg) => {
-        page.value = pageArg;
-        let ordersResults = await axios.get('/orders/change-page?page=' + pageArg);
-        orders.value = ordersResults.data;
-        console.log(orders.value);
+    const handleFilter = (ev) => {
+        const value = ev.target.value;
+        router.visit(route('orders.index', { byOrder: encodeURIComponent(value) }), {
+            preserveState: true,
+            method: 'get'
+        });
     };
 
     if (getMessage()) {
         push.success(getMessage());
+    }
+
+    if (getError()) {
+        push.success(getError());
     }
 
 
@@ -66,28 +50,28 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-11/12 mx-auto mt-3">
-            <div class="w-8/12 mx-auto flex justify-between">
+            <div class="flex justify-between items-center">
                 <IndexTitle 
-                     title="Ordenes"
-                     ownLink="/orders"
-                     addLink="/orders/create"/>
-                <Pagination
-                    :total-items="totalItems"
-                    :items-per-page-prop="items"
-                    :pages-per-chunk-prop="pages"
-                    :current-page-prop="page"
-                    @change-page="handleChangePage" />
-            </div>
-            <div class="w-8/12 mx-auto my-4 bg-blue-200 rounded px-4 py-3">
-                <div class="w-3/12">
-                    <IndexFilter 
-                        @filter="filter"
-                        type-prop="client"
-                        text="Cliente"
-                        :value-prop="filters.client"/>
-                </div>
-                <div class="w-6/12">
-                    
+                    title="Ordenes"
+                    :add-link="route('orders.create')"
+                    :own-link="route('orders.index')"/>
+                
+                <Pagination 
+                    :links="ordersProp.links"/>
+                <div 
+                    class="flex items-center">
+                   <IndexFilter 
+                    :filters="[
+                        {
+                            value: 'folio',
+                            label: 'Folio'
+                        },
+                        {
+                            value: 'cliente',
+                            label: 'Cliente'
+                        },
+                    ]"
+                    route="orders.index"/>
                 </div>
             </div>
             <!--<Alert 
@@ -152,7 +136,7 @@
                 <tbody>
                     <tr 
                         class="border-b dark:border-gray-700" 
-                        v-for="order in orders"
+                        v-for="order in ordersProp.data"
                         :key="order.id">
                         <td scope="row"
                             class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">

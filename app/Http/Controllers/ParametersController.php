@@ -16,15 +16,15 @@ class ParametersController extends Controller
     //
     public function index (Request $request)
     {
-        $filters = $request->only('byParameter');
+        $filters = $request->all();
         $parameters = Parameter::orderByDesc('id')
             ->when(
-                $filters['byParameter'] ?? false, 
+                $filters['parameter'] ?? false, 
                 fn ($query, $filter) => $query->where('parametro', 'like', '%' . urldecode($filter) . '%')
             )->paginate(10)
             ->withQueryString();
-        if (isset($filters['byParameter'])) {
-            $filters['byParameter'] = urldecode($filters['byParameter']);
+        if (isset($filters['parameter'])) {
+            $filters['parameter'] = urldecode($filters['parameter']);
         }
         return Inertia::render('parameters/Index', [
             'parametersProp' => $parameters,

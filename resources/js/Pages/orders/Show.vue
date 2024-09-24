@@ -9,10 +9,11 @@
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     const props = defineProps({
         order: Object,
     });
-
+    
     const { getMessage, getError } = useMessages();
     if (getMessage()) {
         push.success(getMessage());
@@ -22,8 +23,11 @@
         push.error(getError());
     }
 
+    const isDeleteModalVisible = ref(false);
+    const isDeleteSampleModalVisible = ref(false);
+    const deleteSample = ref(null);
+
     const numeroMuestras = ref('');
-    const openDeleteOrderModal = ref(false);
     const orderInfoEditDisable = ref(true);
 
     const partialOrderInfo = reactive({
@@ -33,11 +37,23 @@
     });
 
     const handleAddSubmit = () => {
-        
+        const url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+        router.visit(url);
     }; 
 
     const handleDeleteOrderModal = (orderId) => {
         const url = `/orders/${orderId}`;
+        router.visit(url, { method: 'DELETE' });
+    };
+
+    const handleDeleteSampleModalOpening = (sample) => {
+        deleteSample.value = sample;
+        isDeleteSampleModalVisible.value = true;
+    };
+
+    const handleDeleteSampleModal = () => {
+        const sampleType = props.order.aguas_alimentos === 'Aguas' ? 'water_samples':'food_samples';
+        const url = `/${sampleType}/${deleteSample.value.id}`;
         router.visit(url, { method: 'DELETE' });
     };
 
@@ -191,7 +207,7 @@
                             </td>
                             <td>
                                 <DeleteButton
-                                    :funct="() => {openDeleteOrderModal = true;}"
+                                    :funct="() => {isDeleteModalVisible = true;}"
                                     :args="[]"/>
                             </td>
                         </tr>
@@ -236,7 +252,12 @@
                         v-for="sample in order.muestras">
                         <div class="grid grid-cols-2">
                             <p class="bg-slate-500 font-bold py-1.5 px-2">Folio</p>
-                            <p class="bg-slate-500 py-1.5 px-2">MFQ-{{ order.folio }} - {{ sample.numero_muestra }}</p>
+                            <p class="bg-slate-500 py-1.5 px-2 flex justify-between">
+                                MFQ-{{ order.folio }} - {{ sample.numero_muestra }}
+                                <DeleteButton
+                                    :funct="() => handleDeleteSampleModalOpening(sample)"
+                                    :args="[]"/>
+                            </p>
                         </div>
                         <div class="grid grid-cols-2">
                             <p class="bg-gray-200 font-bold py-1.5 px-2">Tipo de muestra</p>
@@ -321,5 +342,31 @@
         <Notivue v-slot="item">
             <Notification :item="item" />
         </Notivue>
+        <MyModal
+            v-model="isDeleteModalVisible"
+            title="Eliminar orden"
+            @ok="() => handleDeleteOrderModal(order.id)"
+            @close-from="isDeleteModalVisible = false"
+            :ok-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :cancel-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }">
+            <p>Estas seguro de que deseas eliminar la orden MFQ-{{ order.folio }}</p>
+        </MyModal>
+        <MyModal
+            v-model="isDeleteSampleModalVisible"
+            title="Eliminar Muestra"
+            @ok="() => handleDeleteSampleModal(deleteSample.id)"
+            @close-from="isDeleteSampleModalVisible = false"
+            :ok-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :cancel-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }">
+            <p>Estas seguro de que deseas eliminar la muestra MFQ-{{ order.folio }} - {{ deleteSample.numero_muestra }}</p>
+        </MyModal>
     </AuthenticatedLayout>
 </template>

@@ -6,4 +6,5 @@ export default defineConfig({
   theme: tailwind,
   locales: { es },
   locale: 'es',
+  classHelpers: true,
 })

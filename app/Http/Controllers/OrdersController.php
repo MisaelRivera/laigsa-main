@@ -18,18 +18,21 @@ class OrdersController extends Controller
     //
     public function index (Request $request)
     {
-        $page = $request->has('page') ? $request->query('page'):1;
-        $items = $request->has('items') ? $request->query('items'):40;
-        $pages = $request->has('pages') ? $request->query('pages'):10;
+        $filters = $request->all();
         $orders = Order::leftJoin('siralab', 'ordenes.id', '=', 'siralab.id_orden')
             ->join('clientes', 'ordenes.id_cliente', '=', 'clientes.id')
             ->select('ordenes.*', 'siralab.id as siralab_id', 'siralab.hoja_campo', 'siralab.cadena_custodia', 'siralab.croquis', 'clientes.cliente')
             ->orderBy('fecha_recepcion', 'desc')
             ->orderBy('hora_recepcion', 'desc')
             ->orderBy('folio', 'desc')
-            ->offset($page - 1)
-            ->limit($items)
-            ->get();
+            ->when(
+                $filters['folio'] ?? false, 
+                fn ($query, $filter) => $query->where('folio', 'like', '%' . urldecode($filter) . '%')
+            )->when(
+                $filters['cliente'] ?? false, 
+                fn ($query, $filter) => $query->where('clientes.cliente', 'like', '%' . urldecode($filter) . '%')
+            )
+            ->paginate(40);
         foreach ($orders as $order) {
             if ($order->aguas_alimentos === 'Aguas') {
                 $order->muestras = WaterSample::rightJoin('identificacion_muestras', 'identificacion_muestras.id', '=', 'muestras_aguas.id_identificacion_muestra')
@@ -43,9 +46,6 @@ class OrdersController extends Controller
         }
         return Inertia::render('orders/Index', [
             'ordersProp' => $orders,
-            'itemsProp' => $items,
-            'pageProp' => $page,
-            'pagesProp' => $pages,
             'totalItems' => Order::count()
         ]);
     }
@@ -202,7 +202,7 @@ class OrdersController extends Controller
                 ->with('error', 'La orden que intenta borrar no existe');
         }
 
-        Order::where('id', $id)
+        $order
             ->delete();
 
         return redirect()
