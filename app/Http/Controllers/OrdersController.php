@@ -32,7 +32,8 @@ class OrdersController extends Controller
                 $filters['cliente'] ?? false, 
                 fn ($query, $filter) => $query->where('clientes.cliente', 'like', '%' . urldecode($filter) . '%')
             )
-            ->paginate(40);
+            ->paginate(40)
+            ->withQueryString();
         foreach ($orders as $order) {
             if ($order->aguas_alimentos === 'Aguas') {
                 $order->muestras = WaterSample::rightJoin('identificacion_muestras', 'identificacion_muestras.id', '=', 'muestras_aguas.id_identificacion_muestra')

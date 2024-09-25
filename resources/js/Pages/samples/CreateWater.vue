@@ -13,9 +13,7 @@
         parametersProp: Array,
         errors: Object,
     });
-
-    let formState = ref([]);
-
+    console.log(props.errors);
     const page = usePage();
     const oldParams = [
         "NOM-001-SEMARNAT-2021", "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales", "Nom-001-semarnat-1996", "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot", "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa", "NOM-127-SSA1-2021, Parte de la Norma",  "Nom-127-ssa1-1994. Parte de la norma", "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor", "Nom-127-ssa1-1994. Norma completa/con olor y sabor", "Nom-002-semarnat-1996", "Nom-003-semarnat-1996", "CT, As, Pb, Fluor", "CF, CT (purificada)", "CT (purificada)", "Salmonella. Contratar toxicidad", "Dureza, alcalinidad, ph, conductividad, metales.",  "E. Coli, cf, ct de nom-127-ssa1-1994.",  "Mesofilicos aerobios",  "Ph, cn",  "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",  "Nom-004-semarnat-2002",  "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",  "Nom-127: cn",  "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",  "Ph, cn", "Nueva"
@@ -24,19 +22,7 @@
 
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
-        for (let i = props.inicioMuestras + 1; i <= props.inicioMuestras + props.numeroMuestras; i++)
-        {
-            formState.value.push({
-                tipo_muestra: vueFormData[`tipo_muestra_${i}`],
-                identificacion_muestra: vueFormData[`identificacion_muestra_${i}`],
-                caracteristicas: vueFormData[`caracteristicas_${i}`],
-                muestreador: vueFormData[`muestreador_${i}`],
-                ph: vueFormData[`ph_${i}`],
-                tratada_biologicamente: vueFormData[`tratada_biologicamente_${i}`],
-            });
-        }
-        formState = useForm(formState);
-        formState.post('/water_samples');
+        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}`, vueFormData);
     };
 </script>
 
@@ -51,7 +37,13 @@
                 :endpoint="false"
                 @submit="handleSubmit"
                 :columns="{ container: 12, wrapper: 12 }"
-                :scroll-to-invalid="false">
+                :scroll-to-invalid="false"
+                :add-class="{
+                    FormTabs: {
+                        container: 'max-w-full'
+                    }
+                    }"
+                    :formErrors="errors">
                 <template #empty>
                     <FormTabs>
                         <FormTab
@@ -74,23 +66,21 @@
                                 :name="`tipo_muestra_${i + 1}`"
                                 :before="`Tipo de muestra ${i + 1}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">
-                                 <template 
-                                    #description
-                                    v-if="formState.errors.tipo_muestra">
-                                    <p class="text-red-500">{{ formState.errors.tipo_muestra }}</p>
-                                </template>
+                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"
+                                 :errors="errors">
                             </TextElement>
                             <TextElement 
                                 :name="`identificacion_muestra_${i + 1}`"
                                 :before="`Identificacion de muestra ${i + 1}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
+                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">  
+                            </TextElement>
                             <TextElement 
                                 :name="`caracteristicas_${i + 1}`"
                                 :before="`Caracteristicas ${i + 1}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
+                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"> 
+                            </TextElement>
                             <SelectElement 
                                 :name="`muestreador_${i + 1}`"
                                 :before="`Muestreador ${i + 1}`"
@@ -111,7 +101,8 @@
                                 :name="`ph_${i + 1}`"
                                 :before="`pH ${i + 1}`"
                                 :columns="{container:1, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
+                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">
+                            </TextElement>
                             <CheckboxElement
                                 :name="`tratada_biologicamente_${i + 1}`"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class WaterSamplesController extends Controller
 {
@@ -31,12 +32,31 @@ class WaterSamplesController extends Controller
 
     public function store (Request $request)
     {
-        $request->validate([
-            'samples.*.tipo_muestra' => 'required',
-            'samples.*.identificacion_muestra' => 'required',
-            'samples.*.caracteristicas' => 'required',
-            'samples.*.ph' => 'required',
-        ]);
+        $inicio_muestras = $request->query('inicio_muestras');
+        $numero_muestras = $request->query('numero_muestras');
+        for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
+            $validator = Validator::make([
+                "tipo_muestra_$i" => $request->input("tipo_muestra_$i"),
+                "identificacion_muestra_$i" => $request->input("identificacion_muestra_$i"),
+                "caracteristicas_$i" => $request->input("caracteristicas_$i"),
+                "ph_$i" => $request->input("ph_$i"),
+            ], [
+               "tipo_muestra_$i" => 'required',
+                "identificacion_muestra_$i" => 'required',
+                "caracteristicas_$i" => 'required',
+                "ph_$i" => "required",
+            ],[
+                "tipo_muestra_$i.required" => "Ingrese el tipo de muestra $i",
+                "identificacion_muestra_$i.required" => "Ingrese la identificacion de muestra $i",
+                "caracteristicas_$i.required" => "Ingrese las caracteristicas $i",
+                "ph_$i.required" => "Ingrese el ph $i",
+            ]);
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator);
+            }
+        }
     }
 
     public function destroy (WaterSample $waterSample)
