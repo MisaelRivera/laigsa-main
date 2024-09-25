@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, reactive, computed } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { router, usePage, useForm } from '@inertiajs/vue3';
     import { createRange } from '@/helpers/time_helper.js';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -12,6 +12,11 @@
         identificacionesMuestra: Array,
         parametersProp: Array,
         errors: Object,
+    });
+    const tabsContainer = ref(null);
+    onMounted(() => {
+      // Add the class to the FormTabs container
+      tabsContainer.value.$el.classList.add('overflow-x-scroll');
     });
     console.log(props.errors);
     const page = usePage();
@@ -39,13 +44,12 @@
                 :columns="{ container: 12, wrapper: 12 }"
                 :scroll-to-invalid="false"
                 :add-class="{
-                    FormTabs: {
-                        container: 'max-w-full'
-                    }
-                    }"
-                    :formErrors="errors">
+                    'FormTabs.container': ''
+                }"
+                :formErrors="errors">
                 <template #empty>
-                    <FormTabs>
+                    <FormTabs
+                     ref="tabsContainer">
                         <FormTab
                             :name="`muestra_${i + 1}`"
                             :label="`Muestra ${order.folio} - ${i + 1}`"
