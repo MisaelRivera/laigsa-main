@@ -9,7 +9,6 @@
         order: Object,
         numeroMuestras: Number,
         inicioMuestras: Number,
-        identificacionesMuestra: Array,
         parametersProp: Array,
         errors: Object,
     });
@@ -18,8 +17,10 @@
       // Add the class to the FormTabs container
       tabsContainer.value.$el.classList.add('overflow-x-scroll');
     });
-    console.log(props.errors);
-    const page = usePage();
+    const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
+        return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
+    });
+    identificaciones_muestra.unshift({ value: null, label: 'Elija una opcion' })
     const oldParams = [
         { value: null, label: 'Elija un parametro' },
         "NOM-001-SEMARNAT-2021", "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales", "Nom-001-semarnat-1996", "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot", "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa", "NOM-127-SSA1-2021, Parte de la Norma",  "Nom-127-ssa1-1994. Parte de la norma", "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor", "Nom-127-ssa1-1994. Norma completa/con olor y sabor", "Nom-002-semarnat-1996", "Nom-003-semarnat-1996", "CT, As, Pb, Fluor", "CF, CT (purificada)", "CT (purificada)", "Salmonella. Contratar toxicidad", "Dureza, alcalinidad, ph, conductividad, metales.",  "E. Coli, cf, ct de nom-127-ssa1-1994.",  "Mesofilicos aerobios",  "Ph, cn",  "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",  "Nom-004-semarnat-2002",  "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",  "Nom-127: cn",  "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",  "Ph, cn", "Otro"
@@ -70,7 +71,7 @@
                             :label="`Muestra ${order.folio} - ${i + 1}`"
                             :elements="[
                                 `tipo_muestra_${i + 1}`, 
-                                `identificacion_muestra_${i + 1}`,
+                                `id_identificacion_muestra_${i + 1}`,
                                 `caracteristicas_${i + 1}`,
                                 `muestreador_${i + 1}`,
                                 `ph_${i + 1}`,
@@ -109,14 +110,15 @@
                                     <div class="text-sm">{{ `Tipo de muestra ${i + 1}` }}</div>
                                 </template>
                             </TextElement>
-                            <TextElement 
-                                :name="`identificacion_muestra_${i + 1}`"
+                            <SelectElement 
+                                :name="`id_identificacion_muestra_${i + 1}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">
+                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"
+                                 :items="identificaciones_muestra">
                                  <template #before>
                                     <div class="text-sm">{{ `Identificacion de muestra ${i + 1}` }}</div>
                                 </template>
-                            </TextElement>
+                            </SelectElement>
                             <TextElement 
                                 :name="`caracteristicas_${i + 1}`"
                                 :columns="{container:6, wrapper:12}"
@@ -141,7 +143,7 @@
                                 ]"
                                 :columns="{container:2, wrapper:12}" v-for="i in createRange(inicioMuestras, numeroMuestras)">
                                 <template #before>
-                                    <div class="text-sm">{{ `Caracteristicas ${i + 1}` }}</div>
+                                    <div class="text-sm">{{ `Muestreador ${i + 1}` }}</div>
                                 </template> 
                             </SelectElement>
                             <TextElement 

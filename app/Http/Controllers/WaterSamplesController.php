@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\WaterSampleStoreRequest;
 use App\Models\WaterSample;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,11 +14,10 @@ class WaterSamplesController extends Controller
 {
     public function create ($folio, $numero_muestras, $inicio_muestras)
     {
-        $order = Order::with('cliente')->where('folio', $folio)->first();
+        $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
         $data = [
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
-            'identificacionesMuestra' => $order->cliente->nombreIdentificacionesMuestra(),
             'inicioMuestras' => (int) $inicio_muestras,
         ];
       
@@ -35,25 +35,18 @@ class WaterSamplesController extends Controller
         $inicio_muestras = $request->query('inicio_muestras');
         $numero_muestras = $request->query('numero_muestras');
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            $validator = Validator::make([
-                "tipo_muestra_$i" => $request->input("tipo_muestra_$i"),
-                "identificacion_muestra_$i" => $request->input("identificacion_muestra_$i"),
-                "caracteristicas_$i" => $request->input("caracteristicas_$i"),
-                "ph_$i" => $request->input("ph_$i"),
-            ], [
-               "tipo_muestra_$i" => 'required',
-                "identificacion_muestra_$i" => 'required',
-                "caracteristicas_$i" => 'required',
-                "ph_$i" => "required",
-            ],[
-                "tipo_muestra_$i.required" => "Ingrese el tipo de muestra $i",
-                "identificacion_muestra_$i.required" => "Ingrese la identificacion de muestra $i",
-                "caracteristicas_$i.required" => "Ingrese las caracteristicas $i",
-                "ph_$i.required" => "Ingrese el ph $i",
-            ]);
-
+    
+            // Create an instance of the request and set the iteration
+            $waterSampleRequest = new WaterSampleStoreRequest();
+            $waterSampleRequest->setIteration($i);
+    
+            // Use Validator::make to validate the data
+            $validator = Validator::make($waterSampleRequest->values(), $waterSampleRequest->rules(), $waterSampleRequest->messages());
+    
+            // If validation fails, handle the errors
             if ($validator->fails()) {
-                return back()
+                return redirect()
+                    ->back()
                     ->withErrors($validator);
             }
         }
