@@ -34,14 +34,15 @@ class WaterSamplesController extends Controller
     {
         $inicio_muestras = $request->query('inicio_muestras');
         $numero_muestras = $request->query('numero_muestras');
+        $idOrden = $request->query('id_orden');
+        $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
     
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
             $waterSampleRequest->setIteration($i);
-    
             // Use Validator::make to validate the data
-            $validator = Validator::make($waterSampleRequest->values(), $waterSampleRequest->rules(), $waterSampleRequest->messages());
+            $validator = Validator::make($waterSampleRequest->values($request), $waterSampleRequest->rules(), $waterSampleRequest->messages());
     
             // If validation fails, handle the errors
             if ($validator->fails()) {
@@ -49,7 +50,24 @@ class WaterSamplesController extends Controller
                     ->back()
                     ->withErrors($validator);
             }
+
+            $validatedData = $validator->validate();
+
+            if ($validatedData["parametros_$i"] === "Otro") {
+                $validatedData["parametros_$i"] = $request->input("otros_$i");
+                $validatedData["otros_$i"] = 1;
+            }
+            $validatedData["id_orden_$i"] = (int)$idOrden;
+            $validatedData["numero_muestra_$i"] = $i;
+            $sample = removeDynamicPostfixFromKeys($validatedData);
+            array_push($samples, $sample);
         }
+        foreach ($samples as $sampleInstance) {
+            WaterSample::create($sampleInstance);
+        }
+        return redirect()
+            ->route('orders.show', ['id' => $idOrden])
+            ->with('message', 'La orden y sus muestras se han creado correctamente');
     }
 
     public function destroy (WaterSample $waterSample)

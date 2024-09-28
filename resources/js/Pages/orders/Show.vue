@@ -295,6 +295,16 @@
                             <p class="bg-gray-200 font-bold py-1.5 px-2">Tipo de muestreo:</p>
                             <p class="bg-gray-200 py-1.5 px-2"> {{ sample.tipo_muestreo }}</p>
                         </div>
+                        <div 
+                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="bg-gray-300 font-bold py-1.5 px-2">Fecha de fin de muestreo:</p>
+                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.fecha_final_muestreo }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="bg-gray-300 font-bold py-1.5 px-2">Hora de fin de muestreo:</p>
+                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.hora_final_muestreo }}</p>
+                        </div>
                         <div class="grid grid-cols-2">
                             <p class="bg-gray-300 font-bold py-1.5 px-2">Muestreador:</p>
                             <p class="bg-gray-300 py-1.5 px-2"> {{ sample.muestreador }}</p>
@@ -311,6 +321,16 @@
                         <div class="grid grid-cols-2">
                             <p class="bg-gray-200 font-bold py-1.5 px-2">SIRALAB:</p>
                             <p class="bg-gray-200 py-1.5 px-2"> {{ sample.siralab ? 'Si':'No' }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="bg-gray-300 font-bold py-1.5 px-2">Fecha de composicion:</p>
+                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.fecha_composicion }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="bg-gray-300 font-bold py-1.5 px-2">Hora de composicion:</p>
+                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.hora_composicion }}</p>
                         </div>
                         <div 
                             class="grid grid-cols-2">

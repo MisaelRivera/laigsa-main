@@ -38,7 +38,7 @@
 
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
-        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}`, vueFormData);
+        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
     };
 </script>
 
@@ -301,7 +301,6 @@
                             </TextElement>
                             <TextElement 
                                 :name="`flujo_1_${i + 1}`"
-                                input-type="time"
                                 :conditions="[
                                     [`tipo_muestreo_${i + 1}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
@@ -313,7 +312,6 @@
                             </TextElement>
                             <TextElement 
                                 :name="`flujo_2_${i + 1}`"
-                                input-type="time"
                                 :conditions="[
                                     [`tipo_muestreo_${i + 1}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
@@ -325,7 +323,6 @@
                             </TextElement>
                             <TextElement 
                                 :name="`flujo_3_${i + 1}`"
-                                input-type="time"
                                 :conditions="[
                                     [`tipo_muestreo_${i + 1}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
@@ -337,7 +334,6 @@
                             </TextElement>
                             <TextElement 
                                 :name="`flujo_4_${i + 1}`"
-                                input-type="time"
                                 :conditions="[
                                     [`tipo_muestreo_${i + 1}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
@@ -349,7 +345,6 @@
                             </TextElement>
                             <TextElement 
                                 :name="`flujo_5_${i + 1}`"
-                                input-type="time"
                                 :conditions="[
                                     [`tipo_muestreo_${i + 1}`, ['Compuesto_6']]
                                 ]"
@@ -361,7 +356,6 @@
                             </TextElement>
                             <TextElement 
                                 :name="`flujo_6_${i + 1}`"
-                                input-type="time"
                                 :conditions="[
                                     [`tipo_muestreo_${i + 1}`, ['Compuesto_6']]
                                 ]"
