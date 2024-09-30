@@ -10,10 +10,11 @@
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
     import MyModal from '@/Components/Shared/MyModal.vue';
+import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
     const props = defineProps({
         order: Object,
     });
-    
+
     const { getMessage, getError } = useMessages();
     if (getMessage()) {
         push.success(getMessage());
@@ -26,6 +27,10 @@
     const isDeleteModalVisible = ref(false);
     const isDeleteSampleModalVisible = ref(false);
     const deleteSample = ref(null);
+    const isPreservationDisable = ref([]);
+    for (let i = 0; i < props.order.muestras.length; i++) {
+        isPreservationDisable.value.push(true);
+    }
 
     const numeroMuestras = ref('');
     const orderInfoEditDisable = ref(true);
@@ -40,6 +45,14 @@
         const url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
         router.visit(url);
     }; 
+    const handlePreservationSubmit = (form$, FormData) => {
+        console.log(form$.requestData);
+    };
+
+    const handleToggleEditPreservation = (index) => {
+        console.log(isPreservationDisable.value);
+        isPreservationDisable.value[index] = !isPreservationDisable.value[index];
+    };
 
     const handleDeleteOrderModal = (orderId) => {
         const url = `/orders/${orderId}`;
@@ -73,7 +86,7 @@
 
 <template>
     <AuthenticatedLayout>
-        <div class="w-11/12 mx-auto mt-8">
+        <div class="w-full mx-auto mt-8">
             <div class="w-8/12 mx-auto">
                 <CreateTitle 
                     title="Datos de la orden"
@@ -231,6 +244,7 @@
                             :disabled="orderInfoEditDisable"
                             size="col-span-2"
                             :label-classes="['text-xs']"
+                            :input-classes="['bg-red-300', 'disabled:bg-slate-300']"
                             v-model="partialOrderInfo.temperatura"
                             label="Temperatura °C"/>
                         <button 
@@ -246,10 +260,11 @@
                         </button>
                     </section>
                 </div>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-3 gap-4 items-start">
                     <div 
-                        class="p-1 px-1 border-2 border-slate-400 rounded-lg"
-                        v-for="sample in order.muestras">
+                        class="p-1 px-1 border-2 border-slate-400 rounded-lg min-h-0"
+                        v-for="(sample, index) in order.muestras"
+                        :key="index">
                         <div class="grid grid-cols-2">
                             <p class="bg-slate-500 font-bold py-1.5 px-2">Folio</p>
                             <p class="bg-slate-500 py-1.5 px-2 flex justify-between">
@@ -259,101 +274,205 @@
                                     :args="[]"/>
                             </p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">Tipo de muestra</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.tipo_muestra }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Tipo de muestra</p>
+                            <p class="py-1.5 px-2"> {{ sample.tipo_muestra }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Identificación de muestra</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.identificacion_muestra }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
+                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">Latitud</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.latitud }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Latitud</p>
+                            <p class="py-1.5 px-2"> {{ sample.latitud }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Longitud</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.longitud }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Longitud</p>
+                            <p class="py-1.5 px-2"> {{ sample.longitud }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">Parametros:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.parametros }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Parametros:</p>
+                            <p class="py-1.5 px-2"> {{ sample.parametros }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Caracteristicas:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.caracteristicas }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Caracteristicas:</p>
+                            <p class="py-1.5 px-2"> {{ sample.caracteristicas }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">Fecha de muestreo:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.fecha_muestreo }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Fecha de muestreo:</p>
+                            <p class="py-1.5 px-2"> {{ sample.fecha_muestreo }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Hora de muestreo:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.hora_muestreo.substr(0, 5) }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Hora de muestreo:</p>
+                            <p class="py-1.5 px-2"> {{ sample.hora_muestreo.substr(0, 5) }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">Tipo de muestreo:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.tipo_muestreo }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Fecha de fin de muestreo:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.fecha_final_muestreo }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Tipo de muestreo:</p>
+                            <p class="py-1.5 px-2"> {{ sample.tipo_muestreo }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Hora de fin de muestreo:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.hora_final_muestreo }}</p>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Muestreador:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.muestreador }}</p>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">Cloro:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.cloro }}</p>
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Fecha de fin de muestreo:</p>
+                            <p class="py-1.5 px-2"> {{ sample.fecha_final_muestreo }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2" v-if="sample.cloro === 'Si' || sample.cloro === 'No' ">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Valor del cloro:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.valor_cloro === 'Si' ? sample.valor_cloro:'< 0.1' }}</p>
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Hora de fin de muestreo:</p>
+                            <p class="py-1.5 px-2"> {{ sample.hora_final_muestreo }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">SIRALAB:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.siralab ? 'Si':'No' }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Muestreador:</p>
+                            <p class="py-1.5 px-2"> {{ sample.muestreador }}</p>
                         </div>
-                        <div 
-                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Fecha de composicion:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.fecha_composicion }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Hora de composicion:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.hora_composicion }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Cloro:</p>
+                            <p class="py-1.5 px-2"> {{ sample.cloro }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Tratada biológicamente:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.tratada_biologicamente ? 'Si':'No' }}</p>
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.cloro === 'Si' || sample.cloro === 'No' ">
+                            <p class="font-bold py-1.5 px-2">Valor del cloro:</p>
+                            <p class="py-1.5 px-2"> {{ sample.valor_cloro === 'Si' ? sample.valor_cloro:'< 0.1' }}</p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">pH:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.pH }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Conductividad (uS/cm):</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.conductividad }}</p>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p class="bg-gray-200 font-bold py-1.5 px-2">pH Cr VI:</p>
-                            <p class="bg-gray-200 py-1.5 px-2"> {{ sample.ph_cromo_hexavalente }}</p>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">SIRALAB:</p>
+                            <p class="py-1.5 px-2"> {{ sample.siralab ? 'Si':'No' }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2">
-                            <p class="bg-gray-300 font-bold py-1.5 px-2">Preservación correcta:</p>
-                            <p class="bg-gray-300 py-1.5 px-2"> {{ sample.preservacion_correcta }}</p>
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Fecha de composicion:</p>
+                            <p class="py-1.5 px-2"> {{ sample.fecha_composicion }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Hora de composicion:</p>
+                            <p class="py-1.5 px-2"> {{ sample.hora_composicion }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Tratada biológicamente:</p>
+                            <p class="py-1.5 px-2"> {{ sample.tratada_biologicamente ? 'Si':'No' }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">pH:</p>
+                            <p class="py-1.5 px-2"> {{ sample.pH }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Conductividad (uS/cm):</p>
+                            <p class="py-1.5 px-2"> {{ sample.conductividad }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">pH Cr VI:</p>
+                            <p class="py-1.5 px-2"> {{ sample.ph_cromo_hexavalente }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Preservación correcta:</p>
+                            <p class="py-1.5 px-2"> {{ sample.preservacion_correcta }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Flujo 1 (l/s):</p>
+                            <p class="py-1.5 px-2"> {{ sample.flujo_1 }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Flujo 2 (l/s):</p>
+                            <p class="py-1.5 px-2"> {{ sample.flujo_2 }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Flujo 3 (l/s):</p>
+                            <p class="py-1.5 px-2"> {{ sample.flujo_3 }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Flujo 4 (l/s):</p>
+                            <p class="py-1.5 px-2"> {{ sample.flujo_4 }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Flujo 5 (l/s):</p>
+                            <p class="py-1.5 px-2"> {{ sample.flujo_5 }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="sample.tipo_muestreo === 'Compuesto_6'">
+                            <p class="font-bold py-1.5 px-2">Flujo 6 (l/s):</p>
+                            <p class="py-1.5 px-2"> {{ sample.flujo_6 }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            <p class="font-bold py-1.5 px-2">Preservacion correcta</p>
+                            <p class="py-1.5 px-2">
+                                <Vueform
+                                    :endpoint="false"
+                                    @submit="handlePreservationSubmit"
+                                    :scroll-to-invalid="false"
+                                    :columns="{container: 12, wrapper:12}">
+                                    <RadiogroupElement 
+                                        name="preservacion_correcta"
+                                        :items="[
+                                            'Si',
+                                            'No',
+                                            'N/A'
+                                        ]"
+                                        :remove-class="{
+                                            wrapper: 'flex-col',
+                                            
+                                        }"
+
+                                        :add-class="{
+                                            wrapper: ['gap-1', 'text-xs'],
+                                            container: 'items-center',
+                                            text: 'self-center',
+                                        }"
+                                        :add-classes="{
+                                            RadiogroupRadio: {
+                                                container: 'items-center',
+                                                input: 'max-h-3 max-w-3'
+                                            },
+                                        }"
+                                        :columns="{container: 4, wrapper:12}"
+                                        :disabled="isPreservationDisable[index]">
+                                         <template v-slot:radio="{ item, value, el$, classes, isDisabled, id, name, items, index }">
+                                            <span 
+                                                :class="classes.text"
+                                                v-html="item.label"
+                                            />
+                                            <input
+                                                type="radio"
+                                                v-model="el$.value"
+                                                :value="value"
+                                                :class="classes.input"
+                                                :name="name"
+                                                :id="id"
+                                                :disabled="isDisabled"
+                                                :aria-label="item.label"
+                                            />
+                                            </template>    
+                                    </RadiogroupElement>
+                                    <HiddenElement 
+                                        name="id_muestra"
+                                        :value="sample.id"/>
+                                    <button 
+                                        class="py-1 px-2 rounded bg-yellow-500 text-white col-span-2 cursor-pointer"
+                                        @click="() => handleToggleEditPreservation(index)"
+                                        type="button">
+                                        ¶
+                                    </button>
+                                    <button 
+                                        class="py-1 px-2 rounded bg-blue-500 text-white col-span-4 disabled:bg-slate-100 disabled:text-black !important"
+                                        :disabled="isPreservationDisable[index]">
+                                        Editar
+                                    </button>
+                                </Vueform>
+                            </p>
                         </div>
                     </div>
                 </div>
