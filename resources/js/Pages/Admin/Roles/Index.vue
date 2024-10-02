@@ -1,25 +1,47 @@
 <script setup>
-    import { Link } from '@inertiajs/vue3';
+    import { ref } from 'vue';
+    import { Link, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import NavLayout from '@/Layouts/NavLayout.vue';
     import { useMessages } from '@/composables/messages';
-    const { getMessage } = useMessages();
-    const props = defineProps({
-        roles: Object,
-    });
     import Table from '@/Components/Table.vue';
     import TableRow from '@/Components/TableRow.vue';
     import TableHeaderCell from '@/Components/TableHeaderCell.vue';
     import TableDataCell from '@/Components/TableDataCell.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
+    import { Notivue, Notification, push } from 'notivue';
+    const { getMessage } = useMessages();
+    const props = defineProps({
+        roles: Object,
+    });
+
+    if (getMessage()) {
+        push.success(getMessage());
+    }
+
+    const isDeleteModalVisible = ref(false);
+    const deleteRole = ref(null);
+    const handleDelete = () => {
+        router.delete(`/roles/${deleteRole.value.id}`, {
+            onSuccess: () => {
+                isDeleteModalVisible.value = false;
+                push.success(`El rol ${deleteRole.value.name} ha sido eliminado correctamente`);
+                deleteRole.value = null;
+            }
+        });
+    };
+    const handleShowDeleteModal = (role) => {
+        deleteRole.value = role;
+        isDeleteModalVisible.value = true;
+    };
+    const handleCloseDeleteModal = () => {
+        isDeleteModalVisible.value = false;
+        deleteRole.value = null;
+    };
 </script>
 <template>
     <AuthenticatedLayout>
         <NavLayout>
-            <a-alert 
-                v-if="getMessage()"
-                :message="getMessage()"
-                type="success"
-                closable/>
             <div class="flex justify-between">
                 <h1>Roles index page</h1>
                 <Link 
@@ -43,20 +65,35 @@
                             <TableDataCell>{{ role.name }}</TableDataCell>
                             <TableDataCell class="space-x-4">
                                 <Link :href="route('roles.edit', role.id)" class="text-green-400 hover:text-green-600">
-                                    Edit
+                                    Editar
                                 </Link>
-                                <Link 
-                                    :href="route('roles.destroy', role.id)" 
-                                    as="button" 
+                                <button 
+                                    @click="() => handleShowDeleteModal(role)" 
                                     method="delete"
                                     class="text-red-400 hover:text-red-600">
-                                    Delete
-                                </Link>
+                                    Borrar
+                                </button>
                             </TableDataCell>
                         </TableRow>
                     </template>
                 </Table>
             </div>
+            <Notivue v-slot="item">
+                <Notification :item="item" />
+            </Notivue>
+            <MyModal
+                title="Eliminar usuario"
+                v-model="isDeleteModalVisible"
+                @close-from="handleCloseDeleteModal"
+                @ok="handleDelete"
+                :ok-button-props="{
+                    class: ['bg-red-500', 'text-white']  
+                }"
+                :cancel-button-props="{
+                    class: ['bg-blue-500', 'text-white']  
+                }">
+                <p>Estas seguro de eliminar el rol {{ deleteRole.name }}</p>
+            </MyModal>
         </NavLayout>
     </AuthenticatedLayout>
 </template>

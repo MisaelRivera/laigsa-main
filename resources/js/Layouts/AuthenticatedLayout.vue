@@ -61,6 +61,12 @@ const isVisibleServiciosAguas = ref(false),
                                 </Link>
                             </li>
                             <li 
+                                class="text-center text-sm">
+                                <Link :href="route('users.index')">
+                                    Administracion de usuarios
+                                </Link>
+                            </li>
+                            <li 
                                 class="text-center text-sm"
                                 @click="isVisibleServiciosAlimentos = true">
                                 Análisis de alimentos

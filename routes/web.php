@@ -15,6 +15,7 @@ use App\Http\Controllers\MethodsController;
 use App\Http\Controllers\ParameterCombinationController;
 use App\Http\Controllers\ParametersController;
 use App\Http\Controllers\RulesController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VueFormController;
 use App\Http\Controllers\WaterSamplesController;
 use Illuminate\Foundation\Application;
@@ -64,6 +65,17 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/clientes')->group(function () {
         Route::get('/', [ClientsController::class, 'index'])->name('clients.index');
         Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
+    });
+    Route::controller(UserController::class)->group(function () {
+        Route::prefix('/users')->group(function () {
+            Route::get('/', 'index')->name('users.index');
+            Route::get('/create', 'create')->name('users.create');
+            Route::post('/', 'store')->name('users.store');
+            Route::get('/{user}/show', 'show')->name('users.show');
+            Route::get('/{user}/edit', 'edit')->name('users.edit');
+            Route::put('/{user}', 'update')->name('users.update');
+            Route::delete('/{user}', 'destroy')->name('users.destroy');
+        });
     });
 
     Route::prefix('/orders')->group(function () {

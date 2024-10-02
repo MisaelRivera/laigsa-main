@@ -1,14 +1,45 @@
 <script setup>
-    import { Link } from '@inertiajs/vue3';
+    import { ref } from 'vue';
+    import { Link, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import NavLayout from '@/Layouts/NavLayout.vue';
     import Table from '@/Components/Table.vue';
     import TableRow from '@/Components/TableRow.vue';
     import TableHeaderCell from '@/Components/TableHeaderCell.vue';
     import TableDataCell from '@/Components/TableDataCell.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
+    import { Notivue, Notification, push } from 'notivue';
+    import { useMessages } from '@/composables/messages';
+    const { getMessage } = useMessages();
     const props = defineProps({
         users: Object,
     });
+    if (getMessage()) {
+        push.success(getMessage());
+    }
+    const isDeleteModalVisible = ref(false);
+    const deleteUser = ref(null);
+
+    const handleShowDeleteModal = (user) => {
+        deleteUser.value = user;
+        isDeleteModalVisible.value = true;
+    };
+
+    const handleCloseDeleteModal = () => {
+        deleteUser.value = null;
+        isDeleteModalVisible.value = false;
+    };
+
+    const handleDelete = () => {
+       
+        router.delete(`/users/${deleteUser.value.id}`, {
+            onSuccess: () => {
+                isDeleteModalVisible.value = false;
+                push.success(`El usuario ${deleteUser.value.name} Se ha eliminado correctamente`);
+                deleteUser.value = null;
+            }
+        });
+    };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -36,11 +67,36 @@
                             <TableDataCell>{{ user.id }}</TableDataCell>
                             <TableDataCell>{{ user.name }}</TableDataCell>
                             <TableDataCell>{{ user.email }}</TableDataCell>
-                            <TableDataCell>Edit/Delete</TableDataCell>
+                            <TableDataCell>
+                                <Link :href="route('users.edit', user.id)">
+                                    <span class="text-green-500">Edit</span>
+                                </Link>
+                                <span 
+                                    class="text-red-500 ml-2"
+                                    @click="() => handleShowDeleteModal(user)">
+                                    Delete
+                                </span>
+                            </TableDataCell>
                         </TableRow>
                     </template>
                 </Table>
             </div>
+            <Notivue v-slot="item">
+                <Notification :item="item" />
+            </Notivue>
+            <MyModal
+                title="Eliminar usuario"
+                v-model="isDeleteModalVisible"
+                @close-from="handleCloseDeleteModal"
+                @ok="handleDelete"
+                :ok-button-props="{
+                    class: ['bg-red-500', 'text-white']  
+                }"
+                :cancel-button-props="{
+                    class: ['bg-blue-500', 'text-white']  
+                }">
+                <p>Estas seguro de eliminar el usuario {{ deleteUser.name }}</p>
+            </MyModal>
         </NavLayout>
     </AuthenticatedLayout>
 </template>

@@ -467,7 +467,7 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
                                         ¶
                                     </button>
                                     <button 
-                                        class="py-1 px-2 rounded bg-blue-500 text-white col-span-4 disabled:bg-slate-100 disabled:text-black !important"
+                                        class="py-1 px-2 rounded bg-blue-500 text-white col-span-4 disabled:bg-slate-100 disabled:text-black"
                                         :disabled="isPreservationDisable[index]">
                                         Editar
                                     </button>

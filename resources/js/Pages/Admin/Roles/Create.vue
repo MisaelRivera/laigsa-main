@@ -2,17 +2,17 @@
     import { Link, Head, useForm, usePage } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import NavLayout from '@/Layouts/NavLayout.vue';
-    import InputLabel from '@/Components/InputLabel.vue';
-    import TextInput from '@/Components/TextInput.vue';
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     const props = defineProps({
         roles: Object,
+        errors: Object,
     });
-    const page = usePage();
     const form = useForm({
         name: '',
     });
-    const handleSubmit = () => {
+    const handleSubmit = (form$, FormData) => {
         try{
+            form.name = form$.requestData.name;
             form.post(route('roles.store'));
         } catch (e) {
             console.log(e)
@@ -23,29 +23,27 @@
     <Head title="Manage roles"/>
     <AuthenticatedLayout>
         <NavLayout>
-            <div class="flex justify-between">
-                <h1>Roles index page</h1>
-                <Link 
-                    :href="route('roles.create')"
-                    class="py-2 px-3 text-white font-semibold bg-indigo-500 hover:bg-indigo-700 rounded">
-                    New role
-                </Link>
-            </div>
-            <div class="mt-6">
-                <form @submit.prevent="handleSubmit">
-                    <div>
-                        <label for="name">Name</label>
-                        <input 
-                            type="text"
+            <div class="mt-6 grid grid-cols-12">
+                <div class="flex justify-between col-start-4 col-span-6">
+                    <CreateTitle 
+                        title="Crear rol"
+                        own-link="/roles/creates"
+                        back-link="/roles"/>
+                </div>
+                <Vueform
+                    :endpoint="true"
+                    @submit="handleSubmit"
+                    class="col-start-4 col-span-6 mt-2"
+                    :columns="{container:12, wrapper:12}">
+                        <TextElement 
                             name="name"
-                            id="name"
-                            class="w-full block mt-1"
-                            v-model="form.name"
-                            required
-                            />
-                    </div>
-                    <button class="rounded bg-green-500 text-white py-2.5 px-4 mt-2">Create</button>
-                </form>
+                            before="Nombre"
+                            :description="errors.name ? `<p class='text-red-500'>${errors.name}</p>`:null"/>
+                    <button 
+                        class="rounded bg-green-500 text-white py-2.5 px-4 mt-2 col-span-2">
+                        Create
+                    </button>
+                </Vueform>
             </div>
         </NavLayout>
     </AuthenticatedLayout>

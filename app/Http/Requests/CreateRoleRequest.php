@@ -26,4 +26,14 @@ class CreateRoleRequest extends FormRequest
             'name' => ['required', 'string', 'max:30', Rule::unique('roles', 'name')->ignore($this->role)]
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Ingrese el nombre',
+            'name.string' => 'El nombre debe ser texto',
+            'name.max' => 'El nombre no puede contener mas de 30 caracteres',
+            'name.unique' => 'El nombre ingresado ya existe',
+        ];
+    }
 }

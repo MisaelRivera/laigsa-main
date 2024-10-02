@@ -1,11 +1,13 @@
 <script setup>
-    import { Link, Head, useForm, usePage } from '@inertiajs/vue3';
+    import { Link, Head, useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import NavLayout from '@/Layouts/NavLayout.vue';
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     const props = defineProps({
         role: Object,
     });
-    const page = usePage();
+
+    console.log(props.role.name);
     const form = useForm({
         name: props.role.name,
     });
@@ -21,28 +23,28 @@
     <Head title="Manage roles"/>
     <AuthenticatedLayout>
         <NavLayout>
-            <div class="flex justify-between">
-                <Link 
-                    :href="route('roles.index')"
-                    class="py-2 px-3 text-white font-semibold bg-indigo-500 hover:bg-indigo-700 rounded">
-                    Back
-                </Link>
-            </div>
-            <div class="mt-6">
-                <form @submit.prevent="handleSubmit">
-                    <div>
-                        <label for="name">Name</label>
-                        <input 
-                            type="text"
-                            name="name"
-                            id="name"
-                            class="w-full block mt-1"
-                            v-model="form.name"
-                            required
-                            />
-                    </div>
-                    <button class="rounded bg-blue-500 text-white py-2.5 px-4 mt-2">Edit</button>
-                </form>
+            <div class="mt-6 grid grid-cols-12">
+                <CreateTitle 
+                    :title="`Editar rol`"
+                    :own-link="`/roles/${role.id}/edit`"
+                    back-link="/roles"
+                    class="col-start-4 col-span-6"/>
+                <Vueform 
+                    :endpoint="false"
+                    @submit="handleSubmit"
+                    :columns="{container: 12, wrapper: 12}"
+                    v-model="form"
+                    class="col-start-4 col-span-6"
+                    sync>
+                    <TextElement
+                        name="name"
+                        before="Nombre"
+                        v-model="form.name"/>
+                    <button 
+                        class="rounded bg-blue-500 text-white py-2.5 px-4 mt-2 col-span-2">
+                        Edit
+                    </button>
+                </Vueform>
             </div>
         </NavLayout>
     </AuthenticatedLayout>

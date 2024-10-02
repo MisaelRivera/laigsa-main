@@ -1,20 +1,24 @@
 <script setup>
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, Head } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import NavLayout from '@/Layouts/NavLayout.vue';
-    import InputLabel from '@/Components/InputLabel.vue';
-    import TextInput from '@/Components/TextInput.vue';
-    import InputError from '@/Components/InputError.vue';
-    import PrimaryButton from '@/Components/PrimaryButton.vue';
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
 
+    const props = defineProps({
+        errors: Object
+    });
     const form = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
     });
-    const submit = () => {
-        form.post(route('register'), {
+    const submit = (form$, FormData) => {
+        form.name = form$.requestData.name;
+        form.email = form$.requestData.email;
+        form.password = form$.requestData.password;
+        form.password_confirmation = form$.requestData.password_confirmation;
+        form.post(route('users.store'), {
             onFinish: () => form.reset('password', 'password_confirmation'),
         });
     };
@@ -23,78 +27,46 @@
     <AuthenticatedLayout>
         <Head title="Register" />
         <NavLayout>
-            <a-row>
-                <a-col :span="12" :offset="6">
-                    <form @submit.prevent="submit">
-                        <div>
-                            <InputLabel for="name" value="Name" />
-            
-                            <TextInput
-                                id="name"
-                                type="text"
-                                class="mt-1 block w-full"
-                                v-model="form.name"
-                                required
-                                autofocus
-                                autocomplete="name"
-                            />
-            
-                            <InputError class="mt-2" :message="form.errors.name" />
-                        </div>
-            
-                        <div class="mt-4">
-                            <InputLabel for="email" value="Email" />
-            
-                            <TextInput
-                                id="email"
-                                type="email"
-                                class="mt-1 block w-full"
-                                v-model="form.email"
-                                required
-                                autocomplete="username"
-                            />
-            
-                            <InputError class="mt-2" :message="form.errors.email" />
-                        </div>
-            
-                        <div class="mt-4">
-                            <InputLabel for="password" value="Password" />
-            
-                            <TextInput
-                                id="password"
-                                type="password"
-                                class="mt-1 block w-full"
-                                v-model="form.password"
-                                required
-                                autocomplete="new-password"
-                            />
-            
-                            <InputError class="mt-2" :message="form.errors.password" />
-                        </div>
-            
-                        <div class="mt-4">
-                            <InputLabel for="password_confirmation" value="Confirm Password" />
-            
-                            <TextInput
-                                id="password_confirmation"
-                                type="password"
-                                class="mt-1 block w-full"
-                                v-model="form.password_confirmation"
-                                required
-                                autocomplete="new-password"
-                            />
-            
-                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
-                        </div>
-            
-                        <div class="flex items-center justify-end mt-4">
-                            <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                Register
-                            </PrimaryButton>
-                        </div>
-                    </form>
-                </a-col>
-            </a-row>
+            <div class="grid grid-cols-12">
+                <CreateTitle 
+                    title="Crear un usuario"
+                    :own-link="route('users.create')"
+                    :back-link="route('users.index')"
+                    class="col-span-6 col-start-3 mb-2"/>
+                <Vueform
+                    :endpoint="false"
+                    class="col-start-3 col-span-6 border p-4 rounded-lg"
+                    @submit="submit"
+                    :columns="{container:12, wrapper:12}">
+                    <TextElement 
+                        name="name"
+                        before="Name"
+                        :description="errors.name ? `<p class='text-red-600'>${errors.name}</p>`:null"
+                        :columns="{container:6, wrapper:12}"/>
+                    <TextElement 
+                        name="email"
+                        input-type="email"
+                        :description="errors.email ? `<p class='text-red-600'>${errors.email}</p>`:null"
+                        before="Email"
+                        :columns="{container:6, wrapper:12}"/>
+                    <TextElement 
+                        name="password"
+                        input-type="password"
+                        :description="errors.password ? `<p class='text-red-600'>${errors.password}</p>`:null"
+                        before="Password"
+                        :columns="{container:6, wrapper:12}"/> 
+                    <TextElement 
+                        name="password_confirmation"
+                        input-type="password"
+                        before="Confirmar password"
+                        :columns="{container:6, wrapper:12}"/>
+                    <ButtonElement
+                        submits
+                        name="create_user">
+                        Crear
+                    </ButtonElement>
+                </Vueform>
+            </div>
         </NavLayout>
     </AuthenticatedLayout>
 </template>

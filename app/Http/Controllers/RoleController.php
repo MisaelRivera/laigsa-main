@@ -34,8 +34,10 @@ class RoleController extends Controller
      */
     public function store(CreateRoleRequest $request)
     {
-        Role::create($request->validated());
-        return to_route('roles.index');
+        $role = Role::create($request->validated());
+        return redirect()
+            ->route('roles.index')
+            ->with('message', "El $role->name ha sido creado exitosamente");
     }
 
     /**
@@ -49,8 +51,9 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
+    public function edit(string $id)
     {
+        $role = Role::findOrFail($id);
        return Inertia::render('Admin/Roles/Edit', [
         'role' => $role
        ]);
@@ -71,9 +74,8 @@ class RoleController extends Controller
     public function destroy(Request $request, string $id)
     {
         $role = Role::findOrFail($id);
-        $roleName = $role->name;
         $role->delete();
-        $request->session()->flash('message', "Role $roleName successfully deleted!");
-        return to_route('roles.index');
+        return redirect()
+            ->route('roles.index');
     }
 }
