@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class CreateRoleRequest extends FormRequest
+class StorePermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,16 +22,15 @@ class CreateRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:30', Rule::unique('roles', 'name')->ignore($this->role)],
-            'permissions' => 'sometimes|array'
+            'name' => 'required|string|max:30|unique:permissions,name'
         ];
     }
 
-    public function messages()
+    public function messages (): array
     {
         return [
             'name.required' => 'Ingrese el nombre',
-            'name.string' => 'El nombre debe ser texto',
+            'name.string' => 'El nombre debe de ser texto',
             'name.max' => 'El nombre no puede contener mas de 30 caracteres',
             'name.unique' => 'El nombre ingresado ya existe',
         ];

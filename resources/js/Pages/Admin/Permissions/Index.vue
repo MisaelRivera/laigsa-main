@@ -1,72 +1,109 @@
 <script setup>
-    import { Link } from '@inertiajs/vue3';
+    import { ref } from 'vue';
+    import { Link, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    const props = defineProps({
-        permissions: Object,
-    });
+    import NavLayout from '@/Layouts/NavLayout.vue';
+    import IndexTitle from '@/Components/Shared/IndexTitle.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     import Table from '@/Components/Table.vue';
     import TableRow from '@/Components/TableRow.vue';
     import TableHeaderCell from '@/Components/TableHeaderCell.vue';
     import TableDataCell from '@/Components/TableDataCell.vue';
+    import { useMessages } from '@/composables/messages';
+    import { Notivue, Notification, push } from 'notivue';
+    const props = defineProps({
+        permissions: Object,
+    });
+
+    const { getMessage } = useMessages();
+
+    const isDeleteModalVisible = ref(false);
+    const deletePermission = ref(null);
+    const handleCloseDeleteModal = () => {
+        isDeleteModalVisible.value = false;
+        deletePermission.value = null;
+    };
+
+    const handleShowDeleteModal = (permission) => {
+        deletePermission.value = permission;
+        isDeleteModalVisible.value = true;
+    };
+
+    const handleDeletePermission = () => {
+        router.delete(`/permissions/${deletePermission.value.id}`, {
+            onSuccess: () => {
+                push.success(`El permiso ${deletePermission.value.name} Se ha eliminado correctamente!`);
+                isDeleteModalVisible.value = false;
+                deletePermission.value = null;
+            }
+        });
+    };
+
+    if (getMessage()) {
+        push.success(getMessage());
+    }
 </script>
 <template>
     <AuthenticatedLayout>
-        <div class="flex h-screen px-4">
-            <div class="w-2/12 mt-2 bg-indigo-500 rounded h-4/5 py-2">
-                <nav class="mt-10">
-                    <ul class="list-none">
-                        <li 
-                            class="py-2 text-center border-y border-slate-400 text-white"
-                            :class="{'bg-sky-400': route().current('dashboard')}">
-                            <Link :href="route('dashboard')">
-                                Dashboard
-                            </Link>
-                        </li>
-                        <li 
-                            class="py-2 text-center border-y border-slate-400 text-white"
-                            :class="{'bg-sky-400': route().current('users.index')}">
-                            <Link :href="route('users.index')">
-                                Users
-                            </Link>
-                        </li>
-                        <li 
-                            class="py-2 text-center border-y border-slate-400 text-white"
-                            :class="{'bg-sky-400': route().current('roles.index')}">
-                            <Link :href="route('roles.index')">
-                                Roles
-                            </Link>
-                        </li>
-                        <li 
-                            class="py-2 text-center border-y border-slate-400 text-white"
-                            :class="{'bg-sky-400': route().current('permissions.index')}">
-                            <Link :href="route('permissions.index')">
-                                Permissions
-                            </Link>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="w-9/12">
-                <h1>Permissions index page</h1>
-                <div class="mt-6">
+        <NavLayout>
+            <div class="grid grid-cols-12">
+                <div class="col-span-12">
+                    <IndexTitle 
+                        title="Permisos"
+                        :own-link="route('permissions.index')"
+                        :add-link="route('permissions.create')"/>
                     <Table>
                         <template #header>
                             <TableRow>
-                                <TableHeaderCell>ID</TableHeaderCell>
-                                <TableHeaderCell>Name</TableHeaderCell>
-                                <TableHeaderCell>Actions</TableHeaderCell>
+                                <TableHeaderCell>Id</TableHeaderCell>
+                                <TableHeaderCell>Nombre</TableHeaderCell>
+                                <TableHeaderCell>Acciones</TableHeaderCell>
                             </TableRow>
                         </template>
                         <template #default>
-                            <TableRow v-for="permission in permissions" :key="permissions.id" class="border-b">
-                                <TableDataCell>{{ permission.id }}</TableDataCell>
-                                <TableDataCell>{{ permission.name }}</TableDataCell>
-                                <TableDataCell>Edit/Delete</TableDataCell>
+                            <TableRow 
+                                v-for="(permission, index) in permissions"
+                                :key="index">
+                                <TableDataCell>
+                                    {{ permission.id }}
+                                </TableDataCell>
+                                <TableDataCell>
+                                    {{ permission.name }}
+                                </TableDataCell>
+                                <TableDataCell>
+                                    <Link 
+                                        class="text-green-500 mr-2"
+                                        :href="route('permissions.edit', permission.id)">
+                                        Editar
+                                    </Link>
+                                    <button 
+                                        class="text-red-500 mr-2"
+                                        as="button"
+                                        @click="() => handleShowDeleteModal(permission)">
+                                        Eliminar
+                                    </button>
+                                </TableDataCell>
                             </TableRow>
                         </template>
                     </Table>
                 </div>
             </div>
-        </div>
+            <Notivue v-slot="item">
+                <Notification :item="item" />
+            </Notivue>
+            <MyModal
+                title="Eliminar permiso"
+                :ok-button-props="{
+                    class: ['bg-red-500', 'text-white']
+                }"
+                :cancel-button-props="{
+                    class: ['bg-blue-500', 'text-white']
+                }"
+                @ok="handleDeletePermission"
+                @close-from="handleCloseDeleteModal"
+                v-model="isDeleteModalVisible">
+                <p>Seguro de que deseas eliminar el permiso {{ deletePermission.name }}?</p>
+            </MyModal>
+        </NavLayout>
     </AuthenticatedLayout>
 </template>

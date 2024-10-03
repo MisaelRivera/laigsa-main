@@ -49,6 +49,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
     Route::resource('/users', UserController::class);
     Route::resource('/roles', RoleController::class);
+    Route::delete('/roles/remove-permission/{role}/{permission}', [RoleController::class, 'removePermission'])
+        ->name('roles.remove_permission');
     Route::resource('/permissions', PermissionController::class);
 });
 

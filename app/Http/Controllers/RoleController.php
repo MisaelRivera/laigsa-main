@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateRoleRequest;
+use App\Http\Resources\PermissionResource;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Inertia\Inertia;
 
 class RoleController extends Controller
@@ -26,7 +28,12 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Roles/Create');
+        $permissions = PermissionResource::collection(Permission::all())->map(function ($permission) {
+            return ['value' => $permission->id, 'label' => $permission->name];
+        });
+        return Inertia::render('Admin/Roles/Create', [
+            'permissions' => $permissions
+        ]);
     }
 
     /**
@@ -34,10 +41,14 @@ class RoleController extends Controller
      */
     public function store(CreateRoleRequest $request)
     {
-        $role = Role::create($request->validated());
+        $validated = $request->validated();
+        $role = Role::create($validated);
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->input('permissions'));
+        }
         return redirect()
             ->route('roles.index')
-            ->with('message', "El $role->name ha sido creado exitosamente");
+            ->with('message', "El rol $role->name y sus permisos han sido creados exitosamente");
     }
 
     /**
@@ -54,8 +65,13 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
+        $role->load('permissions');
+        $permissions = PermissionResource::collection(Permission::all())->map(function ($permission) {
+            return ['value' => $permission->id, 'label' => $permission->name];
+        });
        return Inertia::render('Admin/Roles/Edit', [
-        'role' => $role
+        'role' =>  new RoleResource($role),
+        'permissions' => $permissions
        ]);
     }
 
@@ -64,8 +80,22 @@ class RoleController extends Controller
      */
     public function update(CreateRoleRequest $request, Role $role)
     {
-        $role->update($request->validated());
-        return to_route('roles.index');
+        $validated = $request->validated();
+        $role->name = $validated['name'];
+        $role->update();
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->input('permissions'));
+        }
+        return redirect()
+            ->route('roles.index')
+            ->with('message', "El rol $role->name y sus permisos han sido editados correctamente");
+    }
+
+    public function removePermission (Role $role, Permission $permission)
+    {
+        $permissionName = $permission->name;
+        $role->revokePermissionTo($permission);
+        return back();
     }
 
     /**

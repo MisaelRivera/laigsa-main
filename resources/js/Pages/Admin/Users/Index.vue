@@ -59,6 +59,7 @@
                             <TableHeaderCell>ID</TableHeaderCell>
                             <TableHeaderCell>Name</TableHeaderCell>
                             <TableHeaderCell>Email</TableHeaderCell>
+                            <TableHeaderCell>Details</TableHeaderCell>
                             <TableHeaderCell>Actions</TableHeaderCell>
                         </TableRow>
                     </template>
@@ -68,13 +69,18 @@
                             <TableDataCell>{{ user.name }}</TableDataCell>
                             <TableDataCell>{{ user.email }}</TableDataCell>
                             <TableDataCell>
+                                <Link :href="route('users.show', user.id)">
+                                    <i class="fas fa-eye text-blue-500"></i>
+                                </Link>
+                            </TableDataCell>
+                            <TableDataCell>
                                 <Link :href="route('users.edit', user.id)">
-                                    <span class="text-green-500">Edit</span>
+                                    <span class="text-green-500">Editar</span>
                                 </Link>
                                 <span 
                                     class="text-red-500 ml-2"
                                     @click="() => handleShowDeleteModal(user)">
-                                    Delete
+                                    Borrar
                                 </span>
                             </TableDataCell>
                         </TableRow>

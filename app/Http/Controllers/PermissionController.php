@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePermissionRequest;
+use App\Http\Requests\UpdatePermissionRequest;
 use App\Http\Resources\PermissionResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,15 +27,18 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Admin/Permissions/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePermissionRequest $request)
     {
-        //
+        $permission = Permission::create($request->validated());
+        return redirect()
+            ->route('permissions.index')
+            ->with('message', "El permiso $permission->name se ha creado correctamente");
     }
 
     /**
@@ -47,24 +52,34 @@ class PermissionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Permission $permission)
     {
-        //
+        return Inertia::render('Admin/Permissions/Edit', [
+            'permission' => $permission
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePermissionRequest $request, Permission $permission)
     {
-        //
+        $validated = $request->validated();
+        $permission->name = $validated['name'];
+        $permission->update();
+        return redirect()
+            ->route('permissions.index')
+            ->with('message', "El permiso $permission->name ha sido editado exitosamente!");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Permission $permission)
     {
-        //
+        $permissionName = $permission->name;
+        $permission->delete();
+        return redirect()
+            ->route('permissions.index');
     }
 }

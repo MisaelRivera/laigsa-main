@@ -9,6 +9,7 @@
     import TableHeaderCell from '@/Components/TableHeaderCell.vue';
     import TableDataCell from '@/Components/TableDataCell.vue';
     import MyModal from '@/Components/Shared/MyModal.vue';
+    import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import { Notivue, Notification, push } from 'notivue';
     const { getMessage } = useMessages();
     const props = defineProps({
@@ -43,12 +44,10 @@
     <AuthenticatedLayout>
         <NavLayout>
             <div class="flex justify-between">
-                <h1>Roles index page</h1>
-                <Link 
-                    :href="route('roles.create')"
-                    class="py-2 px-3 text-white font-semibold bg-indigo-500 hover:bg-indigo-700 rounded">
-                    New role
-                </Link>
+                <IndexTitle 
+                    title="Crear Rol"
+                    :own-link="route('roles.index')"
+                    :add-link="route('roles.create')"/>
             </div>
             <div class="mt-6">
                 <Table>
