@@ -5,6 +5,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
+    import { Notivue, Notification, push } from 'notivue';
 
     const props = defineProps({
         parametersProp: Object,
@@ -16,6 +17,9 @@
         parametro: null
     });
     const { getMessage } = useMessages();
+
+    if (getMessage) push.success(getMessage());
+
     const handleFilter = (ev) => {
         const value = ev.target.value;
         router.visit(route('parameters.index', { parameter: encodeURIComponent(value) }), {
@@ -92,11 +96,8 @@
                 </tbody>
             </table>
         </div>
-        <!--<a-modal
-            v-model:open="isDeleteModalVisible"
-            title="Eliminar parametro"
-            @ok="handleDelete">
-            <p>Seguro que deseas borrar el parametro {{ deleteParameter.parametro }}?</p>
-        </a-modal>-->
+        <Notivue v-slot="item">
+            <Notification :item="item" />
+        </Notivue>
     </AuthenticatedLayout>
 </template>

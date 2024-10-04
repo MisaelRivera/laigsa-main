@@ -49,8 +49,9 @@ class ParametersController extends Controller
     public function store (ParameterStoreRequest $request)
     {
         $parametro = Parameter::create($request->validated());
-        $request->session()->flash('message', 'Se ha creado el parametro ' . $parametro->parametro . ' correctamente.');
-        return redirect()->route('parameters.index');
+        return redirect()
+            ->route('parameters.index')
+            ->with('message', "El parametro $parametro->parametro se ha creado correctamente!");
     }
 
     public function show (Parameter $parameter)

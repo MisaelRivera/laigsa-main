@@ -93,7 +93,6 @@ class RoleController extends Controller
 
     public function removePermission (Role $role, Permission $permission)
     {
-        $permissionName = $permission->name;
         $role->revokePermissionTo($permission);
         return back();
     }

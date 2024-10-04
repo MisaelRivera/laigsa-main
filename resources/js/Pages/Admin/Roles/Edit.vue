@@ -16,9 +16,9 @@ import { push, Notivue, Notification } from 'notivue';
     const permissionsTagsRef = ref(null);
     const form = useForm({
         name: props.role.name,
-        permissions: props.role.permissions.map((permission) => {
+        permissions: ref(props.role.permissions.map((permission) => {
             return permission.id;
-        })
+        }))
     });
     const handleSubmit = () => {
         try{
@@ -33,11 +33,18 @@ import { push, Notivue, Notification } from 'notivue';
             {
                 onSuccess: () => {
                     push.success(`El permiso ${permission.name} se ha removido correctamente!`);
-                    permissionsTagsRef.deselect(permission.id);
+                    permissionsTagsRef.value.on('deselect', () => {
+                        console.log('Activated');
+                        form.permissions.filter((p) => {
+                            return p !== permission.id;
+                        });
+                    });
+                    permissionsTagsRef.value.deselect(permission.id);
                 }
             }
         );
     };
+
 </script>
 <template>
     <Head title="Manage roles"/>
@@ -74,31 +81,31 @@ import { push, Notivue, Notification } from 'notivue';
                 </Vueform>
             </div>
             <Table>
-                    <template #header>
-                        <TableRow>
-                            <TableHeaderCell>ID</TableHeaderCell>
-                            <TableHeaderCell>Nombre</TableHeaderCell>
-                            <TableHeaderCell>Acciones</TableHeaderCell>
-                        </TableRow>
-                    </template>
-                    <template #default>
-                        <TableRow v-for="(permission, index) in role.permissions" :key="index" class="border-b">
-                            <TableDataCell>{{ permission.id }}</TableDataCell>
-                            <TableDataCell>{{ permission.name }}</TableDataCell>
-                            <TableDataCell class="space-x-4">
-                                <button 
-                                    @click="() => handleRemove(permission)" 
-                                    method="delete"
-                                    class="text-red-400 hover:text-red-600">
-                                    Revocar
-                                </button>
-                            </TableDataCell>
-                        </TableRow>
-                    </template>
-                </Table>
-                <Notivue v-slot="item">
-                    <Notification :item="item"/>
-                </Notivue>
+                <template #header>
+                    <TableRow>
+                        <TableHeaderCell>ID</TableHeaderCell>
+                        <TableHeaderCell>Nombre</TableHeaderCell>
+                        <TableHeaderCell>Acciones</TableHeaderCell>
+                    </TableRow>
+                </template>
+                <template #default>
+                    <TableRow v-for="(permission, index) in role.permissions" :key="index" class="border-b">
+                        <TableDataCell>{{ permission.id }}</TableDataCell>
+                        <TableDataCell>{{ permission.name }}</TableDataCell>
+                        <TableDataCell class="space-x-4">
+                            <button 
+                                @click="() => handleRemove(permission)" 
+                                method="delete"
+                                class="text-red-400 hover:text-red-600">
+                                Revocar
+                            </button>
+                        </TableDataCell>
+                    </TableRow>
+                </template>
+            </Table>
+            <Notivue v-slot="item">
+                <Notification :item="item"/>
+            </Notivue>
         </NavLayout>
     </AuthenticatedLayout>
 </template>

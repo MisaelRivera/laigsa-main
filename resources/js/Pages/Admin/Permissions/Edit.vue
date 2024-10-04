@@ -5,6 +5,7 @@
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     const props = defineProps({
         errors: Object,
+        permission: Object,
     });
 
     const form = useForm({

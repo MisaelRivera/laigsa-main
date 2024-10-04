@@ -78,7 +78,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return Inertia::render('Admin/Users/Edit', [
-            'user' => $user
+            'user' => $user,
+            'roles' => $user->getRoleNames()
         ]);
     }
 

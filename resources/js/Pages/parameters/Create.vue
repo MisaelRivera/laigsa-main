@@ -1,60 +1,100 @@
 <script setup>
     import { useForm } from '@inertiajs/vue3';
-    import { useNotification } from "@kyvg/vue3-notification";
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    const { notify }  = useNotification();
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
+import { ElementLayout } from '@vueform/vueform';
+    const props = defineProps({
+        errors: Object
+    });
     const form = useForm({
         parametro: null,
     });
     const handleCreateSubmit = async(form$, FormData) => {
-        /*console.log(form$.requestData.parametro);
-        form.post('/parameters');*/
+        form.parametro = form$.requestData.parametro;
+        form.abreviacion = form$.requestData.abreviacion;
+        form.arrange = form$.requestData.arrange;
+        form.post('/parameters');
     };
-
-    const handleError = (error, details, form$) => {
-        console.log(details);
-    };
-    notify({
-        title: "Authorization",
-        text: "You have been logged in!",
-    });
 </script>
 <template>
     <AuthenticatedLayout>
-        <div class="mx-auto w-4/12 p-5 rounded-lg bg-gray-100">
-            <h2>Crea un nuevo parametro</h2>
-            <!--<a-form
-                layout="vertical"
-                :model="form"
-                @finish="handleCreateSubmit">
-                <div class="mb-4">
-                    <a-form-item 
-                        label="Parametro"
-                        name="parametro"
-                        :rules="[{ required: true, message: 'Ingrese el parametro' }]">
-                        <a-input
-                            v-model:value="form.parametro"
-                            class="rounded h-8"/>
-                    </a-form-item>
-                    <p 
-                        class="text-red-500"
-                        v-if="form.errors.parametro">
-                        {{ form.errors.parametro }}
-                    </p>
-                </div>
-                <button class="rounded bg-green-400 text-white py-2 px-4">
-                    Crear
-                </button>
-            </a-form>-->
+        <div class="mx-auto w-10/12 p-5 rounded-lg bg-gray-100">
+           <CreateTitle 
+                title="Crear un nuevo parametro"
+                :own-link="route('parameters.create')"
+                :back-link="route('parameters.index')"/>
             <Vueform
                 :endpoint="false"
-                @submit="handleCreateSubmit"
                 :display-errors="false"
-                @error="handleError">
+                @submit="handleCreateSubmit"
+                :scroll-to-invalid="false"
+                :columns="{container: 12, wrapper: 12}">
                 <TextElement 
                     name="parametro"
                     before="Parametro"
-                    rules="required"/>
+                    :description="errors.parametro ? `<p class='text-red-500'>${errors.parametro}</p>`:null"
+                    :columns="{container: 3, wrapper:12}"/>
+                <TextElement 
+                    name="abreviacion"
+                    before="Abreviacion"
+                    :description="errors.abreviacion ? `<p class='text-red-500'>${errors.abreviacion}</p>`:null"
+                    :columns="{container: 3, wrapper:12}"/>
+                <TextElement 
+                    name="arrange"
+                    before="Orden de acomodo"
+                    input-type="number"
+                    :description="errors.arrange ? `<p class='text-red-500'>${errors.arrange}</p>`:null"
+                    :columns="{container: 3, wrapper:12}"/>
+                <CheckboxElement
+                    name="subcontratado"
+                    :columns="{ container:3, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    Subcontratado
+                </CheckboxElement>
+                <CheckboxElement
+                    name="compuesto"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    Compuesto
+                </CheckboxElement>
+                <CheckboxElement
+                    name="ema"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    Ema
+                </CheckboxElement>
+                <CheckboxElement
+                    name="cna"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    CNA
+                </CheckboxElement>
+                <CheckboxElement
+                    name="ssa"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    SSA
+                </CheckboxElement>
                 <ButtonElement
                     submits
                     name="submit">
@@ -62,5 +102,6 @@
                 </ButtonElement>
             </Vueform>
         </div>
+        
     </AuthenticatedLayout>
 </template>
