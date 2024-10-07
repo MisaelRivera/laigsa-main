@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ParameterStoreRequest;
+use App\Http\Requests\ParameterUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Parameter;
 use App\Models\LCP;
@@ -101,12 +102,13 @@ class ParametersController extends Controller
         return Inertia::render('parameters/Edit', ['parameter' => $parameter]);
     }
 
-    public function update (ParameterStoreRequest $request, $id)
+    public function update (ParameterUpdateRequest $request, $id)
     {
         $parameter = Parameter::findOrFail($id);
         $parameter->update($request->validated());
-        $request->session()->flash('message', "Se ha editado el parametro $parameter->parametro correctamente");
-        return redirect()->route('parameters.index');
+        return redirect()
+            ->route('parameters.index')
+            ->with('message', "Se ha editado el parametro $parameter->parametro correctamente");
     }
 
     public function destroy (Parameter $parameter)

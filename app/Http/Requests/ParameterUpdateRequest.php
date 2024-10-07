@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class ParameterStoreRequest extends FormRequest
+class ParameterUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +22,7 @@ class ParameterStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'parametro' => ['required', Rule::unique('parametros', 'parametro')->ignore($this->parameter)],
+            'parametro' => ['required'],
             'abreviacion' => 'required',
             'arrange' => 'required',
             'subcontratado' => 'boolean',
@@ -41,7 +40,6 @@ class ParameterStoreRequest extends FormRequest
     public function messages(): array {
         return [
             'parametro.required' => 'Ingrese el parametro',
-            'parametro.unique' => 'El parametro ya existe',
             'abreviacion' => 'Ingrese la abreviacion',
             'arrange' => 'Ingrese el orden de acomodo'
         ];

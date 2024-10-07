@@ -5,6 +5,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     import { Notivue, Notification, push } from 'notivue';
 
     const props = defineProps({
@@ -18,7 +19,7 @@
     });
     const { getMessage } = useMessages();
 
-    if (getMessage) push.success(getMessage());
+    if (getMessage()) push.success(getMessage());
 
     const handleFilter = (ev) => {
         const value = ev.target.value;
@@ -37,9 +38,16 @@
     const handleDelete = () => {
         deleteParameter.delete(`/parameters/${deleteParameter.id}`, {
             onSuccess: async() => {
+                deleteParameter.value = null;
                 isDeleteModalVisible.value = false;
+                push.success(getMessage());
             }
         });
+    };
+
+    const handleCloseDeleteModal = () => {
+        deleteParameter.value = null;
+        isDeleteModalVisible.value = false;
     };
 </script>
 <template>
@@ -96,6 +104,19 @@
                 </tbody>
             </table>
         </div>
+        <MyModal
+            title="Eliminar parametro"
+            v-model="isDeleteModalVisible"
+            @close-from="handleCloseDeleteModal"
+            @ok="handleDelete"
+            :ok-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }"
+            :cancel-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }">
+            <p>Seguro que deseas eliminar el parametro {{ deleteParameter.parametro }}</p>
+        </MyModal>
         <Notivue v-slot="item">
             <Notification :item="item" />
         </Notivue>

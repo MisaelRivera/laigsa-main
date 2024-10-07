@@ -2,17 +2,36 @@
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
-import { ElementLayout } from '@vueform/vueform';
     const props = defineProps({
         errors: Object
     });
     const form = useForm({
         parametro: null,
+        abreviacion: null,
+        arrange: null,
+        subcontratado: null,
+        compuesto: null,
+        ema: null,
+        cna: null,
+        ssa: null,
+        supervisar: null,
+        fecha_resultado_final: null,
+        parametro_campo: null,
+        incertidumbre: null,
     });
-    const handleCreateSubmit = async(form$, FormData) => {
+    const handleCreateSubmit = (form$, FormData) => {
         form.parametro = form$.requestData.parametro;
         form.abreviacion = form$.requestData.abreviacion;
         form.arrange = form$.requestData.arrange;
+        form.subcontratado = form$.requestData.subcontratado;
+        form.compuesto = form$.requestData.compuesto;
+        form.ema = form$.requestData.ema;
+        form.cna = form$.requestData.cna;
+        form.ssa = form$.requestData.ssa;
+        form.supervisar = form$.requestData.supervisar;
+        form.fecha_resultado_final = form$.requestData.fecha_resultados_final;
+        form.parametro_campo = form$.requestData.parametro_campo;
+        form.incertidumbre = form$.requestData.incertidumbre;
         form.post('/parameters');
     };
 </script>
@@ -94,6 +113,48 @@ import { ElementLayout } from '@vueform/vueform';
                         }
                     }">
                     SSA
+                </CheckboxElement>
+                <CheckboxElement
+                    name="supervisar"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="true">
+                    Supervisar
+                </CheckboxElement>
+                <CheckboxElement
+                    name="fecha_resultado_final"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    Fecha resultados final
+                </CheckboxElement>
+                <CheckboxElement
+                    name="parametro_campo"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    Parametro de campo
+                </CheckboxElement>
+                <CheckboxElement
+                    name="incertidumbre"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="true">
+                    Incertidumbre
                 </CheckboxElement>
                 <ButtonElement
                     submits

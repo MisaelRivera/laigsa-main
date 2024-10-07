@@ -1,7 +1,6 @@
 <script setup>
      import { ref } from 'vue';
     import { router, useForm, Link } from '@inertiajs/vue3';
-    import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons-vue';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
@@ -47,11 +46,6 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-10/12 mx-auto">
-            <a-alert
-                type="success"
-                v-if="getMessage()"
-                :message="getMessage()">
-            </a-alert>
             <div class="flex justify-between items-center">
                 <IndexTitle 
                     title="Combinaciones de parametros"
@@ -99,24 +93,18 @@
                         </td>
                         <td class="py-2.5 px-5 border text-center">
                             <Link :href="`/parameters-combinations/${parameterCombination.id}/edit?page=${parametersCombinations.current_page}`">
-                                <EditOutlined class="text-white p-1 rounded-full mr-2 bg-blue-500"/>
+                                <i class="fas fa-edit text-white p-2 text-xs rounded-full mr-2 bg-blue-500"></i>
                             </Link>
                             <Link :href="route('parameters-combinations.show', { id: parameterCombination.id, page: parametersCombinations.current_page})">
-                                <EyeOutlined class="text-white p-1 rounded-full mr-2 bg-sky-500"/>
+                                <i class="fas fa-eye text-blue-500 mr-2"></i>
                             </Link>
-                            <DeleteOutlined 
-                                class="text-white p-1 rounded-full mr-2 bg-red-500"
-                                @click="() => handleOpenDeleteModal(parameterCombination)"/>
+                            <i 
+                                class="fas fa-trash text-white p-2 text-xs rounded-full mr-2 bg-red-500"
+                                @click="() => handleOpenDeleteModal(parameterCombination)"></i>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <a-modal
-            v-model:open="isDeleteModalVisible"
-            title="Eliminar combinacion de parametro"
-            @ok="handleDelete">
-            <p>Seguro que deseas borrar la combinacion de parametro {{ deleteParameterCombination.alias }}?</p>
-        </a-modal>
     </AuthenticatedLayout>
 </template>
