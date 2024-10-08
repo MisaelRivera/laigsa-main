@@ -47,6 +47,11 @@ class ParametersController extends Controller
         return Inertia::render('parameters/Create');
     }
 
+    public function test ()
+    {
+        return Inertia::render('parameters/Test');
+    }
+
     public function store (ParameterStoreRequest $request)
     {
         $parametro = Parameter::create($request->validated());
@@ -61,7 +66,6 @@ class ParametersController extends Controller
         $lcps = LCP::where('id_parametro', $parameter->id)
             ->where('obsoleto', 0)
             ->get();
-        
         return Inertia::render('parameters/Show', [
             'parameter' => $parameter,
             'backUrl' => $backUrl,

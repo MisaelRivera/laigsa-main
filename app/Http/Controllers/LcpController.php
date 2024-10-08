@@ -16,7 +16,8 @@ class LcpController extends Controller
         $filters = $request->only('byLcp');
         $lcps = Lcp::orderByDesc('id')
             ->paginate(10)
-            ->withQueryString();
+            ->withQueryString()
+            ->where('obsoleto', 0);
         return Inertia::render('lcps/Index', [
             'filters' => $filters,
             'lcps' => $lcps,
@@ -31,10 +32,16 @@ class LcpController extends Controller
     public function store (Request $request, Parameter $parameter)
     {
         $validated = $request->validate([
-            'valor' => 'required',
+            'valor_crear' => 'required',
             'id_parametro' => 'required'
+        ], [
+            'valor_crear.required' => 'Ingrese el valor del LCP'
         ]);
-        $parameter->lcps()->save(new Lcp($validated));
+        $lcp = [
+            'id_parametro' => $validated['id_parametro'],
+            'valor' => $validated['valor_crear']
+        ];
+        $parameter->lcps()->save(new Lcp($lcp));
         return redirect()
             ->route('parameters.show', $parameter)
             ->with('message', 'Se ha agregado un lpc al parametro ' . $parameter->parametro);
@@ -59,16 +66,20 @@ class LcpController extends Controller
     public function update (Request $request, Lcp $lcp)
     {
         $validatedLcp = $request->validate([
-            'edit_valor' => 'required',
-            'edit_id_parametro' => 'required'
+            'valor' => 'required',
+            'id_parametro' => 'required'
+        ], [
+            'valor.required' => 'El lcp es requerido',
+            'id_parametro' => 'Incluya el id del parametro'
         ]);
-        if ($validatedLcp['edit_valor'] === $lcp->valor) {
-            throw ValidationException::withMessages(['edit_valor' => 'Se ingreso el mismo valor']);
+
+        if ($validatedLcp['valor'] === $lcp->valor) {
+            throw ValidationException::withMessages(['message' => 'Se ingreso el mismo valor']);
         }
         $parameter = Parameter::findOrFail($lcp->id_parametro);
         $newLcp = new Lcp([
-            'valor' => $validatedLcp['edit_valor'],
-            'id_parametro' => $validatedLcp['edit_id_parametro'],
+            'valor' => $validatedLcp['valor'],
+            'id_parametro' => $validatedLcp['id_parametro'],
         ]);
         $lcp->obsoleto = 1;
         $lcp->save();

@@ -54,6 +54,7 @@
     <AuthenticatedLayout>
         <div class="w-10/12 mx-auto">
             <div class="flex justify-between items-center">
+                <Link :href="route('parameters.test')">Test</Link>
                 <IndexTitle 
                     title="Parametros"
                     :add-link="route('parameters.create')"

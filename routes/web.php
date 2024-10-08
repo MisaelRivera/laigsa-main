@@ -154,6 +154,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ParametersController::class, 'index'])->name('parameters.index');
         Route::get('/filter', [ParametersController::class, 'filter'])->name('parameters.filter');
         Route::get('/create', [ParametersController::class, 'create'])->name('parameters.create');
+        Route::get('/test', [ParametersController::class, 'test'])->name('parameters.test');
         Route::get('/{parameter}/show', [ParametersController::class, 'show'])->name('parameters.show');
         Route::post('/', [ParametersController::class, 'store']);
         Route::get('/{parameter}/edit', [ParametersController::class, 'edit'])->name('parameters.edit');
