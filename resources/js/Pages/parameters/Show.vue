@@ -1,6 +1,6 @@
 <script setup>
-    import { ref, reactive, computed, onMounted, nextTick } from 'vue';
-    import { useForm, Link } from '@inertiajs/vue3';
+    import { ref, nextTick } from 'vue';
+    import { useForm, Link, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowTitle from '@/Components/Shared/ShowTitle.vue';
     import { useMessages } from '@/composables/messages';
@@ -26,6 +26,10 @@
 
    const isOpenEditModal = ref(false);
 
+   const isOpenDeleteModal = ref(false);
+
+   const deleteLCP = ref(null);
+
    const handleCreateLcp = (form$, FormData) => {
         formState.valor_crear = form$.requestData.lcp;
         formState.post(route('lcps.store', props.parameter), {
@@ -34,7 +38,6 @@
             }
         });
    };
-
 
     const handleOpenEditModal = (lcp) => {
         isOpenEditModal.value = true;
@@ -57,6 +60,26 @@
         isOpenEditModal.value = false;
     };
 
+    const handleOpenDeleteModal = (lcp) => {
+        deleteLCP.value = lcp;
+        isOpenDeleteModal.value = true;
+    };
+
+    const handleCloseDeleteModal = () => {
+        isOpenDeleteModal.value = false;
+        deleteLCP.value = null;
+    };
+
+    const handleDeleteLcp = () => {
+        router.delete(`/lcps/${props.parameter.id}/${deleteLCP.value.id}`, {
+            onSuccess: () => {
+                isOpenDeleteModal.value = false;
+                push.success(`Se ha removido el ${deleteLCP.value.valor} correctamente`);
+                deleteLCP.value = null;
+            }
+        });
+    };
+
     if (getMessage()) push.success(getMessage());
 </script>
 <template>
@@ -64,7 +87,7 @@
         <div 
             class="mx-auto rounded-lg p-4 w-8/12 bg-sky-100 border-slate-700">
             <ShowTitle 
-                title="Detalles del parametro"
+                :title="`Detalles del parametro ${parameter.parametro}`"
                 :back-url="backUrl"/>
            <Vueform
                 :endpoint="false"
@@ -96,7 +119,7 @@
                                 @click="() => handleOpenEditModal(lcp)"></i>
                             <i 
                                 class="fas fa-trash p-2 rounded-full cursor-pointer text-white bg-red-500 ml-2"
-                                @click="() => handleOpenDeletetModal(lcp)"></i>
+                                @click="() => handleOpenDeleteModal(lcp)"></i>
                         </td>
                     </tr>
                 </tbody>
@@ -126,6 +149,19 @@
                 <HiddenElement 
                     name="id"/>
             </Vueform>
+        </MyModal>
+        <MyModal
+            v-model="isOpenDeleteModal"
+            title="Remover LCP"
+            @close-from="handleCloseDeleteModal"
+            @ok="handleDeleteLcp"
+            :cancel-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :ok-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }">
+            <p>Seguro que desea remover el lcp {{ deleteLCP.valor }} del parametro {{ parameter.parametro }}</p>
         </MyModal>
         <Notivue v-slot="item">
             <Notification :item="item"/>

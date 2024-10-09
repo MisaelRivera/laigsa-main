@@ -89,8 +89,10 @@ class LcpController extends Controller
             ->with('message', 'El Lcp ha sido actualizado correctamente');
     }
 
-    public function destroy (Lcp $lcp)
+    public function destroy (Parameter $parameter, Lcp $lcp)
     {
-        
+        $lcp->delete();
+        return redirect()
+            ->route("parameters.show", ['parameter' => $parameter->id]);
     }
 }

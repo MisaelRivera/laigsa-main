@@ -47,7 +47,7 @@ class ParameterCombinationController extends Controller
                 ->map(function ($item) {
                 return [
                     'label' => $item->parametro,
-                    'value' => $item->parametro,
+                    'value' => $item->id,
                     'key' => $item->id,
                     'lcps' => $item->lcps
                 ];
@@ -55,14 +55,14 @@ class ParameterCombinationController extends Controller
             'methods' => Method::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->nombre,
-                    'value' => $item->nombre,
+                    'value' => $item->id,
                     'key' => $item->id
                 ];
             }),
             'units' => Unit::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->nombre,
-                    'value' => $item->nombre,
+                    'value' => $item->id,
                     'key' => $item->id
                 ];
             }),
@@ -91,45 +91,32 @@ class ParameterCombinationController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'parametro' => 'required|exists:parametros,parametro',
-            'unidad' => 'required|exists:unidades,nombre',
-            'metodo' => 'required|exists:metodos,nombre',
-            'lcp' => 'required|exists:lcps,valor',
+            'id_parametro' => 'required|exists:parametros,id',
+            'id_unidad' => 'required|exists:unidades,id',
+            'id_metodo' => 'required|exists:metodos,id',
+            'id_lcp' => 'required|exists:lcps,id',
             'clasificacion' => 'required',
             'alias' => 'required',
         ], [
-            'parametro.required' => 'Ingrese el parametro',
-            'parametro.exists' => 'El parametro ingresado no existe',
-            'unidad.required' => 'Ingrese la unidad',
-            'unidad.exists' => 'La unidad ingresada no existe',
-            'metodo.required' => 'Ingrese el metodo',
-            'metodo.exists' => 'El metodo ingresado no existe',
-            'lcp.required' => 'Elija el lcp',
-            'lcp.exists' => 'El lcp ingresado no existe',
+            'id_parametro.required' => 'Ingrese el parametro',
+            'id_parametro.exists' => 'El parametro ingresado no existe',
+            'id_unidad.required' => 'Ingrese la unidad',
+            'id_unidad.exists' => 'La unidad ingresada no existe',
+            'id_metodo.required' => 'Ingrese el metodo',
+            'id_metodo.exists' => 'El metodo ingresado no existe',
+            'id_lcp.required' => 'Elija el lcp',
+            'id_lcp.exists' => 'El lcp ingresado no existe',
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
         ]);
         $parameter = Parameter::where('parametro', $validatedData['parametro'])->firstOrFail();
         $parameter->load('lcps');
-        $lcpsArr = $parameter->lcps()->pluck('valor')->toArray();
-        if (!in_array($validatedData['lcp'], $lcpsArr)) {
+        $lcpsArr = $parameter->lcps()->pluck('id')->toArray();
+        if (!in_array($validatedData['id_lcp'], $lcpsArr)) {
             throw ValidationException::withMessages(['lcp' => 'El lcp ingresado no pertenece a ese parametro']);
         }
-        $lcp = LCP::where('id_parametro', $parameter->id)
-            ->where('valor', $validatedData['lcp'])
-            ->firstOrFail();
-        $method = Method::where('nombre', $validatedData['metodo'])
-            ->firstOrFail();
-        $unit = Unit::where('nombre', $validatedData['unidad'])
-            ->firstOrFail();
-        ParameterCombination::create([
-            'id_parametro' => $parameter->id,
-            'id_lcp' => $lcp->id,
-            'id_unidad' => $unit->id,
-            'id_metodo' => $method->id_metodo,
-            'clasificacion' => $validatedData['clasificacion'],
-            'alias' => $validatedData['alias'],
-        ]);
+       
+        ParameterCombination::create($validatedData);
 
         return redirect()
             ->route('parameters-combinations.index')
@@ -198,7 +185,7 @@ class ParameterCombinationController extends Controller
                 ->map(function ($item) {
                 return [
                     'label' => $item->parametro,
-                    'value' => $item->parametro,
+                    'value' => $item->id,
                     'key' => $item->id,
                     'lcps' => $item->lcps
                 ];
@@ -206,14 +193,14 @@ class ParameterCombinationController extends Controller
             'methods' => Method::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->nombre,
-                    'value' => $item->nombre,
+                    'value' => $item->id,
                     'key' => $item->id
                 ];
             }),
             'units' => Unit::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->nombre,
-                    'value' => $item->nombre,
+                    'value' => $item->id,
                     'key' => $item->id
                 ];
             }),
@@ -226,48 +213,34 @@ class ParameterCombinationController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'parametro' => 'required|exists:parametros,parametro',
-            'unidad' => 'required|exists:unidades,nombre',
-            'metodo' => 'required|exists:metodos,nombre',
-            'lcp' => 'required|exists:lcps,valor',
+            'id_parametro' => 'required|exists:parametros,id',
+            'id_unidad' => 'required|exists:unidades,id',
+            'id_metodo' => 'required|exists:metodos,id',
+            'id_lcp' => 'required|exists:lcps,id',
             'clasificacion' => 'required',
             'alias' => 'required',
         ], [
-            'parametro.required' => 'Ingrese el parametro',
-            'parametro.exists' => 'El parametro ingresado no existe',
-            'unidad.required' => 'Ingrese la unidad',
-            'unidad.exists' => 'La unidad ingresada no existe',
-            'metodo.required' => 'Ingrese el metodo',
-            'metodo.exists' => 'El metodo ingresado no existe',
-            'lcp.required' => 'Elija el lcp',
-            'lcp.exists' => 'El lcp ingresado no existe',
+            'id_parametro.required' => 'Ingrese el parametro',
+            'id_parametro.exists' => 'El parametro ingresado no existe',
+            'id_unidad.required' => 'Ingrese la unidad',
+            'id_unidad.exists' => 'La unidad ingresada no existe',
+            'id_metodo.required' => 'Ingrese el metodo',
+            'id_metodo.exists' => 'El metodo ingresado no existe',
+            'id_lcp.required' => 'Elija el lcp',
+            'id_lcp.exists' => 'El lcp ingresado no existe',
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
         ]);
         $parameter = Parameter::where('parametro', $validatedData['parametro'])->firstOrFail();
         $parameter->load('lcps');
-        $lcpsArr = $parameter->lcps()->pluck('valor')->toArray();
-        if (!in_array($validatedData['lcp'], $lcpsArr)) {
+        $lcpsArr = $parameter->lcps()->pluck('id')->toArray();
+        if (!in_array($validatedData['id_lcp'], $lcpsArr)) {
             throw ValidationException::withMessages(['lcp' => 'El lcp ingresado no pertenece a ese parametro']);
         }
         $oldParameterCombination = ParameterCombination::findOrFail($id);
         $oldParameterCombination->obsoleto = 1;
         $oldParameterCombination->update();
-        $lcp = LCP::where('id_parametro', $parameter->id)
-            ->where('valor', $validatedData['lcp'])
-            ->firstOrFail();
-        $method = Method::where('nombre', $validatedData['metodo'])
-            ->firstOrFail();
-        $unit = Unit::where('nombre', $validatedData['unidad'])
-            ->firstOrFail();
-        ParameterCombination::create([
-            'id_parametro' => $parameter->id,
-            'id_lcp' => $lcp->id,
-            'id_unidad' => $unit->id,
-            'id_metodo' => $method->id_metodo,
-            'clasificacion' => $validatedData['clasificacion'],
-            'alias' => $validatedData['alias'],
-        ]);
+        ParameterCombination::create($validatedData);
 
         return redirect()
             ->route('parameters-combinations.index')

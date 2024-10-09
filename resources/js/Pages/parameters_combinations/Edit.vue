@@ -47,7 +47,7 @@
     const handleParameterSelect = async(value) => {
         const res = await axios.get(`/parameters-combinations/${value}/get-lcps`);
         lcps.value = res.data;
-        console.log(res);
+        console.log(value);
     };
 
 </script>
@@ -55,7 +55,35 @@
     <AuthenticatedLayout>
         <div class="mx-auto w-10/12 p-5 rounded-lg bg-gray-100">
             <h1>Editar combinaciones de parametros </h1>
-            <a-form
+            <Vueform
+                :endpoint="false"
+                @submit="handleEditCombination"
+                :columns="{ container: 12, wrapper: 12 }"
+                :scroll-to-invalid="false"
+                :display-errors="false">
+                <SelectElement 
+                    name="id_parametro"
+                    :items="parameters"
+                    before="Parametro"
+                    :columns="{ container: 6, wrapper: 12 }"
+                    @change="handleParameterSelect"/>
+                <SelectElement 
+                    name="id_metodo"
+                    :items="methods"
+                    before="Metodo"
+                    :columns="{ container: 6, wrapper: 12 }"/>
+                <SelectElement 
+                    name="id_unit"
+                    :items="units"
+                    before="Unidad"
+                    :columns="{ container: 6, wrapper: 12 }"/>
+                <SelectElement 
+                    name="id_lcp"
+                    :items="lcps"
+                    before="LCP"
+                    :columns="{ container: 6, wrapper: 12 }"/>
+            </Vueform>
+           <!-- <a-form
                 :model="formState"
                 layout="vertical"
                 @finish="handleEditCombination">
@@ -164,7 +192,7 @@
             </div>
                 <button 
                     class="btn btn-primary">Edit</button>
-            </a-form>
+            </a-form>-->
         </div>
     </AuthenticatedLayout>
 </template>

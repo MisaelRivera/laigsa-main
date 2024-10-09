@@ -147,7 +147,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{lcp}/show', [LcpController::class, 'show'])->name('lcps.show');
         Route::get('/{lcp}/edit', [LcpController::class, 'edit'])->name('lcps.edit');
         Route::put('/{lcp}', [LcpController::class, 'update'])->name('lcps.update');
-        Route::delete('/{lcp}', [LcpController::class, 'destroy'])->name('lcps.destroy');
+        Route::delete('/{parameter}/{lcp}', [LcpController::class, 'destroy'])->name('lcps.destroy');
     });
 
     Route::prefix('/parameters')->group(function () {

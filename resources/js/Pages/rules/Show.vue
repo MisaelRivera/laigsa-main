@@ -2,7 +2,6 @@
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
-    import { DeleteOutlined } from '@ant-design/icons-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
         rule: {
@@ -58,10 +57,6 @@
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-10/12">
-            <a-alert
-                type="success"
-                v-if="getMessage()"
-                :message="getMessage()"/>
             <div class="grid grid-cols-5">
                 <div class="col-span-5">
                     <button 
@@ -75,9 +70,9 @@
                     v-for="parameterCombination in rule.parametersCombinations">
                     <p class="text-sm text-center">
                         {{ parameterCombination.parametro.parametro }}
-                        <DeleteOutlined 
-                            class="text-white bg-red-500 py-0.5 px-1 rounded-full text-xs"
-                            @click="() => handleOpenDeleteItem(parameterCombination)"/>
+                        <i
+                            class="fas fa-trash text-white bg-red-500 h-6 w-6 rounded-full text-xs py-1"
+                            @click="() => handleOpenDeleteItem(parameterCombination)"></i>
                     </p>
                     <p class="text-sm text-center">
                         {{ parameterCombination.unidad.nombre }}
@@ -88,7 +83,7 @@
                 </div>
             </div>
         </div>
-        <a-modal
+        <!--<a-modal
             v-model:open="isAddModalOpen"
             title="Agregar parametro"
             :ok-button-props="{hidden: true}"
@@ -118,6 +113,6 @@
                 <p>Seguro que deseas remover este parametro?</p>
                 <button class="btn btn-danger">Eliminar</button>
             </form>
-        </a-modal>
+        </a-modal>-->
     </AuthenticatedLayout>
 </template>
