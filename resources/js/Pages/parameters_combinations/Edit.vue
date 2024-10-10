@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
@@ -20,7 +20,18 @@
         },
 
     });
-    console.log(props.parameterCombination);
+    const lcps = ref(props.parameterCombination.parametro.formattedLcps);
+    const form$ = ref(null);
+    onMounted(() => {
+        form$.value.update({
+            id_unidad: props.parameterCombination.unidad.id,
+            id_metodo: props.parameterCombination.metodo.id,
+            id_parametro: props.parameterCombination.parametro.id,
+            id_lcp: props.parameterCombination.lcp.id,
+            clasificacion: props.parameterCombination.clasificacion,
+            alias: props.parameterCombination.alias,
+        });
+    });
     const formState = useForm({
         unidad: props.parameterCombination.unidad.nombre,
         metodo: props.parameterCombination.metodo.nombre,
@@ -34,7 +45,6 @@
         return option.value.toUpperCase().indexOf(input.toUpperCase()) >= 0;
     };
 
-    const lcps = ref([]);
 
     const handleEditCombination = () => {
         try {
@@ -44,10 +54,10 @@
         }
     };
 
-    const handleParameterSelect = async(value) => {
-        const res = await axios.get(`/parameters-combinations/${value}/get-lcps`);
-        lcps.value = res.data;
-        console.log(value);
+    const handleParameterSelect = async(event) => {
+        const paramId = event.target.value;
+        const res = await axios.get(`/parameters-combinations/${paramId}/get-lcps`);
+        lcps.value = res.data; 
     };
 
 </script>
@@ -60,20 +70,21 @@
                 @submit="handleEditCombination"
                 :columns="{ container: 12, wrapper: 12 }"
                 :scroll-to-invalid="false"
-                :display-errors="false">
+                :display-errors="false"
+                ref="form$">
                 <SelectElement 
                     name="id_parametro"
                     :items="parameters"
                     before="Parametro"
                     :columns="{ container: 6, wrapper: 12 }"
-                    @change="handleParameterSelect"/>
+                    @input="handleParameterSelect"/>
                 <SelectElement 
                     name="id_metodo"
                     :items="methods"
                     before="Metodo"
                     :columns="{ container: 6, wrapper: 12 }"/>
                 <SelectElement 
-                    name="id_unit"
+                    name="id_unidad"
                     :items="units"
                     before="Unidad"
                     :columns="{ container: 6, wrapper: 12 }"/>

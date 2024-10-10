@@ -69,15 +69,13 @@ class ParameterCombinationController extends Controller
         ]);
     }
 
-    public function getLCPs ($parameter)
+    public function getLCPs (Parameter $parameter)
     {
-        $parameter = Parameter::where('parametro', $parameter)
-            ->firstOrFail();
         return response()->json(LCP::where('id_parametro', $parameter->id)
             ->get()
             ->map(function ($item) {
                 return [
-                    'value' => $item->valor,
+                    'value' => $item->id,
                     'label' => $item->valor,
                     'key' => $item->id,
                 ];
@@ -177,7 +175,13 @@ class ParameterCombinationController extends Controller
     public function edit($id)
     {
         $parameterCombination = ParameterCombination::findOrFail($id);
-        $parameterCombination->load('parametro', 'lcp', 'unidad', 'metodo');
+        $parameterCombination->load('parametro.lcps', 'lcp', 'unidad', 'metodo');
+        $parameterCombination->parametro->formattedLcps = $parameterCombination->parametro->lcps->map(function ($lcp) {
+            return [
+                'value' => $lcp->id,
+                'label' => $lcp->valor
+            ];
+        });
         return Inertia::render('parameters_combinations/Edit', [
             'parameterCombination' => $parameterCombination,
             'parameters' => Parameter::with(['lcps'])
