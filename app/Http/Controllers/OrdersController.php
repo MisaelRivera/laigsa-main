@@ -12,39 +12,15 @@ use App\Models\FoodSample;
 use App\Models\Client;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
+use App\Api\OrdersApi;
 
 class OrdersController extends Controller
 {
     //
     public function index (Request $request)
     {
-        $filters = $request->all();
-        $orders = Order::leftJoin('siralab', 'ordenes.id', '=', 'siralab.id_orden')
-            ->join('clientes', 'ordenes.id_cliente', '=', 'clientes.id')
-            ->select('ordenes.*', 'siralab.id as siralab_id', 'siralab.hoja_campo', 'siralab.cadena_custodia', 'siralab.croquis', 'clientes.cliente')
-            ->orderBy('fecha_recepcion', 'desc')
-            ->orderBy('hora_recepcion', 'desc')
-            ->orderBy('folio', 'desc')
-            ->when(
-                $filters['folio'] ?? false, 
-                fn ($query, $filter) => $query->where('folio', 'like', '%' . urldecode($filter) . '%')
-            )->when(
-                $filters['cliente'] ?? false, 
-                fn ($query, $filter) => $query->where('clientes.cliente', 'like', '%' . urldecode($filter) . '%')
-            )
-            ->paginate(40)
-            ->withQueryString();
-        foreach ($orders as $order) {
-            if ($order->aguas_alimentos === 'Aguas') {
-                $order->muestras = WaterSample::rightJoin('identificacion_muestras', 'identificacion_muestras.id', '=', 'muestras_aguas.id_identificacion_muestra')
-                    ->select('muestras_aguas.*', 'identificacion_muestras.identificacion_muestra', 'identificacion_muestras.latitud', 'identificacion_muestras.longitud', 'identificacion_muestras.siralab')
-                    ->where('id_orden', $order->id)
-                    ->get();
-            } else {
-                $order->muestras = FoodSample::where('id_orden', $order->id)
-                    ->get();
-            }
-        }
+       $orders = OrdersApi::getIndexOrders($request->all());
+        
         return Inertia::render('orders/Index', [
             'ordersProp' => $orders,
             'totalItems' => Order::count()
@@ -55,21 +31,6 @@ class OrdersController extends Controller
     {
         $last_order = Order::getOrderWithLastFolio();
         return Inertia::render('orders/Create', ['last_order' => $last_order]);
-    }
-
-    public function changePage (Request $request)
-    {
-        $page = $request->query('page');
-        $orders = Order::leftJoin('siralab', 'ordenes.id', '=', 'siralab.id_orden')
-            ->join('clientes', 'ordenes.id_cliente', '=', 'clientes.id')
-            ->select('ordenes.*', 'siralab.id as siralab_id', 'siralab.hoja_campo', 'siralab.cadena_custodia', 'siralab.croquis', 'clientes.cliente')
-            ->orderBy('fecha_recepcion', 'desc')
-            ->orderBy('hora_recepcion', 'desc')
-            ->orderBy('folio', 'desc')
-            ->offset(($page - 1) * 40)
-            ->limit(40)
-            ->get();
-        return response()->json($orders);
     }
 
     public function getClientForOrder (Request $request)

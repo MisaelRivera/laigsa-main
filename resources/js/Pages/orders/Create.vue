@@ -3,6 +3,8 @@
     import { useForm } from '@inertiajs/vue3';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import { Notivue, Notification, push } from 'notivue';
+    import axios from 'axios';
     const props = defineProps({
         last_order: {
             required: true,
@@ -12,10 +14,18 @@
     let formState = useForm({});
     const clientOptions = ref([]);
 
-    const handleSubmit = (form$, FormData) => {
-        formState = useForm(form$.requestData);
-        console.log(formState);
-        formState.post('/orders');
+    const handleSubmit = async(form$, FormData) => {
+        formState = useForm(...form$.requestData, {direccion_muestreo: null});
+        if (formState.id_cliente) {
+            try {
+                const cliente = await axios.get(`/api/clients/${formState.id_cliente}`);
+                formState.direccion_muestreo = cliente.data.direccion_muestreo;
+                console.log(formState);
+                formState.post('/orders');
+            } catch (e) {
+                push.error("Ocurrio un error");
+            }
+        }
     };
 
     const handleClientSearch = async(searchQuery) => 
@@ -155,5 +165,8 @@
                 </Vueform>
             </div>
         </div>
+        <Notivue v-slot="item">
+            <Notification :item="item"/>
+        </Notivue>
     </AuthenticatedLayout>
 </template>
