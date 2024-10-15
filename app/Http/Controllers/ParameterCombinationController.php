@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ListMethodResource;
+use App\Http\Resources\ListParameterResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Unit;
@@ -184,23 +186,8 @@ class ParameterCombinationController extends Controller
         });
         return Inertia::render('parameters_combinations/Edit', [
             'parameterCombination' => $parameterCombination,
-            'parameters' => Parameter::with(['lcps'])
-                ->get()
-                ->map(function ($item) {
-                return [
-                    'label' => $item->parametro,
-                    'value' => $item->id,
-                    'key' => $item->id,
-                    'lcps' => $item->lcps
-                ];
-            }),
-            'methods' => Method::where('obsoleto', 0)->get()->map(function ($item) {
-                return [
-                    'label' => $item->nombre,
-                    'value' => $item->id,
-                    'key' => $item->id
-                ];
-            }),
+            'parameters' => ListParameterResource::collection(Parameter::all()),
+            'methods' => ListMethodResource::collection(Method::where('obsoleto', 0)->get()),
             'units' => Unit::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->nombre,
