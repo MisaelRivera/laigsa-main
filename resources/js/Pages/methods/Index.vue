@@ -1,12 +1,12 @@
 <script setup>
     import { ref } from 'vue';
-    import { useForm, usePage, Link, router } from '@inertiajs/vue3';
+    import { useForm, Link, router } from '@inertiajs/vue3';
+    import { Notification, Notivue, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
-    import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons-vue';
-    import { Alert, Col, Row, Form, FormItem, Input, Modal } from 'ant-design-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     const { getMessage } = useMessages();
     const props = defineProps({
         methods: {
@@ -18,6 +18,10 @@
         },
         Errors: Object
     });
+
+    if (getMessage()) {
+        push.success(getMessage());
+    }
 
     const deleteMethod = useForm({
         id: null,
@@ -39,13 +43,6 @@
         });
     };
 
-    const handleChangePage = async (pageArg) => {
-        page.value = pageArg;
-        let methodsResults = await axios.get('/methods/change-page?page=' + pageArg);
-        methods.value = methodsResults.data;
-        console.log(methods.value);
-    };
-
     const handleFilter = (ev) => {
         const value = ev.target.value;
         router.visit(route('methods.index', { byMethod: encodeURIComponent(value) }), {
@@ -57,10 +54,6 @@
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-10/12">
-            <Alert
-                type="success"
-                :message="getMessage()"
-                v-if="getMessage()"/>
             <div class="flex justify-between">
                 <IndexTitle 
                     title="Metodos"
@@ -97,8 +90,8 @@
                         <td class="border py-2 px-4 text-center">
                             <Link 
                                 :href="route('methods.edit', method)">
-                                <EditOutlined 
-                                    class="bg-blue-500 p-1 text-white rounded-full mr-2"/>
+                                <i 
+                                    class="bg-blue-500 p-1 text-white rounded-full mr-2 fas fa-edit"></i>
                             </Link>
                             <Link 
                                 :href="route('methods.show', method)">
@@ -113,11 +106,14 @@
                 </tbody>
             </table>
         </div>
-        <Modal
-            v-model:open="isDeleteModalVisible"
+        <Notivue v-slot="items">
+            <Notification :items="items"/>
+        </Notivue>
+        <MyModal
+            v-model="isDeleteModalVisible"
             @ok="handleDeleteMethod"
             :title="`Eliminar metodo`">
             <p>{{ `Seguro que deseas eliminar el metodo ${deleteMethod.nombre}?` }}</p>
-        </Modal>
+        </MyModal>
     </AuthenticatedLayout>
 </template>

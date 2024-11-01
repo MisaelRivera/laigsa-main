@@ -40,8 +40,9 @@ class UnitsController extends Controller
         ]);
        
         Unit::create($unit);
-        $request->session()->flash('message', 'Se creo una nueva unidad correctamente!');
-        return redirect('/units');
+        return redirect()
+            ->route('units.index')
+            ->with('message', 'Se creo una nueva unidad correctamente!');
     }
 
     public function show (Request $request)
@@ -66,7 +67,9 @@ class UnitsController extends Controller
         $unit = Unit::find($id);
         $unit->nombre = $request->input('nombre');
         $unit->save();
-        return redirect('/units')->with('message', 'Se ha actualizado la unidad ' . $unit->nombre . ' correctamente');
+        return redirect()
+            ->route('units.index')
+            ->with('message', 'Se ha actualizado la unidad ' . $unit->nombre . ' correctamente');
     }
 
     public function destroy (Request $request, $id)
@@ -78,7 +81,9 @@ class UnitsController extends Controller
         $unit = Unit::find($id);
         $unitName = $unit->nombre;
         $unit->delete();
-        return redirect()->route('units.index')->with('message', "Se ha eliminado la unidad $unitName correctamente.");
+        return redirect()
+            ->route('units.index')
+            ->with('message', "Se ha eliminado la unidad $unitName correctamente.");
     }
 
     public function changePage (Request $request)

@@ -120,7 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [UnitsController::class, 'index'])->name('units.index');
         Route::get('/create', [UnitsController::class, 'create'])
             ->name('units.create');
-        Route::post('/', [UnitsController::class, 'store']);
+        Route::post('/', [UnitsController::class, 'store'])->name('units.store');
         Route::get('/change-page', [UnitsController::class, 'changePage']);
         Route::get('/filter', [UnitsController::class, 'filter']);
         Route::get('/show/{id}', [UnitsController::class, 'show']);
