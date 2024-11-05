@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMethodRequest;
 use App\Models\Method;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -76,13 +77,12 @@ class MethodsController extends Controller
         ]);
     }
 
-    public function update (Request $request, Method $method)
+    public function update (StoreMethodRequest $request, Method $method)
     {
-        $newMethod = $request->validate([
-            'nombre' => 'required|string|min:3'
-        ]);
-        $method->update($newMethod);
-        $name = $method->nombre;
+        $newMethod = $request->validated();
+        $newMethod = Method::create($newMethod);
+        $method->delete();
+        $name = $newMethod->nombre;
         return redirect()
             ->route('methods.index')
             ->with('message', "Se ha editado correctamente el metodo $name");
@@ -91,7 +91,7 @@ class MethodsController extends Controller
     public function destroy (Method $method)
     {
         $name = $method->nombre;
-        $method->delete();
+        $method->forceDelete();
         return redirect()
             ->route('methods.index')
             ->with('message', "Se ha eliminado el metodo $name");

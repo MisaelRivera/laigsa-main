@@ -7,14 +7,19 @@
         errors: Object,
         unit: Object
     });
+    const form$ = ref(null);
     const formState = useForm({
         nombre: props.unit.nombre
     });
 
     const handleSubmit = () => {
-        console.log(formState.nombre);
+        formState.nombre = form$.value.el$('nombre').value;
         formState.put('/units/' + props.unit.id);
     };
+
+    onMounted(() => {
+        form$.value.el$('nombre').update(props.unit.nombre);
+    });
     
 </script>
 <template>
@@ -30,20 +35,20 @@
             </div>
             <Vueform
                 :columns="{ container: 12, wrapper: 12 }"
-                v-model="formState"
+                ref="form$"
                 :endpoint="false"
                 :float-placeholders="false"
-                @submit="handleSubmit"
-                sync>
+                @submit="handleSubmit">
                 <TextElement
                     name="nombre"
                     before="Unidad"
                     placeholder="g, l, etc."
                     :columns="{ container: 9, wrapper: 12 }">
                     <template 
-                        #description
-                        v-if="formState.errors.nombre">
-                        <p class="text-red-500">{{ formState.errors.nombre }}</p>
+                        #description>
+                        <p 
+                            class="text-red-500"
+                            v-if="formState.errors.nombre">{{ formState.errors.nombre }}</p>
                     </template>
                 </TextElement>
                 <button 

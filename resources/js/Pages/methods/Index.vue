@@ -39,6 +39,7 @@
         deleteMethod.delete(`/methods/${deleteMethod.id}`, {
             onSuccess: () => {
                 isDeleteModalVisible.value = false;
+                push.success(`Se ha eliminado correctamente un metodo`);
             }
         });
     };
@@ -85,29 +86,30 @@
                 <tbody>
                     <tr 
                         v-for="method in methods.data"
+                        :key="method.id"
                         class="bg-slate-50">
                         <td class="border py-2 px-4">{{ method.nombre }}</td>
                         <td class="border py-2 px-4 text-center">
                             <Link 
                                 :href="route('methods.edit', method)">
                                 <i 
-                                    class="bg-blue-500 p-1 text-white rounded-full mr-2 fas fa-edit"></i>
+                                    class="bg-blue-500 p-1 text-white rounded-full mr-2 fas fa-edit text-xs"></i>
                             </Link>
                             <Link 
                                 :href="route('methods.show', method)">
-                                <EyeOutlined 
-                                    class="bg-sky-500 p-1 text-white rounded-full"/>
+                                <i 
+                                    class="bg-sky-500 p-1 text-white rounded-full fas fa-eye text-xs"></i>
                             </Link>
-                            <DeleteOutlined 
-                                class="bg-red-500 p-1 text-white rounded-full ml-2"
-                                @click="() => handleShowDeleteModal(method.id_metodo, method.nombre)" />
+                            <i 
+                                class="bg-red-500 p-1 text-white rounded-full ml-2 fas fa-trash text-xs"
+                                @click="() => handleShowDeleteModal(method.id_metodo, method.nombre)" ></i>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <Notivue v-slot="items">
-            <Notification :items="items"/>
+        <Notivue v-slot="item">
+            <Notification :item="item"/>
         </Notivue>
         <MyModal
             v-model="isDeleteModalVisible"
