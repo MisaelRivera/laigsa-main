@@ -25,85 +25,59 @@
                 title="Crear una nueva norma"
                 :back-link="route('rules.index', { page: page })"
                 :own-link="route('rules.create', { page: page })"/>
-            <a-form
-                layout="vertical"
-                :model="form"
-                @finish="handleCreateSubmit">
-                <a-row :gutter="8">
-                    <a-col :span="12">
-                        <div class="mb-4">
-                            <a-form-item 
-                                label="Norma"
-                                name="norma"
-                                :rules="[{ required: false, message: 'Ingrese la norma' }]">
-                                <a-input
-                                    v-model:value="form.norma"
-                                    class="rounded h-8"/>
-                                <p 
-                                    class="text-red-500"
-                                    v-if="form.errors.norma">
-                                    {{ form.errors.norma }}
-                                </p>
-                            </a-form-item>
-                        </div>
-                    </a-col>
-                    <a-col :span="12">
-                        <div class="mb-4">
-                            <a-form-item
-                                label="Tipo"
-                                name="tipo"
-                                :rule="[{ required: true, message: 'Ingrese el tipo' }]">
-                                <a-input
-                                    v-model:value="form.tipo"
-                                    class="rounded h-8"/>
-                                <p 
-                                    class="text-red-500"
-                                    v-if="form.errors.tipo">
-                                    {{ form.errors.tipo }}
-                                </p>
-                            </a-form-item>
-                        </div>
-                    </a-col>
-                </a-row>
-                <a-row  :gutter="8">
-                    <a-col :span="12">
-                        <div class="mb-4">
-                            <a-form-item
-                                label="Descripcion"
-                                name="descripcion"
-                                :rule="[{ required: true, message: 'Ingrese la descripcion' }]">
-                                <a-input
-                                    v-model:value="form.descripcion"
-                                    class="rounded h-8"/>
-                                <p 
-                                    class="text-red-500"
-                                    v-if="form.errors.descripcion">
-                                    {{ form.errors.descripcion }}
-                                </p>
-                            </a-form-item>
-                        </div>
-                    </a-col>
-                    <a-col :span="6">
-                        <a-form-item
-                            name="cesavedac"
-                            class="mb-0 mt-6">
-                            <a-checkbox
-                                v-model:checked="form.cesavedac">Cesavedac</a-checkbox>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :span="6">
-                        <a-form-item
-                            name="aguas"
-                            class="mb-0 mt-6">
-                            <a-checkbox
-                                v-model:checked="form.aguas">Aguas</a-checkbox>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <button class="rounded bg-green-400 text-white py-2 px-4">
-                    Crear
-                </button>
-            </a-form>
+            <Vueform
+                :endpoint="false"
+                @submit="handleCreateSubmit"
+                :columns="{container:12, wrapper:12}">
+                <TextElement
+                    :columns="{container:6, wrapper:12}"
+                    name="norma"
+                    before="Norma">
+                    <template #description>
+                        <p 
+                            class="text-red-500"
+                            v-if="form.errors.norma">
+                            {{ form.errors.norma }}
+                        </p>
+                    </template>
+                </TextElement>
+                <TextElement
+                    name="tipo"
+                    before="Tipo"
+                    :columns="{container:6, wrapper:12}">
+                    <template #description>
+                        <p 
+                            class="text-red-500"
+                            v-if="form.errors.tipo">
+                            {{ form.errors.tipo }}
+                        </p>
+                    </template>
+                </TextElement>
+                <TextElement
+                    name="descripcion"
+                    before="Descripcion"
+                    :columns="{container:6, wrapper:12}">
+                    <template #description>
+                        <p 
+                            class="text-red-500"
+                            v-if="form.errors.descripcion">
+                            {{ form.errors.descripcion }}
+                        </p>
+                    </template>
+                </TextElement>
+                <CheckboxElement
+                    name="cesavedac"
+                    class="mt-8"
+                    :columns="{container:3, wrapper:12}">
+                    Cesavedac
+                </CheckboxElement>
+                <CheckboxElement
+                    name="cesavedac"
+                    class="mt-8"
+                    :columns="{container:3, wrapper:12}">
+                    Aguas
+                </CheckboxElement>
+            </Vueform>
         </div>
     </AuthenticatedLayout>
 </template>

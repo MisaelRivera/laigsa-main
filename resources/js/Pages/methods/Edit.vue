@@ -1,6 +1,6 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
     import { useForm } from '@inertiajs/vue3';
-    import { Form, FormItem, Input } from 'ant-design-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowTitle from '@/Components/Shared/ShowTitle.vue';
 
@@ -9,12 +9,20 @@
         backUrl: String,
     });
 
+    const form$ = ref(null);  
+
+    onMounted(() => {
+        const nombre = form$.value.el$('nombre');
+        nombre.update(props.method.nombre);
+    });
+
     const formState = useForm({
         id: props.method.id_metodo,
         nombre: props.method.nombre
     });
 
     const handleFinish = () => {
+        formState.nombre = form$.value.el$('nombre').value;
         formState.put(`/methods/${formState.id}`);
     };
 </script>
@@ -26,21 +34,27 @@
                     title="Editar metodo"
                     :back-url="backUrl"/>
                 </div>
-                <Form 
-                    layout="vertical"
-                    :model="formState"
-                    @finish="handleFinish">
-                    <FormItem
-                        label="Metodo"
+                <Vueform
+                    :columns="{container:12, wrapper:12}"
+                    @submit="handleFinish"
+                    :endpoint="false"
+                    ref="form$">
+
+                    <TextElement
+                        v-model:value="formState.nombre"
                         name="nombre"
-                        :rules="[{ required: true, message: 'Introduzca el nombre del metodo' }]">
-                        <Input
-                            v-model:value="formState.nombre"/>
-                    </FormItem>
+                        before="Metodo">
+                        <template #description>
+                            <p v-if="formState.errors.nombre"
+                                class="text-red-500">
+                                {{ formState.errors.nombre }}
+                            </p>
+                        </template>
+                    </TextElement>
                     <button class="bg-blue-500 text-white rounded py-2 px-4 mt-2">
                         Editar
                     </button>
-                </Form>
+                </Vueform>
         </div>
     </AuthenticatedLayout>
 </template>

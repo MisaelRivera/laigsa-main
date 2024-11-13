@@ -56,7 +56,7 @@ const isVisibleServiciosAguas = ref(false),
                             </li>
                             <li 
                                 class="text-center text-sm">
-                                <Link :href="route('vue_form_test.test1')">
+                                <Link :href="route('vue_form_test.test2')">
                                     Vue form
                                 </Link>
                             </li>

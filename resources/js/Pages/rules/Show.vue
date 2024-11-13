@@ -3,6 +3,7 @@
     import { useForm } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     const props = defineProps({
         rule: {
             type: Object,
@@ -15,40 +16,58 @@
 
     const { getMessage } = useMessages();
 
+    const form$ = ref(null);
+
     const addingForm = useForm({
         alias: null,
 
     });
 
-    const isAddModalOpen = ref(false);
-    const handleOpenAddParameterCombinationModal = () => {
-        isAddModalOpen.value = true;
+    const isAddOpen = ref(false);
+    const handleOpenAdd = () => {
+        isAddOpen.value = true;
     };
 
-    const isDeleteModalOpen = ref(false);
-    const deleteForm = useForm({
-        id: null,
-    });
-    const handleAddParameterCombination = () => {
+    const handleCloseAdd = () => {
+        isAddOpen.value = false;
+    };
+
+    const handleAdd = () => {
+        addingForm.alias = form$.value.el$('alias').value;
        addingForm.post(route('parameters-combinations.add_param_combination',  props.rule.id));
-       isAddModalOpen.value = false;
+       isAddOpen.value = false;
        addingForm.reset();
     };
 
+    const isDeleteOpen = ref(false);
+    const deleteForm = useForm({
+        id: null,
+        alias: null,
+    });
+
+    
+    
+    
     const filterOption = (input, option) => {
         return option.value.toUpperCase().indexOf(input.toUpperCase()) >= 0;
     };
-
+    
     const handleOpenDeleteItem = (parameterCombination) => {
-        isDeleteModalOpen.value = true;
+        isDeleteOpen.value = true;
         deleteForm.id = parameterCombination.id;
+        deleteForm.alias = parameterCombination.alias;
+    };
+    
+    const handleCloseDeleteItem = () => {
+        isDeleteOpen.value = false;
+        deleteForm.id = null;
     };
 
     const handleDelete = () => {
         try {
             console.log(deleteForm.id);
             deleteForm.delete(route('parameters-combinations.remove_param_combination', deleteForm.id));
-            isDeleteModalOpen.value = false;
+            isDeleteOpen.value = false;
         } catch (e) {
             console.log(e);
         }
@@ -61,7 +80,7 @@
                 <div class="col-span-5">
                     <button 
                         class="py-1.5 px-3 text-white bg-yellow-500 rounded-full"
-                        @click="handleOpenAddParameterCombinationModal">
+                        @click="handleOpenAdd">
                         +
                     </button>
                 </div>
@@ -83,36 +102,47 @@
                 </div>
             </div>
         </div>
-        <!--<a-modal
-            v-model:open="isAddModalOpen"
+        <MyModal
+            v-model="isAddOpen"
             title="Agregar parametro"
-            :ok-button-props="{hidden: true}"
-            :cancel-button-props="{hidden: true}">
-            <form
-                @submit.prevent="handleAddParameterCombination">
-                <a-auto-complete
-                    :options="parametersCombinations"
-                    :filter-option="filterOption"
-                    class="w-full"
-                    v-model:value="addingForm.alias"/>
-                <p v-if="addingForm.errors.alias" class="text-red-400">
-                    {{ addingForm.errors.alias }}
-                </p>
-                <button class="btn btn-success mt-12">
+            :ok-button-props="{
+                class: ['bg-green-500', 'text-white', 'hidden']
+            }"
+            :cancel-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }"
+            @close-from="handleCloseAdd">
+            <Vueform
+                :endpoint="false"
+                @submit="handleAdd"
+                :columns="{container:12, wrapper:12}"
+                ref="form$">
+                <SelectElement
+                    :search="true"
+                    name="alias"
+                    before="Alias"
+                    :items="parametersCombinations">
+                    <template #description>
+                        <p 
+                            v-if="addingForm.errors.alias"
+                            class="text-red-400">
+                            {{ addingForm.errors.alias }}
+                        </p>
+                    </template>
+                </SelectElement>
+                <button 
+                    class="rounded-md bg-green-500 text-white py-1 px-2 col-span-3">
                     Agregar
                 </button>
-            </form>
-        </a-modal>
-        <a-modal
-            v-model:open="isDeleteModalOpen"
+            </Vueform>
+        </MyModal>
+        <MyModal
             title="Eliminar parametro"
-            :ok-button-props="{ hidden: true }"
-            :cancel-button-props="{ hidden: true }">
-            <form
-                @submit.prevent="handleDelete">
-                <p>Seguro que deseas remover este parametro?</p>
-                <button class="btn btn-danger">Eliminar</button>
-            </form>
-        </a-modal>-->
+            v-model="isDeleteOpen"
+            @ok="handleDelete"
+            @close-from="handleCloseDeleteItem">
+            <p>Seguro que deseas eliminar el parametro {{ deleteForm.alias }}?</p>
+        </MyModal>
+        
     </AuthenticatedLayout>
 </template>
