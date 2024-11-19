@@ -35,6 +35,12 @@
         isDeleteModalVisible.value = true;
     };
 
+    const handleCloseDeleteModal = () => {
+        deleteMethod.id = null;
+        deleteMethod.nombre = null;
+        isDeleteModalVisible.value = false;
+    };
+
     const handleDeleteMethod = () => {
         deleteMethod.delete(`/methods/${deleteMethod.id}`, {
             onSuccess: () => {
@@ -114,7 +120,14 @@
         <MyModal
             v-model="isDeleteModalVisible"
             @ok="handleDeleteMethod"
-            :title="`Eliminar metodo`">
+            @close-from="handleCloseDeleteModal"
+            :title="`Eliminar metodo`"
+            :ok-button-props="{
+                class: 'bg-red-500 text-white'
+            }"
+            :cancel-button-props="{
+                class: 'bg-blue-500 text-white'
+            }">
             <p>{{ `Seguro que deseas eliminar el metodo ${deleteMethod.nombre}?` }}</p>
         </MyModal>
     </AuthenticatedLayout>

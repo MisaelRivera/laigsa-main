@@ -125,6 +125,12 @@ const isVisibleServiciosAguas = ref(false),
                             </li>
                             <li 
                                 class="text-center text-sm">
+                                <Link :href="route('tasks.index')">
+                                    Tasks
+                                </Link>
+                            </li>
+                            <li 
+                                class="text-center text-sm">
                                 <Link :href="route('methods.index')">
                                     Metodos
                                 </Link>

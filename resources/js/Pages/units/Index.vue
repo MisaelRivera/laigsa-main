@@ -114,7 +114,7 @@
                 :cancel-button-props="{
                     class: ['bg-blue-500', 'text-white']
                 }">
-                    <p>Seguro que deseas borrar la unidad {{ deleteUnit.name }}?</p>
+                    <p>Seguro que deseas borrar la unidad {{ deleteUnit.nombre }}?</p>
             </MyModal>
         </div>
     </AuthenticatedLayout>

@@ -15,6 +15,7 @@ use App\Http\Controllers\MethodsController;
 use App\Http\Controllers\ParameterCombinationController;
 use App\Http\Controllers\ParametersController;
 use App\Http\Controllers\RulesController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VueFormController;
 use App\Http\Controllers\WaterSamplesController;
@@ -175,6 +176,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/test1', [VueFormController::class, 'test1Store'])->name('vue_form_test.test1_store');
         Route::get('/test2', [VueFormController::class, 'test2'])->name('vue_form_test.test2');
     });
+
+    Route::controller(TaskController::class)->group(function () {
+        Route::prefix('/tasks')->group(function () {
+            Route::get('/', 'index')->name('tasks.index');
+            Route::get('/create', 'create')->name('tasks.create');
+            Route::post('/', 'store')->name('tasks.store');
+            Route::get('/{id}/edit', 'edit')->name('tasks.edit');
+            Route::delete('/{id}', 'destroy')->name('tasks.delete');
+        });
+    });
+
 });
 
 

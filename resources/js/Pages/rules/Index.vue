@@ -37,6 +37,7 @@
     const handleDelete = () => {
         deleteRule.delete(`/rules/${deleteRule.id}?page=${props.rules.current_page}`, {
             onSuccess: async() => {
+                push.success(`Se ha eliminado la norma ${deleteRule.norma} correctamente`);
                 isDeleteModalVisible.value = false;
             }
         });
@@ -112,8 +113,9 @@
             }"
             :cancel-button-props="{
                 class: ['bg-blue-500', 'text-white']
-            }">
-            <p>Seguro que desea eliminar la norma {{ deleteRule.name }}</p>
+            }"
+            @ok="handleDelete">
+            <p>Seguro que desea eliminar la norma {{ deleteRule.norma }}?</p>
         </MyModal>
         <Notivue v-slot="item">
             <Notification :item="item"/>

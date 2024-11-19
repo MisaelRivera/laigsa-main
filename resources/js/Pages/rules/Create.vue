@@ -1,4 +1,5 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
@@ -7,6 +8,7 @@
             type: String
         }
     });
+    const form$ = ref(null);
     const form = useForm({
         norma: null,
         tipo: null,
@@ -15,8 +17,18 @@
         aguas: true,
     });
     const handleCreateSubmit = () => {
+        form.norma = form$.value.el$('norma').value;
+        form.tipo = form$.value.el$('tipo').value;
+        form.descripcion = form$.value.el$('descripcion').value;
+        form.cesavedac = form$.value.el$('cesavedac').value;
+        form.aguas = form$.value.el$('aguas').value;
         form.post('/rules');
     };
+
+    onMounted(() => {
+        const aguas = form$.value.el$('aguas');
+        aguas.update(true);
+    });
 </script>
 <template>
     <AuthenticatedLayout>
@@ -28,6 +40,7 @@
             <Vueform
                 :endpoint="false"
                 @submit="handleCreateSubmit"
+                ref="form$"
                 :columns="{container:12, wrapper:12}">
                 <TextElement
                     :columns="{container:6, wrapper:12}"
@@ -72,11 +85,12 @@
                     Cesavedac
                 </CheckboxElement>
                 <CheckboxElement
-                    name="cesavedac"
+                    name="aguas"
                     class="mt-8"
                     :columns="{container:3, wrapper:12}">
                     Aguas
                 </CheckboxElement>
+                <button class="rounded py-3 px-2 bg-green-500 text-white">Crear</button>
             </Vueform>
         </div>
     </AuthenticatedLayout>

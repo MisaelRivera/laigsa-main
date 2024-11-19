@@ -7,7 +7,7 @@
     const props = defineProps({
         parameters: Object
     });
-
+    console.log(props.parameters);
     const isDeleteOpen = ref(false);
     const deleteParam = useForm({
         id: null,
@@ -33,6 +33,7 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-7/12 mx-auto">
+            <h1>Crear parametro</h1>
             <table class="border">
                 <thead>
                     <tr>
@@ -43,13 +44,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(index, param) in parameters" :key="index">
+                    <tr v-for="(param, index) in parameters.data" :key="index">
                         <td class="border py-1 px-2">{{ param.parametro }}</td>
                         <td class="border py-1 px-2">{{ param.metodo }}</td>
                         <td class="border py-1 px-2">{{ param.abreviacion }}</td>
                         <td class="border py-1 px-2">
                             <i 
-                                class="fa fas-trash bg-red-500 text-white py-2 px-2"
+                                class="fas fa-trash bg-red-500 text-white py-2 px-2 rounded-full"
                                 @click="handleOpenDelete"></i>
                         </td>
                     </tr>
@@ -65,7 +66,7 @@
             :cancel-button-props="{
                 class: ['bg-red-500', 'text-white']
             }"
-            @cancel-from="handleCloseDelete"
+            @close-from="handleCloseDelete"
             @ok="handleDelete">
             <p>Estas seguro que deseas eliminar el parametro {{ deleteParam.parametro }}</p>
         </MyModal>
