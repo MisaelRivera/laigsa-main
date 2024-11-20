@@ -1,9 +1,10 @@
 <script setup>
     import { ref } from 'vue';
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, Link } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import MyModal from '@/Components/Shared/MyModal.vue';
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     const props = defineProps({
         rule: {
             type: Object,
@@ -12,6 +13,10 @@
         parametersCombinations: {
             type: Array
         },
+        
+        page: {
+            type: String
+        }
     });
 
     const { getMessage } = useMessages();
@@ -45,9 +50,6 @@
         alias: null,
     });
 
-    
-    
-    
     const filterOption = (input, option) => {
         return option.value.toUpperCase().indexOf(input.toUpperCase()) >= 0;
     };
@@ -77,12 +79,20 @@
     <AuthenticatedLayout>
         <div class="mx-auto w-10/12">
             <div class="grid grid-cols-5">
-                <div class="col-span-5">
+                <CreateTitle 
+                    title="Agregar parametros a la norma"
+                    class="col-span-5"
+                    :back-link="route('rules.index', { page: page })"
+                    :own-link="route('rules.edit', { rule: props.rule, page: page })"/>
+                <div class="col-span-5 flex">
                     <button 
-                        class="py-1.5 px-3 text-white bg-yellow-500 rounded-full"
+                        class="py-1.5 px-3 text-white bg-yellow-500 rounded-full col-span-1"
                         @click="handleOpenAdd">
                         +
                     </button>
+                    <input 
+                        type="text"
+                        class="border ml-3 px-2">
                 </div>
                 <div 
                     class="col-span-1 p-5"

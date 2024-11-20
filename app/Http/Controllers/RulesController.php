@@ -59,8 +59,12 @@ class RulesController extends Controller
             ->with('message', 'Se ha creado la norma ' .  $ruleName->norma . ' correctamente');
     }
 
-    public function show (Rule $rule)
+    public function show (Request $request, Rule $rule)
     {
+        $data = [];
+        if ($request->has('page')) {
+            $data['page'] = $request->query('page');
+        }
         $parametersCombinations = ParameterCombination::all()->map(function ($item) {
             return [
                 'label' => $item->alias,
@@ -68,13 +72,14 @@ class RulesController extends Controller
                 'key' => $item->id
             ];
         });
-        $rule->parametersCombinations = RuleParameterCombinationWater::with(['parametro', 'unidad', 'metodo'])
-            ->where('id_norma', $rule->id)
+        $rule->parametersCombinations = RuleParameterCombinationWater::where('id_norma', $rule->id)
+            ->whereHas('parametros', function ($query) use ($paramName) {
+                $query->where('parametro', $paramName);
+            })->with(['unidad', 'metodo', 'parametros'])
             ->get();
-        return Inertia::render('rules/Show', [
-            'rule' => $rule,
-            'parametersCombinations' => $parametersCombinations
-        ]);
+        $data['rule'] = $rule;
+        $data['parametersCombinations'] = $parametersCombinations;
+        return Inertia::render('rules/Show', $data);
     }
 
     public function edit (Request $request, Rule $rule)
@@ -91,18 +96,20 @@ class RulesController extends Controller
     public function update (Request $request, Rule $rule)
     {
         $validatedData = $request->validate([
-            'norma' => 'required|unique:normas,norma',
+            'norma' => 'required',
             'tipo' => 'required',
             'descripcion' => 'required',
             'cesavedac' => 'required',
             'aguas' => 'required',
         ], [
             'norma.required' => 'Ingrese la norma',
-            'norma.unique' => 'Esta norma ya existe',
             'tipo.required' => 'Ingrese el tipo',
             'descripcion.required' => 'Ingrese la descripcion',
         ]);
-
+        $rule->update($validatedData);
+        return redirect()
+            ->route('rules.index')
+            ->with('message', "Se ha editado la norma $rule->norma");
     }
 
     public function destroy (Request $request, Rule $rule)

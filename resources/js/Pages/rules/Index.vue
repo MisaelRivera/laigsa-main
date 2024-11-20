@@ -93,7 +93,7 @@
                             <Link :href="`/rules/${rule.id}/edit?page=${rules.current_page}`">
                                 <i class="fas fa-edit text-white p-1 text-xs rounded-full mr-2 bg-blue-500"></i>
                             </Link>
-                            <Link :href="route('rules.show', { id: rule.id, page: rules.current_page})">
+                            <Link :href="`/rules/${rule.id}?page=${rules.current_page}`">
                                 <i class="fas fa-eye text-blue-500 mr-2"></i>
                             </Link>
                             <i 
