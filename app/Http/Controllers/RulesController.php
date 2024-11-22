@@ -72,10 +72,12 @@ class RulesController extends Controller
                 'key' => $item->id
             ];
         });
-        $rule->parametersCombinations = RuleParameterCombinationWater::where('id_norma', $rule->id)
-            ->whereHas('parametros', function ($query) use ($paramName) {
-                $query->where('parametro', $paramName);
-            })->with(['unidad', 'metodo', 'parametros'])
+        $rule->parametersCombinations = RuleParameterCombinationWater::with(['unidad', 'metodo'])
+            ->where('id_norma', $rule->id)
+            ->when(
+                $request->has('paramCombination'),
+                fn ($query, $filter) => $query->where('parametro', 'like', '%' . urldecode($filter) . '%') 
+            )
             ->get();
         $data['rule'] = $rule;
         $data['parametersCombinations'] = $parametersCombinations;
