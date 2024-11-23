@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ParameterCombination;
 use App\Models\Rule;
 use App\Models\RuleParameterCombinationWater;
+use App\Api\RulesApi;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -61,26 +62,7 @@ class RulesController extends Controller
 
     public function show (Request $request, Rule $rule)
     {
-        $data = [];
-        if ($request->has('page')) {
-            $data['page'] = $request->query('page');
-        }
-        $parametersCombinations = ParameterCombination::all()->map(function ($item) {
-            return [
-                'label' => $item->alias,
-                'value' => $item->alias,
-                'key' => $item->id
-            ];
-        });
-        $rule->parametersCombinations = RuleParameterCombinationWater::with(['unidad', 'metodo'])
-            ->where('id_norma', $rule->id)
-            ->when(
-                $request->has('paramCombination'),
-                fn ($query, $filter) => $query->where('parametro', 'like', '%' . urldecode($filter) . '%') 
-            )
-            ->get();
-        $data['rule'] = $rule;
-        $data['parametersCombinations'] = $parametersCombinations;
+        $data = RulesApi::show($request, $rule);
         return Inertia::render('rules/Show', $data);
     }
 
