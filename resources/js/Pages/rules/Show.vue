@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import { useForm, Link } from '@inertiajs/vue3';
+    import { useForm, Link, router } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import MyModal from '@/Components/Shared/MyModal.vue';
@@ -74,6 +74,13 @@
             console.log(e);
         }
     };
+
+    const handleFiltering = (ev, id) => {
+        const value = ev.target.value;
+         router.get(`/rules/${id}?paramCombination=${value}`);
+        console.log(props.rule.parametersCombinations);
+       // props.rule.parametersCombinations = rule.parametersCombinations;
+    };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -92,22 +99,23 @@
                     </button>
                     <input 
                         type="text"
-                        class="border ml-3 px-2">
+                        class="border ml-3 px-2"
+                        @input="(ev) => handleFiltering(ev, props.rule.id)">
                 </div>
                 <div 
                     class="col-span-1 p-5"
                     v-for="parameterCombination in rule.parametersCombinations">
                     <p class="text-sm text-center">
-                        {{ parameterCombination.parametro.parametro }}
+                        {{ parameterCombination.parametro }}
                         <i
                             class="fas fa-trash text-white bg-red-500 h-6 w-6 rounded-full text-xs py-1"
                             @click="() => handleOpenDeleteItem(parameterCombination)"></i>
                     </p>
                     <p class="text-sm text-center">
-                        {{ parameterCombination.unidad.nombre }}
+                        {{ parameterCombination.nombre_unidad }}
                     </p>
                     <p class="text-sm text-center">
-                        {{ parameterCombination.metodo.nombre }}
+                        {{ parameterCombination.nombre_metodo }}
                     </p>
                 </div>
             </div>

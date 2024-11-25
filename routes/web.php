@@ -164,6 +164,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('rules', RulesController::class);
+    Route::get('/rules/show-filter/{ruleId}', [RulesController::class, 'showFilter']);
     Route::resource('parameters-combinations', ParameterCombinationController::class);
     Route::get('/parameters-combinations/{parameter}/get-lcps', [ParameterCombinationController::class, 'getLCPs']);
     Route::post('/parameters-combinations/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
