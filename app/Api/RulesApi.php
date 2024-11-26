@@ -20,7 +20,6 @@
                     'key' => $item->id
                 ];
             });
-            
             $mainTable = 'normas_combinaciones_parametros_aguas';
             $secTable = 'combinaciones_parametros';
             /*
@@ -35,6 +34,7 @@
                 $data['rule'] = $rule;
                 $data['parametersCombinations'] = $parametersCombinations;
                 return $data;*/
+                $filter = $request->query('paramCombination');
                 $rule->parametersCombinations = DB::table($mainTable)
                     ->join($secTable, "{$mainTable}.id_combinacion_parametro", '=', "{$secTable}.id")
                     ->join('parametros', "{$secTable}.id_parametro", '=', 'parametros.id')
@@ -43,8 +43,10 @@
                     ->select('parametros.parametro', "{$secTable}.alias", DB::raw('unidades.nombre as nombre_unidad, metodos.nombre as nombre_metodo'))
                     ->where("{$mainTable}.id_norma", $rule->id)
                     ->when(
-                        $request->has('paramCombination'),
-                        fn ($query, $filter) => $query->where('parametro', 'like', '%' . urldecode($filter) . '%') 
+                        $filter ?? false,
+                        function ($query, string $filter) {
+                            $query->where('parametros.parametro', 'like', '%' . urldecode($filter) . '%'); 
+                        } 
                      )
                     ->get();
             $data['parametersCombinations'] = $parametersCombinations;

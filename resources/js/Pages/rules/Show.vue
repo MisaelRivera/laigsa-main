@@ -77,7 +77,9 @@
 
     const handleFiltering = (ev, id) => {
         const value = ev.target.value;
-         router.get(`/rules/${id}?paramCombination=${value}`);
+         router.get(`/rules/${id}?paramCombination=${value}`, {}, {
+            preserveState: true,
+         });
         console.log(props.rule.parametersCombinations);
        // props.rule.parametersCombinations = rule.parametersCombinations;
     };
