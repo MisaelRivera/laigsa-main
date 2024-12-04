@@ -22,13 +22,13 @@ class ParameterCombinationController extends Controller
      */
     public function index(Request $request)
     {
-        $filters = $request->only('byAlias');
+        $filters = $request->only('alias');
         $parametersCombinations = ParameterCombination::with(['parametro', 'lcp'])
             ->where('obsoleto', 0)
             ->orderByDesc('id')
             ->when(
-            $filters['byAlias'] ?? false, 
-            fn ($query, $filter) => $query->where('alias', 'like', '%' . $filter . '%')
+            $filters['alias'] ?? false, 
+            fn ($query, $filter) => $query->where('alias', 'like', '%' . urldecode($filter) . '%')
         )->paginate(10)
         ->withQueryString();
 
@@ -57,8 +57,8 @@ class ParameterCombinationController extends Controller
             'methods' => Method::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->nombre,
-                    'value' => $item->id,
-                    'key' => $item->id
+                    'value' => $item->id_metodo,
+                    'key' => $item->id_metodo
                 ];
             }),
             'units' => Unit::where('obsoleto', 0)->get()->map(function ($item) {
@@ -93,7 +93,7 @@ class ParameterCombinationController extends Controller
         $validatedData = $request->validate([
             'id_parametro' => 'required|exists:parametros,id',
             'id_unidad' => 'required|exists:unidades,id',
-            'id_metodo' => 'required|exists:metodos,id',
+            'id_metodo' => 'required|exists:metodos,id_metodo',
             'id_lcp' => 'required|exists:lcps,id',
             'clasificacion' => 'required',
             'alias' => 'required',
@@ -109,7 +109,7 @@ class ParameterCombinationController extends Controller
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
         ]);
-        $parameter = Parameter::where('parametro', $validatedData['parametro'])->firstOrFail();
+        $parameter = Parameter::where('id', $validatedData['id_parametro'])->firstOrFail();
         $parameter->load('lcps');
         $lcpsArr = $parameter->lcps()->pluck('id')->toArray();
         if (!in_array($validatedData['id_lcp'], $lcpsArr)) {
@@ -206,7 +206,7 @@ class ParameterCombinationController extends Controller
         $validatedData = $request->validate([
             'id_parametro' => 'required|exists:parametros,id',
             'id_unidad' => 'required|exists:unidades,id',
-            'id_metodo' => 'required|exists:metodos,id',
+            'id_metodo' => 'required|exists:metodos,id_metodo',
             'id_lcp' => 'required|exists:lcps,id',
             'clasificacion' => 'required',
             'alias' => 'required',
@@ -222,7 +222,7 @@ class ParameterCombinationController extends Controller
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
         ]);
-        $parameter = Parameter::where('parametro', $validatedData['parametro'])->firstOrFail();
+        $parameter = Parameter::where('id', $validatedData['id_parametro'])->firstOrFail();
         $parameter->load('lcps');
         $lcpsArr = $parameter->lcps()->pluck('id')->toArray();
         if (!in_array($validatedData['id_lcp'], $lcpsArr)) {

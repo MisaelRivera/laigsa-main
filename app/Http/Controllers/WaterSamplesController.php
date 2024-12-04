@@ -30,11 +30,30 @@ class WaterSamplesController extends Controller
         }
     }
 
+    public function createV2 ($folio, $numero_muestras, $inicio_muestras)
+    {
+        $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
+        $data = [
+            'order' => $order,
+            'numeroMuestras' => (int) $numero_muestras,
+            'inicioMuestras' => (int) $inicio_muestras,
+        ];
+      
+        if ($order->aguas_alimentos === 'Aguas') {
+            $data['parametersProp'] = Rule::where('aguas', 1)
+                ->get();
+            return Inertia::render('samples/CreateWaterV2', $data);
+        } else {
+
+        }
+    }
+
     public function store (Request $request)
     {
         $inicio_muestras = $request->query('inicio_muestras');
         $numero_muestras = $request->query('numero_muestras');
         $idOrden = $request->query('id_orden');
+        $orden = Order::fing($idOrden);
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
     
@@ -65,9 +84,17 @@ class WaterSamplesController extends Controller
         foreach ($samples as $sampleInstance) {
             WaterSample::create($sampleInstance);
         }
-        return redirect()
-            ->route('orders.show', ['id' => $idOrden])
+
+        if ($orden->v_libreta_resultados) {
+            return redirect()
+            ->route('orders.show_v2', ['id' => $idOrden])
             ->with('message', 'La orden y sus muestras se han creado correctamente');
+        } else {
+            return redirect()
+                ->route('orders.show', ['id' => $idOrden])
+                ->with('message', 'La orden y sus muestras se han creado correctamente');
+        }
+
     }
 
     public function destroy (WaterSample $waterSample)

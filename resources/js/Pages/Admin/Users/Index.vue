@@ -57,10 +57,10 @@
                     <template #header>
                         <TableRow>
                             <TableHeaderCell>ID</TableHeaderCell>
-                            <TableHeaderCell>Name</TableHeaderCell>
+                            <TableHeaderCell>Nombre</TableHeaderCell>
                             <TableHeaderCell>Email</TableHeaderCell>
-                            <TableHeaderCell>Details</TableHeaderCell>
-                            <TableHeaderCell>Actions</TableHeaderCell>
+                            <TableHeaderCell>Detalles</TableHeaderCell>
+                            <TableHeaderCell>Acciones</TableHeaderCell>
                         </TableRow>
                     </template>
                     <template #default>

@@ -113,6 +113,12 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.store');
             Route::delete('/{waterSample}', 'destroy')
                 ->name('water_samples.destroy');
+                Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')
+                ->name('water_samples.create_v2');
+            Route::post('/v2', 'storeV2')
+                ->name('water_samples.store_v2');
+            Route::delete('/v2/{waterSample}', 'destroyV2')
+                ->name('water_samples.destroy_v2');
         });
     });
 

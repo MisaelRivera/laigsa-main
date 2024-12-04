@@ -5,6 +5,9 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
+    import { Notivue, Notification, push } from 'notivue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
+    import IndexFilter from '@/Components/Shared/IndexFilter.vue';
 
     const props = defineProps({
         parametersCombinations: {
@@ -20,6 +23,11 @@
 
 
     const { getMessage } = useMessages();
+    
+    if (getMessage()) {
+        push.success(getMessage());
+    }
+
     const handleFilter = (ev) => {
         const value = ev.target.value;
         router.visit(route('parameters-combinations.index', { byAlias: value }), {
@@ -38,9 +46,19 @@
         deleteParameterCombination.delete(`/parameters-combinations/${deleteParameterCombination.id}?page=${props.parametersCombinations.current_page}`, {
             onSuccess: async() => {
                 isDeleteModalVisible.value = false;
+                push.success(`Se ha eliminado la combinacion ${deleteParameterCombination.alias} correctamente`);
+                deleteParameterCombination.id = null;
+                deleteParameterCombination.alias = null;
             }
         });
     };
+
+    const handleCloseDeleteModal = (parameterCombination) => {
+        isDeleteModalVisible.value = false;
+        deleteParameterCombination.id = null;
+        deleteParameterCombination.alias = null;
+    };
+
     console.log(props.parametersCombinations);
 </script>
 <template>
@@ -57,16 +75,14 @@
                     :links="parametersCombinations.links"/>
                 <div 
                     class="flex items-center">
-                    <div class="w-40 mb-4 mr-3">
-                        <label for="filtro">Filtro</label>
-                        <input 
-                            type="text"
-                            id="filtro"
-                            name="filter"
-                            class="h-8 w-40 rounded"
-                            v-model="filters.byAlias"
-                            @input="handleFilter">
-                    </div>
+                   <IndexFilter 
+                    :filters="[
+                        {
+                            value: 'alias',
+                            label: 'Alias'
+                        },
+                    ]"
+                    route="parameters-combinations.index"/>
                 </div>
             </div>
             <table class="borde w-full">
@@ -106,5 +122,24 @@
                 </tbody>
             </table>
         </div>
+        <Notivue v-slot="item">
+            <Notification 
+                :item="item"/>
+        </Notivue>
+        <MyModal
+            title="Eliminar Combinacion parametro"
+            v-model="isDeleteModalVisible"
+            @close-from="handleCloseDeleteModal"
+            @ok="handleDelete"
+            :cancel-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :ok-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }">
+            <p>
+                Esta seguro de que desea eliminar la combinacion parametro {{ deleteParameterCombination.alias }}?
+            </p>
+        </MyModal>
     </AuthenticatedLayout>
 </template>

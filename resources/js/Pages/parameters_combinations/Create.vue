@@ -21,8 +21,8 @@
     const { getError } = useMessages();
 
     const formState = useForm({
-        id_unidad: '',
-        id_metodo: '',
+        id_unidad: null,
+        id_metodo: null,
         id_parametro: null,
         clasificacion: null,
         id_lcp: '',
@@ -33,10 +33,18 @@
         return option.value.toUpperCase().indexOf(input.toUpperCase()) >= 0;
     };
 
+    const form$ = ref(null);
+
     const lcps = ref([]);
 
     const handleCreateCombination = () => {
         try {
+            formState.id_unidad = form$.value.data.id_unidad;
+            formState.id_metodo = form$.value.data.id_metodo;
+            formState.id_parametro = form$.value.data.id_parametro;
+            formState.clasificacion = form$.value.data.clasificacion;
+            formState.id_lcp = form$.value.data.id_lcp;
+            formState.alias = form$.value.data.alias;
             formState.post(route('parameters-combinations.store'));
         } catch (e) {
             console.log(e);
@@ -67,31 +75,67 @@
                     :search="true"
                     before="Parametro"
                     :columns="{ container: 6, wrapper: 12 }"
-                    @select="handleParameterSelect"/>
+                    @select="handleParameterSelect">
+                    <template #description>
+                        <p 
+                            v-if="formState.errors.id_parametro"
+                            class="text-red-500">
+                            {{ formState.errors.id_parametro }}
+                        </p>
+                    </template>
+                </SelectElement>
                 <SelectElement 
                     name="id_metodo"
                     :items="methods"
-                     :search="true"
+                    :search="true"
                     before="Metodo"
-                    :columns="{ container: 6, wrapper: 12 }"/>
+                    :columns="{ container: 6, wrapper: 12 }">
+                    <template #description>
+                        <p 
+                            v-if="formState.errors.id_metodo"
+                            class="text-red-500">
+                            {{ formState.errors.id_metodo }}
+                        </p>
+                    </template>
+                </SelectElement>
                 <SelectElement 
                     name="id_unidad"
                     :items="units"
                      :search="true"
                     before="Unidad"
-                    :columns="{ container: 6, wrapper: 12 }"/>
+                    :columns="{ container: 6, wrapper: 12 }">
+                    <template #description>
+                        <p 
+                            v-if="formState.errors.id_unidad"
+                            class="text-red-500">
+                            {{ formState.errors.id_unidad }}
+                        </p>
+                    </template>
+                </SelectElement>
                 <SelectElement 
                     name="id_lcp"
                     :items="lcps"
                      :search="true"
                     before="LCP"
-                    :columns="{ container: 6, wrapper: 12 }"/>
+                    :columns="{ container: 6, wrapper: 12 }">
+                    <template #description>
+                        <p 
+                            v-if="formState.errors.id_lcp"
+                            class="text-red-500">
+                            {{ formState.errors.id_lcp }}
+                        </p>
+                    </template>
+                </SelectElement>
                 <TextElement
                     name="alias"
                     :columns="{container: 6, wrapper:12}"
                     before="Alias">
                     <template #description>
-                        <p v-if="formState.errors.alias">{{ formState.errors.alias }}</p>
+                        <p 
+                            v-if="formState.errors.alias"
+                            class="text-red-500">
+                            {{ formState.errors.alias }}
+                        </p>
                     </template>
                 </TextElement>
                 <SelectElement
@@ -103,10 +147,17 @@
                         'Alimentos'
                     ]"
                     before="Clasificacion">
+                    <template #description>
+                        <p 
+                            v-if="formState.errors.clasificacion"
+                            class="text-red-500">
+                            {{ formState.errors.clasificacion }}
+                        </p>
+                    </template>
                 </SelectElement>
-            </Vueform>
                 <button 
                     class="btn btn-success">Crear</button>
+            </Vueform>
         </div>
     </AuthenticatedLayout>
 </template>

@@ -7,6 +7,7 @@
     import Pagination from '@/Components/Shared/Pagination.vue';
     import MyModal from '@/Components/Shared/MyModal.vue';
     import { Notivue, Notification, push } from 'notivue';
+    import IndexFilter from '@/Components/Shared/IndexFilter.vue';
     const props = defineProps({
         rules: {
             type: Object,

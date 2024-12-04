@@ -48,7 +48,6 @@ class OrdersController extends Controller
 
         $client = Client::where('id', $order['id_cliente'])->first();
        $order['direccion_muestreo'] = $client->direccion_muestreo;
-
         $order = Order::create($order);
         $folio = $request->input('folio');
         $numero_muestras = $request->input('numero_muestras');
@@ -59,6 +58,7 @@ class OrdersController extends Controller
         if ($order->aguas_alimentos === 'Aguas') {
             $route_name .= '_water';
         }
+        if ((int)$order->v_libreta_resultados)
         return redirect()
             ->route($route_name, [$folio, $numero_muestras, 1])
             ->with('message', 'Se ha creado una nuva orden correctamente. A continuacion cree las muestras de la orden');
