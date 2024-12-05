@@ -14,7 +14,8 @@ class MethodsController extends Controller
     {
         $filters = $request->only('byMethod');
         $methods = Method::orderBy('id_metodo', 'desc')
-            ->when(
+        ->where('obsoleto', 0)
+        ->when(
                 $filters['byMethod'] ?? false, 
                 fn ($query, $filter) => $query->where('nombre', 'like', '%' . urldecode($filter) . '%')
             )->paginate(10)
@@ -77,11 +78,18 @@ class MethodsController extends Controller
         ]);
     }
 
-    public function update (StoreMethodRequest $request, Method $method)
+    public function update (Request $request, Method $method)
     {
-        $newMethod = $request->validated();
+        $newMethod = $request->validate([
+            'nombre' => 'required|string|min:8',
+        ], [
+            'nombre.required' => 'Ingrese el nombre',
+            'nombre.string' => 'Ingrese una cadena de texto',
+            'nombre.min' => 'El nombre debe tener al menos 8 caracterers'
+        ]);
         $newMethod = Method::create($newMethod);
-        $method->delete();
+        $method->obsoleto = 1;
+        $method->save();
         $name = $newMethod->nombre;
         return redirect()
             ->route('methods.index')

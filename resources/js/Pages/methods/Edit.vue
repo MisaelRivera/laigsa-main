@@ -17,13 +17,13 @@
     });
 
     const formState = useForm({
-        id: props.method.id_metodo,
+        id_metodo: props.method.id_metodo,
         nombre: props.method.nombre
     });
 
     const handleFinish = () => {
         formState.nombre = form$.value.el$('nombre').value;
-        formState.put(`/methods/${formState.id}`);
+        formState.put(`/methods/${formState.id_metodo}`);
     };
 </script>
 <template>

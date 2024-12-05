@@ -64,9 +64,11 @@ class UnitsController extends Controller
             'nombre' => 'Introduzca el nombre de la unidad'
         ]);
 
-        $unit = Unit::find($id);
-        $unit->nombre = $request->input('nombre');
-        $unit->save();
+        $oldUnit = Unit::find($id);
+        $oldUnit->obsoleto = 0;
+        $unit = Unit::create([
+            'nombre' => $request->input('nombre')
+        ]);
         return redirect()
             ->route('units.index')
             ->with('message', 'Se ha actualizado la unidad ' . $unit->nombre . ' correctamente');

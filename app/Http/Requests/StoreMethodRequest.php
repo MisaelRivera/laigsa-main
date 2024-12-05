@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMethodRequest extends FormRequest
 {
@@ -21,8 +22,14 @@ class StoreMethodRequest extends FormRequest
      */
     public function rules(): array
     {
+        $methodId = $this->route('method') ? $this->route('method')->id_metodo : null;
         return [
-            'nombre' => 'required|string|min:8|unique:metodos,nombre'
+            'nombre' => [
+                'required',
+                'string',
+                'min:8',
+                Rule::unique('metodos', 'nombre')->ignore($methodId)
+            ]
         ];
 
     }

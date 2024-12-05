@@ -13,4 +13,9 @@ class Method extends Model
     protected $primaryKey = 'id_metodo';
     protected $fillable = ['nombre'];
     public $timestamps = false;
+
+    public function getRouteKeyName()
+    {
+        return 'id_metodo'; // This tells Laravel to use 'method_id' instead of 'id'
+    }
 }
