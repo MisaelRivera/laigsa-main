@@ -33,10 +33,11 @@ class UnitsController extends Controller
     public function store (Request $request)
     {
         $unit = $request->validate([
-            'nombre' => 'required'
+            'nombre' => 'required|unique:unidades,nombre,except,id'
         ],
         [
-            'nombre' => 'Por favor ingresa el nombre de la unidad'
+            'nombre.required' => 'Por favor ingresa el nombre de la unidad',
+            'nombre.unique' => 'La unidad ingresada ya existe',
         ]);
        
         Unit::create($unit);

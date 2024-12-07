@@ -28,6 +28,17 @@
         clasificacion: null,
         id_lcp: '',
         alias: '',
+        abreviacion: null,
+        arrange: null,
+        subcontratado: null,
+        compuesto: null,
+        ema: null,
+        cna: null,
+        ssa: null,
+        supervisar: null,
+        fecha_resultado_final: null,
+        parametro_campo: null,
+        incertidumbre: null,
     });
     const form$ = ref(null);
     onMounted(() => {
@@ -38,6 +49,8 @@
             id_lcp: props.parameterCombination.lcp.id,
             clasificacion: props.parameterCombination.clasificacion,
             alias: props.parameterCombination.alias,
+            abreviacion: props.parameterCombination.abreviacion,
+            arrange: props.parameterCombination.arrange,
         });
     });
 
@@ -54,6 +67,17 @@
             formState.id_lcp = form$.value.data.id_lcp;
             formState.clasificacion = form$.value.data.clasificacion;
             formState.alias = form$.value.data.alias;
+            formState.abreviacion = form$.value.data.abreviacion;
+            formState.arrange = form$.value.data.arrange;
+            formState.subcontratado = form$.value.data.subcontratado;
+            formState.compuesto = form$.value.data.compuesto;
+            formState.ema = form$.value.data.ema;
+            formState.cna = form$.value.data.cna;
+            formState.ssa = form$.value.data.ssa;
+            formState.supervisar = form$.value.data.supervisar;
+            formState.fecha_resultado_final = form$.value.data.fecha_resultado_final;
+            formState.parametro_campo = form$.value.data.parametro_campo;
+            formState.incertidumbre = form$.value.data.incertidumbre;
             formState.put(route('parameters-combinations.update', props.parameterCombination.id));
         } catch (e) {
             console.log(e);
@@ -67,7 +91,7 @@
         lcp.clear();
         lcp.update('null');
     };
-
+    console.log(form$.value);
 </script>
 <template>
     <AuthenticatedLayout>
@@ -138,6 +162,115 @@
                         <p v-if="formState.errors.clasificacion">{{ formState.errors.clasificacion }}</p>
                     </template>
                 </SelectElement>
+                <TextElement 
+                    name="abreviacion"
+                    before="Abreviacion"
+                    :description="formState.errors.abreviacion ? `<p class='text-red-500'>${formState.errors.abreviacion}</p>`:null"
+                    :columns="{container: 3, wrapper:12}"/>
+                <TextElement 
+                    name="arrange"
+                    before="Orden de acomodo"
+                    input-type="number"
+                    :description="formState.errors.arrange ? `<p class='text-red-500'>${formState.errors.arrange}</p>`:null"
+                    :columns="{container: 3, wrapper:12}"/>
+                <CheckboxElement
+                    name="subcontratado"
+                    :columns="{ container:3, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.subcontratado">
+                    Subcontratado
+                </CheckboxElement>
+                <CheckboxElement
+                    name="compuesto"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }">
+                    Compuesto
+                </CheckboxElement>
+                <CheckboxElement
+                    name="ema"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.ema">
+                    Ema
+                </CheckboxElement>
+                <CheckboxElement
+                    name="cna"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.cna">
+                    CNA
+                </CheckboxElement>
+                <CheckboxElement
+                    name="ssa"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.ssa">
+                    SSA
+                </CheckboxElement>
+                <CheckboxElement
+                    name="supervisar"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.supervisar">
+                    Supervisar
+                </CheckboxElement>
+                <CheckboxElement
+                    name="fecha_resultado_final"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.fecha_resultado_final">
+                    Fecha resultados final
+                </CheckboxElement>
+                <CheckboxElement
+                    name="parametro_campo"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.parametro_campo">
+                    Parametro de campo
+                </CheckboxElement>
+                <CheckboxElement
+                    name="incertidumbre"
+                    :columns="{ container:2, wrapper:12 }"
+                    :add-classes="{
+                        ElementLayout: {
+                            container: ['flex items-center']
+                        }
+                    }"
+                    :default="parameterCombination.incertidumbre">
+                    Incertidumbre
+                </CheckboxElement>
                 <button 
                     class="btn btn-primary">Editar</button>
             </Vueform>

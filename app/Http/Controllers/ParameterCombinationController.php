@@ -97,6 +97,8 @@ class ParameterCombinationController extends Controller
             'id_lcp' => 'required|exists:lcps,id',
             'clasificacion' => 'required',
             'alias' => 'required',
+            'abreviacion' => 'required',
+            'arrange' => 'required',
         ], [
             'id_parametro.required' => 'Ingrese el parametro',
             'id_parametro.exists' => 'El parametro ingresado no existe',
@@ -108,6 +110,8 @@ class ParameterCombinationController extends Controller
             'id_lcp.exists' => 'El lcp ingresado no existe',
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
+            'abreviacion.required' => 'Ingrese la abreviacion',
+            'arrange.required' => 'Ingrese el orden',
         ]);
         $parameter = Parameter::where('id', $validatedData['id_parametro'])->firstOrFail();
         $parameter->load('lcps');

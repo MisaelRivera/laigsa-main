@@ -101,6 +101,11 @@
                     :description="errors.valor_crear ? `<p class='text-red-500'>${errors.valor_crear}</p>`:null"/>
                 <button class="py-1 px-2 rounded-md text-white bg-green-500">Agregar</button>
            </Vueform>
+           <div class="w-full px-4 py-3 rounded-lg bg-teal-500 mt-2 grid grid-cols-3">
+                <p><b>Parametro:</b> {{ parameter.parametro }}</p>
+                <p><b>Parametro:</b> {{ parameter.parametro }}</p>
+                <p><b>Parametro:</b> {{ parameter.parametro }}</p>
+           </div>
            <table class="border w-full">
                 <thead>
                     <tr class="bg-sky-600 text-white">

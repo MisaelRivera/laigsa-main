@@ -12,6 +12,18 @@ class ParameterCombination extends Model
     protected $guarded = [];
     public $timestamps = false;
 
+    protected $casts = [
+        'subcontratado' => 'boolean', // Casts time to Carbon instance,
+        'compuesto' => 'boolean',
+        'ema' => 'boolean',
+        'cna' => 'boolean',
+        'ssa' => 'boolean',
+        'supervisar' => 'boolean',
+        'fecha_resultados_final' => 'boolean',
+        'parametro_campo' => 'boolean',
+        'incertidumbre' => 'boolean',
+    ];
+
     public function parametro ()
     {
         return $this->belongsTo(Parameter::class, 'id_parametro', 'id');
