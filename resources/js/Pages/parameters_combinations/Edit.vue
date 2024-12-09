@@ -2,6 +2,7 @@
     import { ref, computed, onMounted } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     const props = defineProps({
         parameterCombination: {
             type: Object
@@ -96,7 +97,10 @@
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-10/12 p-5 rounded-lg bg-gray-100">
-            <h1>Editar combinaciones de parametros </h1>
+            <CreateTitle
+                title="Editar combinacion parametro"
+                :own-link="route('parameters-combinations.edit', {parameters_combination: parameterCombination.id})"
+                :back-link="route('parameters-combinations.index')"/>
             <Vueform
                 :endpoint="false"
                 @submit="handleEditCombination"
@@ -191,7 +195,8 @@
                         ElementLayout: {
                             container: ['flex items-center']
                         }
-                    }">
+                    }"
+                    :default="parameterCombination.compuesto">
                     Compuesto
                 </CheckboxElement>
                 <CheckboxElement

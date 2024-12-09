@@ -113,13 +113,21 @@ class ParameterCombinationController extends Controller
             'abreviacion.required' => 'Ingrese la abreviacion',
             'arrange.required' => 'Ingrese el orden',
         ]);
+        $validatedData['compuesto'] = $request->input('compuesto');
+        $validatedData['subcontratado'] = $request->input('subcontratado');
+        $validatedData['ema'] = $request->input('ema');
+        $validatedData['cna'] = $request->input('cna');
+        $validatedData['ssa'] = $request->input('ssa');
+        $validatedData['supervisar'] = $request->input('supervisar');
+        $validatedData['fecha_resultado_final'] = $request->input('fecha_resultado_final');
+        $validatedData['parametro_campo'] = $request->input('parametro_campo');
+        $validatedData['incertidumbre'] = $request->input('incertidumbre');
         $parameter = Parameter::where('id', $validatedData['id_parametro'])->firstOrFail();
         $parameter->load('lcps');
         $lcpsArr = $parameter->lcps()->pluck('id')->toArray();
         if (!in_array($validatedData['id_lcp'], $lcpsArr)) {
             throw ValidationException::withMessages(['lcp' => 'El lcp ingresado no pertenece a ese parametro']);
         }
-       
         ParameterCombination::create($validatedData);
 
         return redirect()
@@ -214,6 +222,8 @@ class ParameterCombinationController extends Controller
             'id_lcp' => 'required|exists:lcps,id',
             'clasificacion' => 'required',
             'alias' => 'required',
+            'abreviacion' => 'required',
+            'arrange' => 'required',
         ], [
             'id_parametro.required' => 'Ingrese el parametro',
             'id_parametro.exists' => 'El parametro ingresado no existe',
@@ -225,7 +235,18 @@ class ParameterCombinationController extends Controller
             'id_lcp.exists' => 'El lcp ingresado no existe',
             'clasificacion.required' => 'Elija la clasificacion',
             'alias.required' => 'Ingrese el alias',
+            'abreviacion.required' => 'Ingrese la abreviacion',
+            'arrange.required' => 'Ingrese el orden',
         ]);
+        $validatedData['compuesto'] = $request->input('compuesto');
+        $validatedData['subcontratado'] = $request->input('subcontratado');
+        $validatedData['ema'] = $request->input('ema');
+        $validatedData['cna'] = $request->input('cna');
+        $validatedData['ssa'] = $request->input('ssa');
+        $validatedData['supervisar'] = $request->input('supervisar');
+        $validatedData['fecha_resultado_final'] = $request->input('fecha_resultado_final');
+        $validatedData['parametro_campo'] = $request->input('parametro_campo');
+        $validatedData['incertidumbre'] = $request->input('incertidumbre');
         $parameter = Parameter::where('id', $validatedData['id_parametro'])->firstOrFail();
         $parameter->load('lcps');
         $lcpsArr = $parameter->lcps()->pluck('id')->toArray();

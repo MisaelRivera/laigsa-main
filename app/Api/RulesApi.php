@@ -13,7 +13,7 @@
             if ($request->has('page')) {
                 $data['page'] = $request->query('page');
             }
-            $parametersCombinations = ParameterCombination::all()->map(function ($item) {
+            $parametersCombinations = ParameterCombination::where('obsoleto', 0)->get()->map(function ($item) {
                 return [
                     'label' => $item->alias,
                     'value' => $item->alias,

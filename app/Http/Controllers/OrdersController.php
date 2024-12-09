@@ -51,14 +51,16 @@ class OrdersController extends Controller
         $order = Order::create($order);
         $folio = $request->input('folio');
         $numero_muestras = $request->input('numero_muestras');
-
+        $order = Order::find($order->id);
         /*$order->v_libreta_resultados = 1;
         $order->save();*/
-        $route_name = 'samples.create';
+        $route_name = '';
         if ($order->aguas_alimentos === 'Aguas') {
-            $route_name .= '_water';
+            if ((int)$order->v_libreta_resultados)
+                $route_name .= 'water_samples.create_v2';
+            else $route_name .= 'water_samples.create';
         }
-        if ((int)$order->v_libreta_resultados)
+
         return redirect()
             ->route($route_name, [$folio, $numero_muestras, 1])
             ->with('message', 'Se ha creado una nuva orden correctamente. A continuacion cree las muestras de la orden');

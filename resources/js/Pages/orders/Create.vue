@@ -5,17 +5,43 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import { Notivue, Notification, push } from 'notivue';
     import axios from 'axios';
+    const form$ = ref(null);
     const props = defineProps({
         last_order: {
             required: true,
             type: Object,
         }
     });
-    let formState = useForm({});
+    let formState = useForm({
+        folio: null,
+        numero_cotizacion: null,
+        numero_muestras: null,
+        aguas_alimentos: null,
+        direccion_muestreo: null,
+        id_cliente: null,
+        fecha_recepcion: null,
+        hora_recepcion: null,
+        termometro: null,
+        temperatura: null,
+        observaciones: null,
+        cesavedac: false,
+        area_recepcion_muestras_limpia: false,
+    });
     const clientOptions = ref([]);
 
-    const handleSubmit = async(form$, FormData) => {
-        formState = useForm(...form$.requestData, {direccion_muestreo: null});
+    const handleSubmit = async() => {
+        formState.folio = form$.value.data.folio;
+        formState.numero_cotizacion = form$.value.data.numero_cotizacion;
+        formState.numero_muestras = form$.value.data.numero_muestras;
+        formState.aguas_alimentos = form$.value.data.aguas_alimentos;
+        formState.id_cliente = form$.value.data.id_cliente;
+        formState.fecha_recepcion = form$.value.data.fecha_recepcion;
+        formState.hora_recepcion = form$.value.data.hora_recepcion;
+        formState.termometro = form$.value.data.termometro;
+        formState.temperatura = form$.value.data.temperatura;
+        formState.observaciones = form$.value.data.observaciones;
+        formState.cesavedac = form$.value.data.cesavedac;
+        formState.area_recepcion_muestras_limpia = form$.value.data.area_recepcion_muestras_limpia;
         if (formState.id_cliente) {
             try {
                 const cliente = await axios.get(`/api/clients/${formState.id_cliente}`);
@@ -59,15 +85,17 @@
                     :columns="{ container:12, wrapper:12 }"
                     :scroll-to-invalid="false"
                     :endpoint="false"
+                    ref="form$"
                     @submit="handleSubmit">
                     <TextElement 
                         name="folio"
                         before="Folio"
-                        :columns="{ container: 3, wrapper:12 }">
-                        <template 
-                            #description
-                            v-if="formState.errors.folio">
-                            <p class="text-red-500">{{ formState.errors.folio }}</p>
+                        :columns="{ container: 3, wrapper:12 }"
+                        rules="required">
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.folio">{{ formState.errors.folio }}</p>
                         </template>
                     </TextElement>
                     <TextElement 
@@ -80,16 +108,17 @@
                         before="Número de muestras"
                         rules="required|numeric|min:0"
                         :columns="{ container: 3, wrapper:12 }">
-                        <template 
-                            #description
-                            v-if="formState.errors.numero_muestras">
-                            <p class="text-red-500">{{ formState.errors.numero_muestras }}</p>
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.numero_muestras">
+                                {{ formState.errors.numero_muestras }}
+                            </p>
                         </template>
                     </TextElement>
                     <SelectElement 
                         name="aguas_alimentos"
                         before="Aguas o alimentos"
-                        rules="required"
                         :items="[
                             {
                                 value: null,
@@ -105,10 +134,12 @@
                             }
                         ]"
                         :columns="{ container: 3, wrapper:12 }">
-                        <template 
-                            #description
-                            v-if="formState.errors.aguas_alimentos">
-                            <p class="text-red-500">{{ formState.errors.aguas_alimentos }}</p>
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.aguas_alimentos">
+                                {{ formState.errors.aguas_alimentos }}
+                            </p>
                         </template>
                     </SelectElement>
                     <SelectElement 
@@ -119,10 +150,12 @@
                         :search="true"
                         rules="required"
                         @search-change="handleClientSearch">
-                        <template 
-                            #description
-                            v-if="formState.errors.cliente">
-                            <p class="text-red-500">{{ formState.errors.cliente }}</p>
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.cliente">
+                                {{ formState.errors.cliente }}
+                            </p>
                         </template>
                     </SelectElement>
                     <DateElement 

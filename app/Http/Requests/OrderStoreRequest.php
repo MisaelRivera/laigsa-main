@@ -25,7 +25,6 @@ class OrderStoreRequest extends FormRequest
         return [
             'folio' => 'required|unique:ordenes,folio|integer',
             'numero_muestras' => 'required|integer|min:0|max:30',
-            'aguas_alimentos' => 'required|string',
             'id_cliente' => 'required|exists:clientes,id',
             'fecha_recepcion' => 'nullable|date',
             'hora_recepcion' => 'nullable',
@@ -43,7 +42,13 @@ class OrderStoreRequest extends FormRequest
     {
         return [
             'folio.unique' => 'El folio ingresado ya existe',
-            'folio.required' => 'Ingrese el folio'
+            'folio.required' => 'Ingrese el folio',
+            'numero_muestras.required' => 'Ingrese el numero de muestras',
+            'numeros_muestras.integer' => 'El numero de muestras debe ser un numero entero',
+            'numeros_muestras.min' => 'El minimo de muestras es 0',
+            'numeros_muestras.max' => 'El maximo de muestras es 30',
+            'aguas_alimentos.required' => 'Elija el tipo de orden',
+            'aguas_alimentos.in' => 'El tipo de muestra de la orden debe de ser aguas o alimentos'
         ];
     }
 }

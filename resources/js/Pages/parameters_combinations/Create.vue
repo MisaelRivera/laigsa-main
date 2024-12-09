@@ -3,6 +3,7 @@
     import { useForm } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+    import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     const props = defineProps({
         parameters: {
             type: Array
@@ -83,8 +84,11 @@
 <template>
     <AuthenticatedLayout>
         <div class="mx-auto w-10/12 p-5 rounded-lg bg-gray-100">
-            <h1>Crear combinaciones de parametros </h1>
-                <Vueform
+            <CreateTitle
+                title="Crear combinaciones de parametros"
+                :own-link="route('parameters-combinations.create')"
+                :back-link="route('parameters-combinations.index')"/>
+            <Vueform
                 :endpoint="false"
                 @submit="handleCreateCombination"
                 :columns="{ container: 12, wrapper: 12 }"
@@ -123,7 +127,7 @@
                 <SelectElement 
                     name="id_unidad"
                     :items="units"
-                     :search="true"
+                    :search="true"
                     before="Unidad"
                     :columns="{ container: 6, wrapper: 12 }">
                     <template #description>
