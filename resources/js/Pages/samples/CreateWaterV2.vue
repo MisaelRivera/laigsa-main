@@ -9,7 +9,7 @@
         order: Object,
         numeroMuestras: Number,
         inicioMuestras: Number,
-        parametersProp: Array,
+        rules: Array,
         errors: Object,
     });
     const tabsContainer = ref(null);
@@ -33,8 +33,6 @@
         { value: 'Compuesto_6', label: 'Compuesto 6' },
         'N/A'
     ];
-
-    const params = props.order.v_libreta_resultados ? props.parametersProp.map(parameter => parameter.parametro):oldParams;
 
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
@@ -380,6 +378,7 @@
                                 :items="oldParams"
                                 :name="`parametros_${i}`"
                                 :columns="{ container:12, wrapper:12 }"
+                                before="Parametros"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
                             <TextareaElement 
                                 :name="`otros_${i}`"
@@ -392,6 +391,14 @@
                                     <div class="text-sm">{{ `Otros ${i}` }}</div>
                                 </template>
                             </TextareaElement>
+                            <SelectElement
+                                :items="rules"
+                                v-for="i in createRange(inicioMuestras, numeroMuestras)"
+                                :key="i"
+                                before="Norma"
+                                :name="`norma_${i}`"
+                                :columns="{container: 12, wrapper: 12}">
+                            </SelectElement>
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"

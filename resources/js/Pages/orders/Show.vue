@@ -42,7 +42,12 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
     });
 
     const handleAddSubmit = () => {
-        const url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+        let url = '';
+        if (props.order.v_libreta_resultados) {
+            url = `/water_samples/create/v2/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+        } else {
+            url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+        }
         router.visit(url);
     }; 
     const handlePreservationSubmit = (form$, FormData) => {

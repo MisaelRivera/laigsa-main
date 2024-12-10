@@ -40,8 +40,14 @@ class WaterSamplesController extends Controller
         ];
       
         if ($order->aguas_alimentos === 'Aguas') {
-            $data['parametersProp'] = Rule::where('aguas', 1)
-                ->get();
+            $data['rules'] = Rule::where('aguas', 1)
+                ->get()
+                ->map(function ($rule) {
+                    return [
+                        'value' => $rule->id,
+                        'label' => $rule->norma
+                    ];
+                });
             return Inertia::render('samples/CreateWaterV2', $data);
         } else {
 
