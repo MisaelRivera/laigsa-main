@@ -16,6 +16,11 @@ class RuleParameterCombinationWater extends Model
         return $this->belongsTo(Rule::class, 'id_norma', 'id');
     }
 
+    public function combinacionParametro ()
+    {
+        return $this->hasOne(ParameterCombination::class, 'id', 'id_combinacion_parametro');
+    }
+
     public function parametro ()
     {
         return $this->hasOneThrough(Parameter::class, ParameterCombination::class, 'id', 'id', 'id_combinacion_parametro', 'id_parametro');

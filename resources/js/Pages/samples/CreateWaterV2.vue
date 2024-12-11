@@ -1,6 +1,7 @@
 <script setup>
     import { ref, onMounted } from 'vue';
     import { router, usePage, useForm } from '@inertiajs/vue3';
+    import axios from 'axios';
     import { createRange } from '@/helpers/time_helper.js';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
@@ -12,11 +13,17 @@
         rules: Array,
         errors: Object,
     });
+    const selectedParams = ref([]);
     const tabsContainer = ref(null);
     onMounted(() => {
       // Add the class to the FormTabs container
       tabsContainer.value.$el.classList.add('overflow-x-scroll');
+      createRange(props.inicioMuestras, props.numeroMuestras).forEach((number) => {
+        selectedParams.value.push([]);
+      });
     });
+    const form$ = ref(null);
+    console.log(selectedParams.value);
     const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
         return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
     });
@@ -38,6 +45,14 @@
         const vueFormData = form$.requestData;
         router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
     };
+
+    const handleRuleSelect = async(newValue, oldValue, el$) => {
+        const len = el$.name.split('_').length;
+        const number = el$.name.split('_')[len - 1];
+        const res = await axios.get(`/water_samples/v2/get_rule_params/${newValue}`);
+        selectedParams.value.splice(number - 1, 1, res.data);
+        console.log(selectedParams.value);
+    };
 </script>
 
 <template>
@@ -54,6 +69,7 @@
             </p>
             <Vueform
                 :endpoint="false"
+                ref="form$"
                 @submit="handleSubmit"
                 :columns="{ container: 12, wrapper: 12 }"
                 :scroll-to-invalid="false"
@@ -92,9 +108,9 @@
                                 `flujo_6_${i}`,
                                 `parametros_${i}`,
                                 `otros_${i}`,
+                                `norma_${i}`,
+                                `parametros_seleccionados_${i}`,
                                 `preservacion_correcta_${i}`,
-                                `offset_${i}`,
-                                `offset2_${i}`,
                                 'create_water_samples'
                             ]"
                             v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
@@ -397,8 +413,14 @@
                                 :key="i"
                                 before="Norma"
                                 :name="`norma_${i}`"
-                                :columns="{container: 12, wrapper: 12}">
+                                :columns="{container: 12, wrapper: 12}"
+                                @change="handleRuleSelect">
                             </SelectElement>
+                            <TagsElement
+                                :name="`parametros_seleccionados_${i}`"
+                                v-for="i in createRange(inicioMuestras, numeroMuestras)"
+                                :native="false"
+                                v-model="selectedParams[i]"/>
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"

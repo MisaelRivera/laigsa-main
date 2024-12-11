@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\Rule;
+use App\Models\RuleParameterCombinationWater;
 use Illuminate\Support\Facades\Validator;
 
 class WaterSamplesController extends Controller
@@ -52,6 +53,20 @@ class WaterSamplesController extends Controller
         } else {
 
         }
+    }
+
+    public function getRuleParams ($ruleId)
+    {
+        $params = RuleParameterCombinationWater::with(['combinacionParametro', 'parametro', 'metodo', 'unidad'])
+            ->where('id_norma', $ruleId)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'value' => $item->combinacionParametro->id,
+                    'label' => $item->combinacionParametro->alias,
+                ];
+            });
+        return response()->json($params);
     }
 
     public function store (Request $request)

@@ -119,6 +119,7 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.store_v2');
             Route::delete('/v2/{waterSample}', 'destroyV2')
                 ->name('water_samples.destroy_v2');
+            Route::get('/v2/get_rule_params/{ruleId}', 'getRuleParams');
         });
     });
 
