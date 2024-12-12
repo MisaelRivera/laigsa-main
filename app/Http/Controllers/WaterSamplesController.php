@@ -74,9 +74,9 @@ class WaterSamplesController extends Controller
         $inicio_muestras = $request->query('inicio_muestras');
         $numero_muestras = $request->query('numero_muestras');
         $idOrden = $request->query('id_orden');
-        $orden = Order::fing($idOrden);
+        $orden = Order::find($idOrden);
         $samples = [];
-        for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
+        for ($i = $inicio_muestras; $i < $inicio_muestras + $numero_muestras; $i++) {
     
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();

@@ -4,6 +4,8 @@
     import { createRange } from '@/helpers/time_helper.js';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
+    import { Validator } from '@vueform/vueform';
+
 
     const props = defineProps({
         order: Object,
@@ -36,8 +38,22 @@
 
     const params = props.order.v_libreta_resultados ? parametersProp.map(parameter => parameter.parametro):oldParams;
 
+    const phRange = class extends Validator {
+        get msg() {
+            return 'El valor debe estar entre 9.3 y 9.7';
+        }
+
+        check(value) {
+            if (value.match(/[0-9]/)) {
+                return parseFloat(value) > 9.299 && parseFloat(value) < 9.71
+            }
+            return true;
+        }
+    }
+
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
+        console.log(vueFormData);
         router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
     };
 </script>
@@ -68,7 +84,7 @@
                      ref="tabsContainer">
                         <FormTab
                             :name="`muestra_${i}`"
-                            :label="`Muestra ${order.folio} - ${i}`"
+                            :label="`MFQ-${order.folio} - ${i}`"
                             :elements="[
                                 `tipo_muestra_${i}`, 
                                 `id_identificacion_muestra_${i}`,
@@ -99,6 +115,9 @@
                                 `offset2_${i}`,
                                 'create_water_samples'
                             ]"
+                            :add-class="{
+                                wrapper_active: ['border-b-4', 'bg-red-100'],
+                            }"
                             v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
                     </FormTabs>
                     <FormElements>
@@ -186,6 +205,7 @@
                                     [`cloro_${i}`, ['Presente', 'Ausente']],
                                     [`tipo_muestreo_${i}`, 'Simple']
                                 ]"
+                                default="N/A"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">
                                 <template #before>
                                     <div class="text-sm">{{ `Valor del cloro ${i}` }}</div>
@@ -193,7 +213,9 @@
                             </TextElement>
                             <TextElement 
                                 :name="`ph_cromo_hexavalente_${i}`"
+                                :rules="[phRange]"
                                 :columns="{ container:2, wrapper:12 }"
+                                default="N/A"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">
                                 <template #before>
                                     <div class="text-sm">{{ `pH Cr VI ${i}` }}</div>

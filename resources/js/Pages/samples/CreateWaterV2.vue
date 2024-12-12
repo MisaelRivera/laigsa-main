@@ -52,6 +52,8 @@
         const res = await axios.get(`/water_samples/v2/get_rule_params/${newValue}`);
         selectedParams.value.splice(number - 1, 1, res.data);
         console.log(selectedParams.value);
+        const parametrosSeleccionados = form$.value.el$(`parametros_seleccionados_${number}`);
+        parametrosSeleccionados.select(res.data); 
     };
 </script>
 
@@ -200,6 +202,7 @@
                                     [`cloro_${i}`, ['Presente', 'Ausente']],
                                     [`tipo_muestreo_${i}`, 'Simple']
                                 ]"
+                                default="N/A"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)">
                                 <template #before>
                                     <div class="text-sm">{{ `Valor del cloro ${i}` }}</div>
@@ -420,7 +423,7 @@
                                 :name="`parametros_seleccionados_${i}`"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"
                                 :native="false"
-                                v-model="selectedParams[i]"/>
+                                :items="selectedParams[i]"/>
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"

@@ -21,8 +21,10 @@
             },
             filters: Object
         }
-    );    
-
+    );
+    
+    const clientFilter = ref(null);
+    const folioFilter = ref(null);
     const filters = reactive({
         client: '',
         folio: '',
@@ -34,6 +36,24 @@
         router.visit(route('orders.index', { byOrder: encodeURIComponent(value) }), {
             preserveState: true,
             method: 'get'
+        });
+    };
+
+    const handleClientFilter = (ev) => {
+        const value = ev.target.value;
+        const folioVal = folioFilter.value.value;
+        router.visit(route('orders.index', { cliente: encodeURIComponent(value), folio: encodeURIComponent(folioVal) }), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
+    const handleFolioFilter = (ev) => {
+        const value = ev.target.value;
+        const clientVal = clientFilter.value.value;
+        router.visit(route('orders.index', { folio: encodeURIComponent(value), cliente: encodeURIComponent(clientVal) }), {
+            preserveState: true,
+            method: 'get',
         });
     };
 
@@ -92,6 +112,13 @@
                             scope="col" 
                             class="px-2 py-3 w-[3%]">
                             Folio
+                            <input 
+                                type="text"
+                                id="busqueda"
+                                name="busqueda"
+                                ref="folioFilter"
+                                class="h-8 w-20 rounded border px-3"
+                                @input="handleFolioFilter">
                         </th>
                         <th scope="col" class="px-2 py-3 w-[1%]">No.</th>
                         <th scope="col" class="px-2 py-3 w-[1%]">
@@ -104,6 +131,13 @@
                             <th scope="col" class="px-2 py-3 w-[5%]">Hora de recepcion</th>
                             <th scope="col" class="px-2 py-3">
                                 Cliente
+                                <input 
+                                    type="text"
+                                    id="busqueda"
+                                    name="busqueda"
+                                    ref="clientFilter"
+                                    class="h-8 w-40 rounded border px-3"
+                                    @input="handleClientFilter">
                             </th>
                             <th scope="col" class="px-2 py-3 w-[1%]">
                                 Cesavedac
