@@ -78,22 +78,15 @@
                 
                 <Pagination 
                     :links="ordersProp.links"/>
-                <div 
-                    class="flex items-center">
-                   <IndexFilter 
-                    :filters="[
-                        {
-                            value: 'folio',
-                            label: 'Folio'
-                        },
-                        {
-                            value: 'cliente',
-                            label: 'Cliente'
-                        },
-                    ]"
-                    route="orders.index"/>
+                <div class="flex">
+                    <label for="muestreador_filter">Muestreador</label>
+                    <input 
+                        type="text"
+                        id="muestreador-filter"
+                        class="border rounded-md py-1 w-20">
                 </div>
             </div>
+            
             <!--<Alert 
                 :message="usePageCons.props.flash.error"
                 v-if="usePageCons.props.flash.error"

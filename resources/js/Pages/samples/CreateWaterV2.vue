@@ -23,7 +23,7 @@
       });
     });
     const form$ = ref(null);
-    console.log(selectedParams.value);
+    
     const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
         return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
     });
@@ -51,10 +51,15 @@
         const number = el$.name.split('_')[len - 1];
         const res = await axios.get(`/water_samples/v2/get_rule_params/${newValue}`);
         selectedParams.value.splice(number - 1, 1, res.data);
-        console.log(selectedParams.value);
+        const values = selectedParams.value[number - 1].map((value) => {
+            return value.value;
+        });
+
         const parametrosSeleccionados = form$.value.el$(`parametros_seleccionados_${number}`);
-        parametrosSeleccionados.select(res.data); 
+        parametrosSeleccionados.select(values);
+
     };
+
 </script>
 
 <template>
@@ -412,18 +417,16 @@
                             </TextareaElement>
                             <SelectElement
                                 :items="rules"
-                                v-for="i in createRange(inicioMuestras, numeroMuestras)"
-                                :key="i"
-                                before="Norma"
                                 :name="`norma_${i}`"
-                                :columns="{container: 12, wrapper: 12}"
-                                @change="handleRuleSelect">
-                            </SelectElement>
+                                @change="handleRuleSelect"
+                                :columns="{ container:12, wrapper:12 }"
+                                before="Normas"
+                                v-for="i in createRange(inicioMuestras, numeroMuestras)"/>
                             <TagsElement
                                 :name="`parametros_seleccionados_${i}`"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"
                                 :native="false"
-                                :items="selectedParams[i]"/>
+                                :items="selectedParams[i - 1]"/>
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"
