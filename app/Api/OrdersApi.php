@@ -23,6 +23,7 @@
             )
             ->paginate(40)
             ->withQueryString();
+
             foreach ($orders as $order) {
                 if ($order->aguas_alimentos === 'Aguas') {
                     $order->muestras = WaterSample::rightJoin('identificacion_muestras', 'identificacion_muestras.id', '=', 'muestras_aguas.id_identificacion_muestra')
@@ -34,6 +35,19 @@
                         ->get();
                 }
             }
+            if(isset($filters['muestreador'])) {
+                $userInput = $filters['muestreador'];
+                $orders = $orders->filter(function ($order) use ($userInput) {
+                    if (count($order->muestras) > 0) {
+                        return $order->muestras->contains(function ($muestra) use ($userInput) {
+                            return stripos($muestra->muestreador, $userInput) !== false; 
+                        });
+                    }
+                    return false;
+                });
+            }
+            var_dump($orders);
+            die();
             return $orders;
         }
     }

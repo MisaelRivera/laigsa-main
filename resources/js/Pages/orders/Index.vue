@@ -25,6 +25,10 @@
     
     const clientFilter = ref(null);
     const folioFilter = ref(null);
+    const muestreadorFilter = ref(null);
+    const cesavedacFilter = ref(null);
+    const supervisionFilter = ref(null);
+    const siralabFilter = ref(null);
     const filters = reactive({
         client: '',
         folio: '',
@@ -57,6 +61,16 @@
         });
     };
 
+    const handleMuestreadorFilter = (ev) => {
+        const folioVal = folioFilter.value.value;
+        const clientVal = clientFilter.value.value;
+        const value = ev.target.value;
+        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(value)}), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
     if (getMessage()) {
         push.success(getMessage());
     }
@@ -78,12 +92,54 @@
                 
                 <Pagination 
                     :links="ordersProp.links"/>
-                <div class="flex">
-                    <label for="muestreador_filter">Muestreador</label>
-                    <input 
-                        type="text"
-                        id="muestreador-filter"
-                        class="border rounded-md py-1 w-20">
+                <div class="flex items-center">
+                    <div>
+                        <label 
+                            for="muestreador_filter" 
+                            class="text-xs">Muestreador</label>
+                        <input 
+                            type="text"
+                            id="muestreador-filter"
+                            ref="muestreadorFilter"
+                            @input="handleMuestreadorFilter"
+                            class="border rounded-md w-20">
+                    </div>
+                    <div class="flex items-center ml-2">
+                        <label 
+                            for="cesavedac"
+                            class="text-xs">
+                            Cesavedac
+                        </label>
+                        <input 
+                            type="checkbox"
+                            name="cesavedac"
+                            ref="cesavedacFilter"
+                            class="border p-2 rounded">
+                    </div>
+                    <div class="flex items-center ml-2">
+                        <label 
+                            for="supervision"
+                            class="text-xs">
+                            Supervision
+                        </label>
+                        <input 
+                            type="checkbox"
+                            name="supervision"
+                            ref="supervisionFilter"
+                            class="border p-2 rounded">
+                    </div>
+                    <div class="flex items-center ml-2">
+                        <label 
+                            for="siralab"
+                            class="text-xs">
+                            Siralab
+                        </label>
+                        <input 
+                            type="checkbox"
+                            name="siralab"
+                            ref="siralabFilter"
+                            class="border p-2 rounded">
+                    </div>
                 </div>
             </div>
             
