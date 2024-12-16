@@ -46,7 +46,8 @@
     const handleClientFilter = (ev) => {
         const value = ev.target.value;
         const folioVal = folioFilter.value.value;
-        router.visit(route('orders.index', { cliente: encodeURIComponent(value), folio: encodeURIComponent(folioVal) }), {
+        const muestreadorVal = muestreadorFilter.value.value;
+        router.visit(route('orders.index', { cliente: encodeURIComponent(value), folio: encodeURIComponent(folioVal), muestreador: encodeURIComponent(muestreadorVal) }), {
             preserveState: true,
             method: 'get',
         });
@@ -55,7 +56,8 @@
     const handleFolioFilter = (ev) => {
         const value = ev.target.value;
         const clientVal = clientFilter.value.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(value), cliente: encodeURIComponent(clientVal) }), {
+        const muestreadorVal = muestreadorFilter.value.value;
+        router.visit(route('orders.index', { folio: encodeURIComponent(value), cliente: encodeURIComponent(clientVal), muestreador: encodeURIComponent(muestreadorVal) }), {
             preserveState: true,
             method: 'get',
         });
@@ -243,7 +245,7 @@
                                             </li>
                                             <li class="px-3 py-1 max-w-full">
                                                <span class="font-black">Identificacion de la muestra:</span>
-                                               {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:muestra.identificacion_muestra_relacion.identificacion_muestra }} 
+                                               {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:order.identificacion_muestra }} 
                                             </li>
                                             <li class="px-3 py-1 max-w-full">
                                                 <span class="font-black">Caracteriticas: </span>
