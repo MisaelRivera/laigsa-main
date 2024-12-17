@@ -245,7 +245,7 @@
                                             </li>
                                             <li class="px-3 py-1 max-w-full">
                                                <span class="font-black">Identificacion de la muestra:</span>
-                                               {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:order.identificacion_muestra }} 
+                                               {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:muestra.identificacion_muestra_relacion.identificacion_muestra }} 
                                             </li>
                                             <li class="px-3 py-1 max-w-full">
                                                 <span class="font-black">Caracteriticas: </span>
@@ -301,7 +301,7 @@
                             {{ order.hora_recepcion ? order.hora_recepcion.substr(0, 5):'---' }}
                         </td>
                         <td class="px-2 py-3 text-xs">
-                            {{ order.cliente }}
+                            {{ order.cliente.cliente }}
                         </td>
                         <td class="px-2 py-3">
                             <CircleSwitch
@@ -321,24 +321,24 @@
                         </td>
                         <td class="px-2 py-3">
                             <CircleSwitch
-                                v-if="order.siralab_id"
-                                :value="order.hoja_campo"
+                                v-if="order.siralab"
+                                :value="order.siralab.hoja_campo"
                                 :key="order.id"
                                 url="/orders/toggle-hoja-campo"
                                 :orderId="order.id"/>
                         </td>
                         <td class="px-2 py-3">
                             <CircleSwitch
-                                v-if="order.siralab_id"
-                                :value="order.cadena_custodia"
+                                v-if="order.siralab"
+                                :value="order.siralab.cadena_custodia"
                                 :key="order.id"
                                 url="/orders/toggle-cadena-custodia"
                                 :orderId="order.id"/>
                         </td>
                         <td class="px-2 py-3">
                             <CircleSwitch
-                                v-if="order.siralab_id"
-                                :value="order.croquis"
+                                v-if="order.siralab"
+                                :value="order.siralab.croquis"
                                 :key="order.id"
                                 url="/orders/toggle-croquis"
                                 :orderId="order.id"/>
