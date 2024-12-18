@@ -67,6 +67,8 @@ Route::controller(PagesController::class)->group(function () {
 Route::middleware('auth')->group(function () {
     Route::prefix('/clientes')->group(function () {
         Route::get('/', [ClientsController::class, 'index'])->name('clients.index');
+        Route::get('/create', [ClientsController::class, 'create'])->name('clients.create');
+        Route::get('/{client}/edit', [ClientsController::class, 'edit'])->name('clients.edit');
         Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
     });
     Route::controller(UserController::class)->group(function () {
