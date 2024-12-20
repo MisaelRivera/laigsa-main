@@ -19,6 +19,11 @@ class ClientsController extends Controller
         return Inertia::render('clients/Index', $data);
     }
 
+    public function create()
+    {
+        return Inertia::render('clients/Create');
+    }
+
     public function clientsByName ()
     {
         try {
