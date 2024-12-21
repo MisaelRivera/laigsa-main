@@ -24,6 +24,29 @@ class ClientsController extends Controller
         return Inertia::render('clients/Create');
     }
 
+    public function store (Request $request)
+    {
+       $client =  $request->validate([
+            'cliente' => 'required|unique:clientes,cliente,except,id',
+            'direccion_muestreo' => 'nullable',
+            'direccion_fiscal' => 'nullable',
+            'observaciones' => 'nullable',
+            'observaciones_analistas' => 'nullable',
+            'encargado' => 'nullable',
+            'telefono' => 'nullable',
+            'correo_electronico' => 'nullable',
+            'cuarto_transitorio' => 'boolean',
+        ], [
+            'cliente.required' => 'Ingrese el cliente',
+            'cliente.unique' => 'El cliente ingresado ya existe'
+        ]);
+
+        $newClient = Client::create($client);
+        return redirect()
+            ->route('clients.index')
+            ->with('message', "Se ha creado el cliente $newClient->cliente correctamente!");
+    }
+
     public function clientsByName ()
     {
         try {
@@ -41,5 +64,13 @@ class ClientsController extends Controller
             Log::error('Error in clientsByName: ' . $e->getMessage());
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
+    }
+
+    public function setCesavedac (Client $client, $cesavedac)
+    {
+        $client->cesavedac = filter_var($cesavedac, FILTER_VALIDATE_BOOLEAN);;
+        $client->save();
+        return redirect()
+            ->route('clients.index');
     }
 }

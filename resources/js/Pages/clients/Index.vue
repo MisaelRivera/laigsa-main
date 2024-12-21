@@ -1,19 +1,50 @@
 <script setup>
+    import { ref } from 'vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    import { Link } from '@inertiajs/vue3';
+    import { Link, router } from '@inertiajs/vue3';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
+    import { Notivue, Notification, push } from 'notivue';
+    import { useMessages } from '@/composables/messages';
+    import MyModal from '@/Components/Shared/MyModal.vue';
+    const { getMessage } = useMessages();
      const props = defineProps({
         clients: Object,
      });
-     const handleChange = (ev) => {
+
+     if (getMessage()) {
+        push.success(getMessage());
+     }
+
+     const isVisibleEditCesavedac = ref(false);
+     const editCesavedacClient = ref(null);
+     const cesavedacValue = ref(false);
+
+     const handleCloseUpdateCesavedacModal = () => {
+        editCesavedacClient.value = null;
+        isVisibleEditCesavedac.value = false;
+     };
+
+     const handleOpenUpdateCesavedacModal = (ev, client) => {
         const value = ev.target.checked;
-        const label = ev.target.previousElementSibling;
-        if (value) {
+        editCesavedacClient.value = client;
+        isVisibleEditCesavedac.value = true;
+        cesavedacValue.value = value;
+     };
+
+     const handleChange = (ev) => {
+        if (cesavedacValue.value) {
             label.classList.add('bg-emerald-400');
+            label.classList.remove('bg-white');
         } else {
+            label.classList.add('bg-white');
             label.classList.remove('bg-emerald-400');
         }
+        router.put(`/clientes/${editCesavedacClient.value.id}/${cesavedacValue.value}/set-cesavedac`, {}, {
+            onSuccess: () => {
+                push.success(`Se ha editado el valor de cesavedac del cliente ${editCesavedacClient.value.cliente}`);
+            },
+        });
      };
 </script>
 <template>
@@ -90,15 +121,15 @@
                         <td class="px-3 py-2">
                             <label
                                 :for="`cesavedac-checkbox-${client.id}`"
-                                class="border h-4 w-4 rounded-sm flex justify-center items-center bg-white"
-                                :class="{'bg-emerald-400': client.cesavedac}">
+                                class="border h-4 w-4 rounded-sm flex justify-center items-center"
+                                :class="{'bg-emerald-400': client.cesavedac, 'bg-white': !client.cesavedac}">
                                 <i class="fas fa-check text-[8px] text-white"></i>
                             </label>
                             <input 
                                 type="checkbox"
                                 class="hidden"
                                 :id="`cesavedac-checkbox-${client.id}`"
-                                @change="handleChange"
+                                @change="(ev) => handleOpenUpdateCesavedacModal(ev, client)"
                                 :checked="client.cesavedac">
                         </td>
                         <td class="px-3 py-2">
@@ -128,7 +159,24 @@
                     </tr>
                 </tbody>
             </table>
-        </div>    
+        </div>
+        <Notivue v-slot="item">
+            <Notification
+                :item="item"/>
+        </Notivue>
+        <MyModal
+            title="Editar cesavedac"
+            :cancel-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :ok-button-props="{
+                class: ['bg-green-500', 'text-white']
+            }"
+            v-model="isVisibleEditCesavedac"
+            @close-from="handleCloseUpdateCesavedacModal"
+            @ok="handleChange">
+            
+        </MyModal>
     </AuthenticatedLayout>
 </template>
 <style>
