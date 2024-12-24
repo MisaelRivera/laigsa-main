@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Client;
+use App\Api\ClientApi;
 use Inertia\Inertia;
 
 class ClientsController extends Controller
 {
     public function index (Request $request)
     {
-       
+       $filters = $request->all();
         $data = [
-            'clients' => Client::orderBy('cliente')
-                ->paginate(10)
-            ];
+            'clients' => ClientApi::getIndexClients($filters)
+        ];
         return Inertia::render('clients/Index', $data);
     }
 
@@ -70,7 +70,6 @@ class ClientsController extends Controller
     {
         $client->cesavedac = filter_var($cesavedac, FILTER_VALIDATE_BOOLEAN);;
         $client->save();
-        return redirect()
-            ->route('clients.index');
+        return response(200);
     }
 }

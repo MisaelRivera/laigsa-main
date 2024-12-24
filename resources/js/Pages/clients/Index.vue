@@ -1,5 +1,6 @@
 <script setup>
     import { ref } from 'vue';
+    import axios from 'axios';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import { Link, router } from '@inertiajs/vue3';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
@@ -19,20 +20,27 @@
      const isVisibleEditCesavedac = ref(false);
      const editCesavedacClient = ref(null);
      const cesavedacValue = ref(false);
+     let label = null;
 
      const handleCloseUpdateCesavedacModal = () => {
         editCesavedacClient.value = null;
         isVisibleEditCesavedac.value = false;
+        label = null;
      };
 
      const handleOpenUpdateCesavedacModal = (ev, client) => {
         const value = ev.target.checked;
+        const input = ev.target;
+        const parent = input.parentElement;
+        label = parent.children[0];
+        console.log(parent.children);                                                                                                                                              
         editCesavedacClient.value = client;
         isVisibleEditCesavedac.value = true;
         cesavedacValue.value = value;
      };
 
-     const handleChange = (ev) => {
+     const handleChange = async(ev) => {
+        
         if (cesavedacValue.value) {
             label.classList.add('bg-emerald-400');
             label.classList.remove('bg-white');
@@ -40,11 +48,9 @@
             label.classList.add('bg-white');
             label.classList.remove('bg-emerald-400');
         }
-        router.put(`/clientes/${editCesavedacClient.value.id}/${cesavedacValue.value}/set-cesavedac`, {}, {
-            onSuccess: () => {
-                push.success(`Se ha editado el valor de cesavedac del cliente ${editCesavedacClient.value.cliente}`);
-            },
-        });
+        const res = await axios.put(`/clientes/${editCesavedacClient.value.id}/${cesavedacValue.value}/set-cesavedac`);
+        push.success(`Se ha editado el valor de cesavedac del cliente ${editCesavedacClient.value.cliente}`);
+        handleCloseUpdateCesavedacModal();
      };
 </script>
 <template>
@@ -175,7 +181,7 @@
             v-model="isVisibleEditCesavedac"
             @close-from="handleCloseUpdateCesavedacModal"
             @ok="handleChange">
-            
+            <p>Seguro que deseas eliminar el cliente {{ editCesavedacClient.cliente }}?</p>
         </MyModal>
     </AuthenticatedLayout>
 </template>
