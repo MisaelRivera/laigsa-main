@@ -31,6 +31,29 @@ class WaterSamplesController extends Controller
         }
     }
 
+    public function editAllWater ($folio, $aguas_alimentos) 
+    {
+        $order = null;
+        
+        if ($aguas_alimentos === 'Aguas') {
+            $order = Order::with(['cliente.identificaciones_muestra', 'muestras_aguas'])->where('folio', $folio)->first();
+        } else {
+            $order = Order::with(['muestras_alimentos'])->where('folio', $folio)->first();
+        }
+        
+        $data = [
+            'order' => $order,
+        ];
+      
+        if ($order->aguas_alimentos === 'Aguas') {
+            $data['parametersProp'] = Rule::where('aguas', 1)
+                ->get();
+            return Inertia::render('samples/EditAllWater', $data);
+        } else {
+
+        }
+    }
+
     public function createV2 ($folio, $numero_muestras, $inicio_muestras)
     {
         $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();

@@ -115,6 +115,8 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.create');
             Route::post('/', 'store')
                 ->name('water_samples.store');
+            Route::get('/editAll/{folio}/{aguas_alimentos}', 'editAllWater')
+                ->name('water_samples.edit_all');
             Route::delete('/{waterSample}', 'destroy')
                 ->name('water_samples.destroy');
                 Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')

@@ -271,7 +271,11 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
                         v-for="(sample, index) in order.muestras"
                         :key="index">
                         <div class="grid grid-cols-2">
-                            <p class="bg-slate-500 font-bold py-1.5 px-2">Folio</p>
+                            <p class="bg-slate-500 font-bold py-1.5 px-2">
+                                Folio
+                                <EditLink 
+                                    :url="`/water_samples/editAll/${order.folio}/${order.aguas_alimentos}`"/>
+                            </p>
                             <p class="bg-slate-500 py-1.5 px-2 flex justify-between">
                                 MFQ-{{ order.folio }} - {{ sample.numero_muestra }}
                                 <DeleteButton
