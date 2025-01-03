@@ -14,40 +14,41 @@
     });
 
     const form = reactive({});
-
+    const form$ = ref(null);
     const tabsContainer = ref(null);
     onMounted(() => {
       // Add the class to the FormTabs container
         tabsContainer.value.$el.classList.add('overflow-x-scroll');
         for (let i = 0; i < props.order.muestras_aguas.length; i++) {
-            form[`tipo_muestra_${i}`] = props.order.muestras_aguas[i].tipo_muestra;
-            form[`id_identificacion_muestra_${i}`] = props.order.muestras_aguas[i];
-            form[`caracteristicas_${i}`],
-            form[`muestreador_${i}`],
-            form[`ph_${i}`],
-            form[`tratada_biologicamente_${i}`],
-            form[`cloro_${i}`],
-            form[`valor_cloro_${i}`],
-            form[`ph_cromo_hexavalente_${i}`],
-            form[`tipo_muestreo_${i}`],
-            form[`fecha_muestreo_${i}`],
-            form[`hora_muestreo_${i}`],
-            form[`fecha_final_muestreo_${i}`],
-            form[`hora_final_muestreo_${i}`],
-            form[`fecha_composicion_${i}`],
-            form[`hora_composicion_${i}`],
-            form[`flujo_1_${i}`],
-            form[`flujo_2_${i}`],
-            form[`flujo_3_${i}`],
-            form[`flujo_4_${i}`],
-            form[`flujo_5_${i}`],
-            form[`flujo_6_${i}`],
-            form[`parametros_${i}`],
-            form[`otros_${i}`],
-            form[`preservacion_correcta_${i}`],
-            form[`offset_${i}`],
-            form[`offset2_${i}`],
+            const muestra = props.order.muestras_aguas[i];
+            form[`tipo_muestra_${i}`] = muestra.tipo_muestra;
+            form[`id_identificacion_muestra_${i}`] = muestra.id_identificacion_muestra;
+            form[`caracteristicas_${i}`] = muestra.caracteristicas;
+            form[`muestreador_${i}`] = muestra.muestreador;
+            form[`ph_${i}`] = muestra.ph;
+            form[`tratada_biologicamente_${i}`] = muestra.ph;
+            form[`cloro_${i}`] = muestra.cloro;
+            form[`valor_cloro_${i}`] = muestra.valor_cloro;
+            form[`ph_cromo_hexavalente_${i}`] = muestra.ph_cromo_hexavalente;
+            form[`tipo_muestreo_${i}`] = muestra.tipo_muestreo;
+            form[`fecha_muestreo_${i}`] = muestra.fecha_muestreo;
+            form[`hora_muestreo_${i}`] = muestra.hora_muestreo;
+            form[`fecha_final_muestreo_${i}`] = muestra.fecha_final_muestreo ?? 'N/A';
+            form[`hora_final_muestreo_${i}`] = muestra.hora_final_muestreo ?? 'N/A';
+            form[`fecha_composicion_${i}`] = muestra.fecha_composicion ?? 'N/A';
+            form[`hora_composicion_${i}`] = muestra.hora_composicion ?? 'N/A';
+            form[`flujo_1_${i}`] = muestra.flujo_1 ?? 'N/A';
+            form[`flujo_2_${i}`] = muestra.flujo_2 ?? 'N/A';
+            form[`flujo_3_${i}`] = muestra.flujo_3 ?? 'N/A';
+            form[`flujo_4_${i}`] = muestra.flujo_4 ?? 'N/A';
+            form[`flujo_5_${i}`] = muestra.flujo_5 ?? 'N/A';
+            form[`flujo_6_${i}`] = muestra.flujo_6 ?? 'N/A';
+            form[`parametros_${i}`] = muestra.parametros;
+            form[`otros_${i}`] = muestra.otros;
+            form[`preservacion_correcta_${i}`] = muestra.preservacion_correcta;
         }
+
+        form$.value.update(form);
     });
     const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
         return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
@@ -104,6 +105,7 @@
             <Vueform
                 :endpoint="false"
                 @submit="handleSubmit"
+                ref="form$"
                 :columns="{ container: 12, wrapper: 12 }"
                 :scroll-to-invalid="false"
                 :add-class="{
