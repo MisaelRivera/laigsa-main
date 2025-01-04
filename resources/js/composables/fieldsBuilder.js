@@ -1,6 +1,6 @@
 import { TextElement } from "@vueform/vueform";
 
-export function useBuild () {
+export function useBuild() {
     const buildTabs = (tabs) => {
         const tabsArr = [];
         for (let i = 0; i < tabs.length; i++) {
@@ -17,20 +17,34 @@ export function useBuild () {
                 } else if (typeof field === 'object') {
                     const fieldElement = {};
                     fieldElement['name'] = field.name;
-                    if (Object.keys(field).includes('component')) {
+                    const fieldKeys = Object.keys(field);
+                    if (fieldKeys.includes('component')) {
                         fieldElement['component'] = field['component'];
-                        if (field.component === 'SelectElement') {
-                            fieldElement['options'] = field['options'];
+                        if (field.component === 'SelectElement' || field.component === 'RadioGroupElement') {
+                            fieldElement['items'] = field['items'];
                         }
                     } else {
                         fieldElement['component'] = 'TextElement';
                     }
 
-                    if (Object.keys(field).includes('columns')) {
+                    if (fieldKeys.includes('columns')) {
                         fieldElement['columns'] = field['columns'];
                     } else {
                         fieldElement['columns'] = 12;
                     }
+
+                    if (fieldKeys.includes('default')) {
+                        fieldElement['default'] = field.default;
+                    }
+
+                    if (fieldKeys.includes('remove-class')) {
+                        fieldElement['remove-class'] = field['remove-class'];
+                    }
+
+                    if (fieldKeys.includes('add-class')) {
+                        fieldElement['add-class'] = field['add-class'];
+                    }
+
 
                     fieldElement['before'] = () => `<div class="text-sm">${field.name.split('_').join(' ').replace(/^./, str => str.toUpperCase())}</div>`;
                 }
