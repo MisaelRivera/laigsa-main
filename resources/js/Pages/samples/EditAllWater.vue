@@ -19,36 +19,6 @@
     onMounted(() => {
       // Add the class to the FormTabs container
         tabsContainer.value.$el.classList.add('overflow-x-scroll');
-        for (let i = 0; i < props.order.muestras_aguas.length; i++) {
-            const muestra = props.order.muestras_aguas[i];
-            form[`tipo_muestra_${i}`] = muestra.tipo_muestra;
-            form[`id_identificacion_muestra_${i}`] = muestra.id_identificacion_muestra;
-            form[`caracteristicas_${i}`] = muestra.caracteristicas;
-            form[`muestreador_${i}`] = muestra.muestreador;
-            form[`ph_${i}`] = muestra.ph;
-            form[`tratada_biologicamente_${i}`] = muestra.ph;
-            form[`cloro_${i}`] = muestra.cloro;
-            form[`valor_cloro_${i}`] = muestra.valor_cloro;
-            form[`ph_cromo_hexavalente_${i}`] = muestra.ph_cromo_hexavalente;
-            form[`tipo_muestreo_${i}`] = muestra.tipo_muestreo;
-            form[`fecha_muestreo_${i}`] = muestra.fecha_muestreo;
-            form[`hora_muestreo_${i}`] = muestra.hora_muestreo;
-            form[`fecha_final_muestreo_${i}`] = muestra.fecha_final_muestreo ?? 'N/A';
-            form[`hora_final_muestreo_${i}`] = muestra.hora_final_muestreo ?? 'N/A';
-            form[`fecha_composicion_${i}`] = muestra.fecha_composicion ?? 'N/A';
-            form[`hora_composicion_${i}`] = muestra.hora_composicion ?? 'N/A';
-            form[`flujo_1_${i}`] = muestra.flujo_1 ?? 'N/A';
-            form[`flujo_2_${i}`] = muestra.flujo_2 ?? 'N/A';
-            form[`flujo_3_${i}`] = muestra.flujo_3 ?? 'N/A';
-            form[`flujo_4_${i}`] = muestra.flujo_4 ?? 'N/A';
-            form[`flujo_5_${i}`] = muestra.flujo_5 ?? 'N/A';
-            form[`flujo_6_${i}`] = muestra.flujo_6 ?? 'N/A';
-            form[`parametros_${i}`] = muestra.parametros;
-            form[`otros_${i}`] = muestra.otros;
-            form[`preservacion_correcta_${i}`] = muestra.preservacion_correcta;
-        }
-
-        form$.value.update(form);
     });
     const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
         return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
@@ -157,7 +127,8 @@
                             <TextElement 
                                 :name="`tipo_muestra_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="(muestra, i) in order.muestras_aguas">
+                                v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.tipo_muestra">
                                  <template #before>
                                     <div class="text-sm">{{ `Tipo de muestra ${i + 1}` }}</div>
                                 </template>
@@ -166,7 +137,8 @@
                                 :name="`id_identificacion_muestra_${i}`"
                                 :columns="{container:6, wrapper:12}"
                                  v-for="(muestra, i) in order.muestras_aguas"
-                                 :items="identificaciones_muestra">
+                                 :items="identificaciones_muestra"
+                                 :default="muestra.id_identificacion_muestra">
                                  <template #before>
                                     <div class="text-sm">{{ `Identificacion de muestra ${i + 1}` }}</div>
                                 </template>
@@ -174,7 +146,8 @@
                             <TextElement 
                                 :name="`caracteristicas_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="(muestra, i) in order.muestras_aguas">
+                                 v-for="(muestra, i) in order.muestras_aguas"
+                                 :default="muestra.caracteristicas">
                                  <template #before>
                                     <div class="text-sm">{{ `Caracteristicas ${i + 1}` }}</div>
                                 </template>
@@ -193,6 +166,7 @@
                                     'APPC',
                                     'LMQH',
                                 ]"
+                                :default="muestra.muestreador"
                                 :columns="{container:2, wrapper:12}" v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Muestreador ${i + 1}` }}</div>
@@ -201,7 +175,8 @@
                             <TextElement 
                                 :name="`ph_${i}`"
                                 :columns="{container:1, wrapper:12}"
-                                 v-for="(muestra, i) in order.muestras_aguas">
+                                 v-for="(muestra, i) in order.muestras_aguas"
+                                 :default="muestra.pH">
                                  <template #before>
                                     <div class="text-sm">{{ `pH ${i + 1}` }}</div>
                                 </template> 
@@ -209,11 +184,13 @@
                             <CheckboxElement
                                 :name="`tratada_biologicamente_${i}`"
                                 v-for="(muestra, i) in order.muestras_aguas"
-                                :columns="{ container:3, wrapper: 12 }">
+                                :columns="{ container:3, wrapper: 12 }"
+                                :default="muestra.tratada_biologicame">
                                 <p class="text-sm">Tratada biologicamente {{ i  + 1}}</p>
                             </CheckboxElement>
                             <RadiogroupElement
                                 :name="`cloro_${i}`"
+                                :default="muestra.cloro"
                                 :columns="{ container: 4, wrapper:12 }"
                                 :remove-class="{
                                     wrapper: 'flex-col'
@@ -233,6 +210,7 @@
                             </RadiogroupElement>
                             <TextElement 
                                 :name="`valor_cloro_${i}`"
+                                :default="muestra.valor_cloro"
                                 :columns="{ container:2, wrapper:12 }"
                                 :conditions="[
                                     [`cloro_${i}`, ['Presente', 'Ausente']],
@@ -246,6 +224,7 @@
                             </TextElement>
                             <TextElement 
                                 :name="`ph_cromo_hexavalente_${i}`"
+                                :default="muestra.ph_cromo_hexavalente"
                                 :rules="[phRange]"
                                 :columns="{ container:2, wrapper:12 }"
                                 default="N/A"
@@ -256,6 +235,7 @@
                             </TextElement>
                             <SelectElement
                                 :name="`tipo_muestreo_${i}`"
+                                :default="muestra.tipo_muestreo"
                                 :columns="{ container: 2, wrapper: 12}"
                                 :items="tiposMuestreo"
                                 v-for="(muestra, i) in order.muestras_aguas">
@@ -287,6 +267,7 @@
                                 :name="`fecha_muestreo_${i}`"
                                 :columns="{ container: 2, wrapper: 12 }"
                                 v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.fecha_muestreo"
                                 display-format="MMMM DD, YYYY">
                                 <template #before>
                                     <div class="text-sm">{{ `Fecha de muestreo ${i + 1}` }}</div>
@@ -296,7 +277,8 @@
                                 :name="`hora_muestreo_${i}`"
                                 input-type="time"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="(muestra, i) in order.muestras_aguas">
+                                v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.hora_muestreo">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de muestreo ${i + 1}` }}</div>
                                 </template>
@@ -313,6 +295,7 @@
                                 ]"
                                 :columns="{ container: 2, offset:4, wrapper: 12 }"
                                 v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.fecha_final_muestreo"
                                 display-format="MMMM DD, YYYY">
                                 <template #before>
                                     <div class="text-sm">{{ `Fecha de fin de muestreo ${i + 1}` }}</div>
@@ -325,7 +308,8 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="(muestra, i) in order.muestras_aguas">
+                                v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.hora_final_muestreo">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de fin muestreo ${i + 1}` }}</div>
                                 </template>

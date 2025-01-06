@@ -15,18 +15,9 @@
         errors: Object,
     });
     const formTest = ref(null);
-    const schema = ref({
-        name: {type: 'text', before: 'Name', columns: 6, name:'name', default: ''},
-        email: {type: 'text', before: 'Email',},
-        job: {type: 'select', before: 'Jobs', conditions:[['name', '!=', '']], items: [{label:'Elija una opcion', value: null}, {label:'Programmer', value: 'programmer'}, 'Plumber']},
-        cloro: {type: 'radiogroup', before: 'Cloro', items: ['Ausente', 'Presente', 'Laboratorio'], addClass: {wrapper: 'gap-1'}, removeClass: {wrapper: 'flex-col'}},
-    });
-    /*:conditions="[
-                                        [`cloro_${i}`, ['Presente', 'Ausente']],
-                                        [`tipo_muestreo_${i}`, 'Simple'],
-                                    ]"*/
+    
     const tabsContainer = ref(null);
-    /*onMounted(() => {
+    onMounted(() => {
       // Add the class to the FormTabs container
       tabsContainer.value.$el.classList.add('overflow-x-scroll');
     });
@@ -66,7 +57,7 @@
         const vueFormData = form$.requestData;
         console.log(vueFormData);
         router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
-    };*/
+    };
 </script>
 
 <template>
@@ -82,8 +73,6 @@
                 {{ errors[key] }}
             </p>
             <Vueform
-                :schema="schema"/>
-            <!--<Vueform
                 :endpoint="false"
                 @submit="handleSubmit"
                 :columns="{ container: 12, wrapper: 12 }"
@@ -442,8 +431,7 @@
                         </ButtonElement>
                     </FormElements>
                 </template>
-            </Vueform>-->
-        </div>
-        
+            </Vueform>
+        </div> 
     </AuthenticatedLayout>
 </template>
