@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Client;
-use App\Api\ClientApi;
+use App\Api\ClientsApi;
 use Inertia\Inertia;
 
 class ClientsController extends Controller
@@ -14,7 +14,7 @@ class ClientsController extends Controller
     {
        $filters = $request->all();
         $data = [
-            'clients' => ClientApi::getIndexClients($filters)
+            'clients' => ClientsApi::getIndexClients($filters)
         ];
         return Inertia::render('clients/Index', $data);
     }

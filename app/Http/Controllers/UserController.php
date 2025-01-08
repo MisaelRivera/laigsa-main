@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -79,7 +80,10 @@ class UserController extends Controller
     {
         return Inertia::render('Admin/Users/Edit', [
             'user' => $user,
-            'roles' => $user->getRoleNames()
+            'selectedRoles' => $user->getRoleNames(),
+            'roles' => Role::all()->map(function ($role) {
+                return $role->name;
+            })
         ]);
     }
 

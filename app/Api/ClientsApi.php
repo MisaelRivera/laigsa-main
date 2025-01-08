@@ -2,7 +2,7 @@
     namespace App\Api;
     use App\Models\Client;
 
-    class ClientApi
+    class ClientsApi
     {
         public static function getIndexClients ($filters)
         {
@@ -14,7 +14,7 @@
                     $query->where('direccion_muestreo', 'like', "%$filter%");
                 })
                 ->paginate(40)
-                ->withQueryString();;
+                ->withQueryString();
 
             return $clients;
         }

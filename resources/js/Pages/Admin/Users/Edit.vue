@@ -1,7 +1,9 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
     import { useForm, Head } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import { usePermission } from '@/composables/permissions';
+    import { Notivue, Notification, push } from 'notivue';
     import NavLayout from '@/Layouts/NavLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import Table from '@/Components/Table.vue';
@@ -12,7 +14,17 @@
     const props = defineProps({
         errors: Object,
         user: Object,
+        selectedRoles: Array,
+        roles: Array
     });
+    
+    const formEl = ref(null);
+    console.log(props.roles);
+    onMounted(() => {
+        const rolesField = formEl.value.el$('roles');
+        rolesField.update(props.selectedRoles);
+    });
+
     const { getPermissions } = usePermission();
     const form = useForm({
         name: props.user.name,
@@ -37,6 +49,7 @@
                     class="col-span-6 col-start-3 mb-2"/>
                 <Vueform
                     v-model="form"
+                    ref="formEl"
                     :endpoint="false"
                     class="col-start-3 col-span-6 border p-4 rounded-lg"
                     @submit="submit"
@@ -68,29 +81,6 @@
                     </button>
                 </Vueform>
             </div>
-            <Table>
-                <template #header>
-                    <TableRow>
-                        <TableHeaderCell>ID</TableHeaderCell>
-                        <TableHeaderCell>Nombre</TableHeaderCell>
-                        <TableHeaderCell>Acciones</TableHeaderCell>
-                    </TableRow>
-                </template>
-                <template #default>
-                    <TableRow v-for="(permission, index) in role.permissions" :key="index" class="border-b">
-                        <TableDataCell>{{ permission.id }}</TableDataCell>
-                        <TableDataCell>{{ permission.name }}</TableDataCell>
-                        <TableDataCell class="space-x-4">
-                            <button 
-                                @click="() => handleRemove(permission)" 
-                                method="delete"
-                                class="text-red-400 hover:text-red-600">
-                                Revocar
-                            </button>
-                        </TableDataCell>
-                    </TableRow>
-                </template>
-            </Table>
             <Notivue v-slot="item">
                 <Notification :item="item"/>
             </Notivue>
