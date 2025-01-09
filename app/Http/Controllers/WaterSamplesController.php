@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\Rule;
 use App\Models\RuleParameterCombinationWater;
+use App\Models\SampleIdentification;
 use Illuminate\Support\Facades\Validator;
 
 class WaterSamplesController extends Controller
@@ -29,6 +30,28 @@ class WaterSamplesController extends Controller
         } else {
 
         }
+    }
+
+    public function edit (WaterSample $sample)
+    {
+        $sample->orden = $sample->orden()->get()[0];
+
+        $identificacionesMuestras = SampleIdentification::where('id', $sample->id_identificacion_muestra)
+            ->get()
+            ->map(function ($sampleIdentification) {
+                return [
+                    'value' => $sampleIdentification->id,
+                    'label' => $sampleIdentification->identificacion_muestra
+                ];
+            })->prepend(collect([
+                'value' => null,
+                'label' => 'Elija una identificacion de muestra'
+            ]));
+
+        return Inertia::render('samples/EditWaterSample', [
+            'sample' => $sample,
+            'identificacionesMuestras' => $identificacionesMuestras
+        ]);
     }
 
     public function editAllWater ($folio, $aguas_alimentos) 

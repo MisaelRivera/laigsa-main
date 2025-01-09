@@ -274,7 +274,7 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
                             <p class="bg-slate-500 font-bold py-1.5 px-2">
                                 Folio
                                 <EditLink 
-                                    :url="`/water_samples/editAll/${order.folio}/${order.aguas_alimentos}`"/>
+                                    :url="`/water_samples/${sample.id}/edit`"/>
                             </p>
                             <p class="bg-slate-500 py-1.5 px-2 flex justify-between">
                                 MFQ-{{ order.folio }} - {{ sample.numero_muestra }}
