@@ -9,23 +9,18 @@
         identificacionesMuestras: Object
     });
 
-    const formEl = ref(null);
-
-    const formState = useForm({
-        tipo_muestra: null,
-        id_identificacion_muestra: null,
-        caracteristicas: null,
-        muestreador: null,
-        pH: null,
-        tratada_biologicamente: false,
-        cloro: null,
-        ph_cromo_hexavalente: 'N/A',
-        tipo_muestreo: null,
-        fecha_muestreo: null,
-        hora_muestreo: null,
-        parametros: null,
-        preservacion_correcta: null
+    const formState = useForm({});
+    onMounted(() => {
+        formState.tipo_muestra = props.sample.tipo_muestra;
+        formState.id_identificacion_muestra = props.sample.id_identificacion_muestra;
+        formState.caracteristicas = props.sample.caracteristicas;
+        formState.muestreador = props.sample.muestreador;
+        formState.pH = props.sample.pH;
+        formState.tratada_biologicamente = props.sample.tratada_biologicamente;
+        formState.cloro = props.sample.cloro;
+        formState.ph_cromo_hexavalente = props.sample.ph_cromo_hexavalente;
     });
+
 
     const muestreadores = [
         {value: null, label: 'Elija un muestreador'},
@@ -54,9 +49,13 @@
         'N/A'
     ];
 
+    const params = [
+        { value: null, label: 'Elija un parametro' },
+        "NOM-001-SEMARNAT-2021", "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales", "Nom-001-semarnat-1996", "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot", "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa", "NOM-127-SSA1-2021, Parte de la Norma",  "Nom-127-ssa1-1994. Parte de la norma", "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor", "Nom-127-ssa1-1994. Norma completa/con olor y sabor", "Nom-002-semarnat-1996", "Nom-003-semarnat-1996", "CT, As, Pb, Fluor", "CF, CT (purificada)", "CT (purificada)", "Salmonella. Contratar toxicidad", "Dureza, alcalinidad, ph, conductividad, metales.",  "E. Coli, cf, ct de nom-127-ssa1-1994.",  "Mesofilicos aerobios",  "Ph, cn",  "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",  "Nom-004-semarnat-2002",  "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",  "Nom-127: cn",  "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",  "Ph, cn", "Otro"
+    ];
+
     const handleEdit = () => {
         
-
     };
 </script>
 <template>
@@ -67,7 +66,7 @@
                 :own-link="route('water_samples.edit', sample.id)"
                 />
             <Vueform
-                ref="formEl"
+                v-model="formState"
                 :endpoint="false"
                 @submit="handleEdit"
                 :scroll-to-invalid="false"
@@ -459,6 +458,68 @@
                         </p>
                     </template>
                 </TextElement>
+                <SelectElement
+                    name="parametros"
+                    :default="sample.otros_parametros  ? 'Otro':sample.parametros"
+                    :items="params">
+                    <template #before>
+                        <p class="text-sm">Parametros</p>
+                    </template>
+                    <template #description>
+                        <p 
+                            v-if="formState.errors.parametros"
+                            class="text-red-400">
+                            {{ formState.errors.parametros }}
+                        </p>
+                    </template>
+                </SelectElement>
+                <TextareaElement
+                    name="otros"
+                    :conditions="[
+                        ['parametros', 'Otro']
+                    ]"
+                    :default="sample.parametros">
+                    <template #before>
+                        <p class="text-sm">
+                            Otros
+                        </p>
+                    </template>
+                    <template #description>
+                        <p 
+                            class="text-red-400"
+                            v-if="formState.errors.otros">
+                            {{ formState.errors.otros }}
+                        </p>
+                    </template>
+                </TextareaElement>
+                <RadiogroupElement
+                    name="preservacion_correcta"
+                    :columns="{container:2, wrapper:12}"
+                    :items="['Si', 'No', 'N/A']"
+                    :remove-class="{
+                        wrapper: 'flex-col'
+                    }"
+                    :add-class="{
+                        wrapper: 'gap-1'
+                    }"
+                    :default="sample.preservacion_correcta">
+                    <template #before>
+                        <p class="text-sm">Preservada correctamente</p>
+                    </template>
+                    <template #description>
+                        <p 
+                            class="text-red-400"
+                            v-if="formState.errors.preservacion_correcta">
+                            {{ formState.errors.preservacion_correcta }}
+                        </p>
+                    </template>
+                </RadiogroupElement>
+                <StaticElement
+                    name="offset_3"
+                    content="<div class='col-span-10'></div>"/>
+                <button class="py-1 px-2 rounded text-white bg-blue-500 ">
+                    Editar
+                </button>
             </Vueform>
         </div>
     </AuthenticatedLayout>

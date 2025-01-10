@@ -23,15 +23,9 @@ class VueFormController extends Controller
         ]);
     }
 
-    public function test1Store(Request $request) {
-        /*$request->validate([
-            'samples.*.tipo_muestra' => 'required',
-            'samples.*.identificacion_muestra' => 'required',
-            'samples.*.caracteristicas' => 'required',
-        ],
-        [
-            'samples.*.tipo_muestra.required' => 'Ingrese el tipo de muestra'
-        ]);*/
-        dd($request->all());
+    public function test2Store(Request $request) {
+        $request->validate([
+            'name' => 'required'
+        ]);
     }
 }

@@ -189,7 +189,7 @@ Route::middleware('auth')->group(function () {
     
     Route::prefix('/vue-form-tests')->group(function () {
         Route::get('/test1', [VueFormController::class, 'test1'])->name('vue_form_test.test1');
-        Route::post('/test1', [VueFormController::class, 'test1Store'])->name('vue_form_test.test1_store');
+        Route::post('/test2', [VueFormController::class, 'test2Store'])->name('vue_form_test.test1_store');
         Route::get('/test2', [VueFormController::class, 'test2'])->name('vue_form_test.test2');
     });
 

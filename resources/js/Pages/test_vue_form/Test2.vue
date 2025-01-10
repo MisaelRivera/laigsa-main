@@ -20,42 +20,49 @@
         deleteParam.parametro = null;
     };
 
-    const handleOpenDelete = (param) => {
-        isDeleteOpen.value = true;
-        deleteParam.id = param.id;
-        deleteParam.parametro = param.parametro;
-    };
-
     const handleDelete = () => {
         deleteParam.delete(`/test2/${deleteParam.id}`);
     };
+
+    const formState = useForm({
+        name: ''
+    });
+
+    const schema = ref({
+        name: {
+            type: 'text',
+            before: {
+                content: '<div class="text-sm">Name</div>'
+            },
+            description: {
+                content: formState.errors.name ? `<p class="text-red-400">${formState.errors.name}</p>`:''
+            },
+
+            placeholder: 'Your name',
+            columns: {container: 6, wrapper: 12},
+        },
+        
+        btn: {
+            type: 'button',
+            'button-label': 'Crear',
+            submits: true,
+        }
+    });
+
+    const handleSubmit = (form$) => {
+        formState.name = form$.requestData;
+        console.log(formState.name);
+        //formState.post('/vue-form-tests/test2');
+    };
+
 </script>
 <template>
     <AuthenticatedLayout>
         <div class="w-7/12 mx-auto">
-            <h1>Crear parametro</h1>
-            <table class="border">
-                <thead>
-                    <tr>
-                        <th class="border py-1 px-2">Parametro</th>
-                        <th class="border py-1 px-2">Metodo</th>
-                        <th class="border py-1 px-2">Abreviacion</th>
-                        <th class="border py-1 px-2">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(param, index) in parameters.data" :key="index">
-                        <td class="border py-1 px-2">{{ param.parametro }}</td>
-                        <td class="border py-1 px-2">{{ param.metodo }}</td>
-                        <td class="border py-1 px-2">{{ param.abreviacion }}</td>
-                        <td class="border py-1 px-2">
-                            <i 
-                                class="fas fa-trash bg-red-500 text-white py-2 px-2 rounded-full"
-                                @click="handleOpenDelete"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <Vueform
+                :schema="schema"
+                @submit="handleSubmit"
+                :endpoint="false"/>
         </div>
         <MyModal 
             v-model="isDeleteOpen"

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\WaterSampleStoreRequest;
+use App\Http\Requests\WaterSampleUpdateRequest;
 use App\Models\WaterSample;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -122,7 +123,7 @@ class WaterSamplesController extends Controller
         $idOrden = $request->query('id_orden');
         $orden = Order::find($idOrden);
         $samples = [];
-        for ($i = $inicio_muestras; $i < $inicio_muestras + $numero_muestras; $i++) {
+        for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
     
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
@@ -148,6 +149,7 @@ class WaterSamplesController extends Controller
             $sample = removeDynamicPostfixFromKeys($validatedData);
             array_push($samples, $sample);
         }
+
         foreach ($samples as $sampleInstance) {
             WaterSample::create($sampleInstance);
         }
@@ -161,6 +163,56 @@ class WaterSamplesController extends Controller
                 ->route('orders.show', ['id' => $idOrden])
                 ->with('message', 'La orden y sus muestras se han creado correctamente');
         }
+
+    }
+
+    public function update (WaterSample $sample, WaterSampleUpdateRequest $request)
+    {
+        $editedSample = $request->validated();
+        $sample->tipo_muestra = $editedSample['tipo_muestra'];
+        $sample->id_identificacion_muestra = $editedSample['id_identificacion_muestra'];
+        $sample->caracteristicas = $editedSample['caracteristicas'];
+        $sample->muestreador = $editedSample['muestreador'];
+        $sample->pH = $editedSample['pH'];
+        $sample->tratada_biologicamente = $editedSample['tratada_biologicamente'];
+        $sample->cloro = $editedSample['cloro'];
+        $sample->ph_cromo_hexavalente = $editedSample['ph_cromo_hexavalente'];
+        $sample->tipo_muestreo = $editedSample['tipo_muestreo'];
+        $sample->fecha_muestreo = $editedSample['fecha_muestreo'];
+        $sample->hora_muestreo = $editedSample['hora_muestreo'];
+        $sample->preservacion_correcta = $editedSample['preservacion_correcta'];
+
+        if (($editedSample['cloro'] == 'Presente' ||
+         $editedSample['cloro'] == 'Ausente') &&
+         $editedSample['tipo_muestreo'] === 'Simple') {
+            $sample->valor_cloro = $editedSample['valor_cloro'];
+        }
+
+        if ($editedSample['tipo_muestreo'] == 'Compuesto_4' || $editedSample['tipo_muestreo'] == 'Compuesto_6') {
+            $sample->fecha_final_muestreo = $editedSample['fecha_final_muestreo'];
+            $sample->hora_final_muestreo = $editedSample['hora_final_muestreo'];
+            $sample->fecha_composicion = $editedSample['fecha_composicion'];
+            $sample->hora_composicion = $editedSample['hora_composicion'];
+            $sample->flujo_1 = $editedSample['flujo_1'];
+            $sample->flujo_2 = $editedSample['flujo_2'];
+            $sample->flujo_3 = $editedSample['flujo_3'];
+            $sample->flujo_4 = $editedSample['flujo_4'];
+        }
+
+        if ($editedSample['tipo_muestreo'] == 'Compuesto_6') {
+            $sample->flujo_5 = $editedSample['flujo_5'];
+            $sample->flujo_6 = $editedSample['flujo_6'];
+        }
+
+        if ($editedSample['parametros'] == 'Otro') {
+            $sample->otros_parametros = 1;
+            $sample->parametros = $editedSample['otros'];
+        }
+
+        $sample->update();
+        return redirect()
+            ->route('orders.show', $sample->id_orden)
+            ->with('message', "Muestra editada correctamente");
 
     }
 
