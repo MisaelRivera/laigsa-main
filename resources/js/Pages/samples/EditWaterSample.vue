@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
@@ -10,17 +10,6 @@
     });
 
     const formState = useForm({});
-    onMounted(() => {
-        formState.tipo_muestra = props.sample.tipo_muestra;
-        formState.id_identificacion_muestra = props.sample.id_identificacion_muestra;
-        formState.caracteristicas = props.sample.caracteristicas;
-        formState.muestreador = props.sample.muestreador;
-        formState.pH = props.sample.pH;
-        formState.tratada_biologicamente = props.sample.tratada_biologicamente;
-        formState.cloro = props.sample.cloro;
-        formState.ph_cromo_hexavalente = props.sample.ph_cromo_hexavalente;
-    });
-
 
     const muestreadores = [
         {value: null, label: 'Elija un muestreador'},
@@ -54,8 +43,21 @@
         "NOM-001-SEMARNAT-2021", "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales", "Nom-001-semarnat-1996", "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot", "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa", "NOM-127-SSA1-2021, Parte de la Norma",  "Nom-127-ssa1-1994. Parte de la norma", "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor", "Nom-127-ssa1-1994. Norma completa/con olor y sabor", "Nom-002-semarnat-1996", "Nom-003-semarnat-1996", "CT, As, Pb, Fluor", "CF, CT (purificada)", "CT (purificada)", "Salmonella. Contratar toxicidad", "Dureza, alcalinidad, ph, conductividad, metales.",  "E. Coli, cf, ct de nom-127-ssa1-1994.",  "Mesofilicos aerobios",  "Ph, cn",  "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",  "Nom-004-semarnat-2002",  "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",  "Nom-127: cn",  "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",  "Ph, cn", "Otro"
     ];
 
-    const handleEdit = () => {
-        
+    const handleEdit = (form$) => {
+        formState.tipo_muestra = form$.requestData.tipo_muestra;
+        formState.id_identificacion_muestra = form$.requestData.id_identificacion_muestra;
+        formState.caracteristicas = form$.requestData.caracteristicas;
+        formState.muestreador = form$.requestData.muestreador;
+        formState.pH = form$.requestData.pH;
+        formState.tratada_biologicamente = form$.requestData.tratada_biologicamente;
+        formState.cloro = form$.requestData.cloro;
+        formState.ph_cromo_hexavalente = form$.requestData.ph_cromo_hexavalente;
+        formState.tipo_muestreo = form$.requestData.tipo_muestreo;
+        formState.fecha_muestreo = form$.requestData.fecha_muestreo;
+        formState.hora_muestreo = form$.requestData.hora_muestreo;
+        formState.parametros = form$.requestData.parametros;
+        formState.preservacion_correcta = form$.requestData.preservacion_correcta;
+        formState.post(`/water_samples/{${props.sample.id}}/edit`);
     };
 </script>
 <template>
@@ -66,7 +68,6 @@
                 :own-link="route('water_samples.edit', sample.id)"
                 />
             <Vueform
-                v-model="formState"
                 :endpoint="false"
                 @submit="handleEdit"
                 :scroll-to-invalid="false"

@@ -181,14 +181,20 @@ class WaterSamplesController extends Controller
         $sample->fecha_muestreo = $editedSample['fecha_muestreo'];
         $sample->hora_muestreo = $editedSample['hora_muestreo'];
         $sample->preservacion_correcta = $editedSample['preservacion_correcta'];
-
-        if (($editedSample['cloro'] == 'Presente' ||
-         $editedSample['cloro'] == 'Ausente') &&
-         $editedSample['tipo_muestreo'] === 'Simple') {
+        $isCloroPresente = $editedSample['cloro'] == 'Presente';
+        $isCloroAusente = $editedSample['cloro'] == 'Ausente';
+        $isTipoMuestreoSimple = $editedSample['tipo_muestreo'] == 'Simple';
+        $isTipoMuestreoCompuesto4 = $editedSample['tipo_muestreo'] == 'Compuesto_4';
+        $isTipoMuestreoCompuesto6 = $editedSample['tipo_muestreo'] == 'Compuesto_6';
+        $isParametroOtro = $editedSample['parametros'] = 'Otro';
+        if (( $isCloroAusente || $isCloroPresente)
+          && $isTipoMuestreoSimple) {
             $sample->valor_cloro = $editedSample['valor_cloro'];
+        } else {
+            $sample->valor_cloro = 'N/A';
         }
 
-        if ($editedSample['tipo_muestreo'] == 'Compuesto_4' || $editedSample['tipo_muestreo'] == 'Compuesto_6') {
+        if ($isTipoMuestreoCompuesto4 || $isTipoMuestreoCompuesto6) {
             $sample->fecha_final_muestreo = $editedSample['fecha_final_muestreo'];
             $sample->hora_final_muestreo = $editedSample['hora_final_muestreo'];
             $sample->fecha_composicion = $editedSample['fecha_composicion'];
@@ -197,16 +203,32 @@ class WaterSamplesController extends Controller
             $sample->flujo_2 = $editedSample['flujo_2'];
             $sample->flujo_3 = $editedSample['flujo_3'];
             $sample->flujo_4 = $editedSample['flujo_4'];
+            if ($editedSample['tipo_muestreo'] == 'Compuesto_6') {
+                $sample->flujo_5 = $editedSample['flujo_5'];
+                $sample->flujo_6 = $editedSample['flujo_6'];
+            } else {
+                $sample->flujo_5 = 'NA';
+                $sample->flujo_6 = 'NA';
+            }
+        } else {
+            $sample->fecha_final_muestreo = null;
+            $sample->hora_final_muestreo = null;
+            $sample->fecha_composicion = null;
+            $sample->hora_composicion = null;
+            $sample->flujo_1 = 'NA';
+            $sample->flujo_2 = 'NA';
+            $sample->flujo_3 = 'NA';
+            $sample->flujo_4 = 'NA';
+            $sample->flujo_5 = 'NA';
+            $sample->flujo_6 = 'NA';
         }
 
-        if ($editedSample['tipo_muestreo'] == 'Compuesto_6') {
-            $sample->flujo_5 = $editedSample['flujo_5'];
-            $sample->flujo_6 = $editedSample['flujo_6'];
-        }
-
-        if ($editedSample['parametros'] == 'Otro') {
+        if ($isParametroOtro) {
             $sample->otros_parametros = 1;
             $sample->parametros = $editedSample['otros'];
+        } else {
+            $sample->otros_parametros = 0;
+            $sample->parametros = $editedSample['parametros'];
         }
 
         $sample->update();
@@ -228,3 +250,5 @@ class WaterSamplesController extends Controller
             ->with('message', "Se ha eliminado la muestra $sampleNumber");
     }
 }
+
+

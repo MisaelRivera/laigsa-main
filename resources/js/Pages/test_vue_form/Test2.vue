@@ -7,7 +7,7 @@
     const props = defineProps({
         parameters: Object
     });
-    console.log(props.parameters);
+    
     const isDeleteOpen = ref(false);
     const deleteParam = useForm({
         id: null,
@@ -27,7 +27,7 @@
     const formState = useForm({
         name: ''
     });
-
+    
     const schema = ref({
         name: {
             type: 'text',
@@ -50,9 +50,8 @@
     });
 
     const handleSubmit = (form$) => {
-        formState.name = form$.requestData;
-        console.log(formState.name);
-        //formState.post('/vue-form-tests/test2');
+        formState.name = form$.requestData.name;
+        formState.post('/vue-form-tests/test2');
     };
 
 </script>
