@@ -166,74 +166,17 @@ class WaterSamplesController extends Controller
 
     }
 
-    public function update (WaterSample $sample, WaterSampleUpdateRequest $request)
+    public function update (WaterSample $waterSample, WaterSampleUpdateRequest $request)
     {
         $editedSample = $request->validated();
-        $sample->tipo_muestra = $editedSample['tipo_muestra'];
-        $sample->id_identificacion_muestra = $editedSample['id_identificacion_muestra'];
-        $sample->caracteristicas = $editedSample['caracteristicas'];
-        $sample->muestreador = $editedSample['muestreador'];
-        $sample->pH = $editedSample['pH'];
-        $sample->tratada_biologicamente = $editedSample['tratada_biologicamente'];
-        $sample->cloro = $editedSample['cloro'];
-        $sample->ph_cromo_hexavalente = $editedSample['ph_cromo_hexavalente'];
-        $sample->tipo_muestreo = $editedSample['tipo_muestreo'];
-        $sample->fecha_muestreo = $editedSample['fecha_muestreo'];
-        $sample->hora_muestreo = $editedSample['hora_muestreo'];
-        $sample->preservacion_correcta = $editedSample['preservacion_correcta'];
-        $isCloroPresente = $editedSample['cloro'] == 'Presente';
-        $isCloroAusente = $editedSample['cloro'] == 'Ausente';
-        $isTipoMuestreoSimple = $editedSample['tipo_muestreo'] == 'Simple';
-        $isTipoMuestreoCompuesto4 = $editedSample['tipo_muestreo'] == 'Compuesto_4';
-        $isTipoMuestreoCompuesto6 = $editedSample['tipo_muestreo'] == 'Compuesto_6';
-        $isParametroOtro = $editedSample['parametros'] = 'Otro';
-        if (( $isCloroAusente || $isCloroPresente)
-          && $isTipoMuestreoSimple) {
-            $sample->valor_cloro = $editedSample['valor_cloro'];
-        } else {
-            $sample->valor_cloro = 'N/A';
+        $editedSample['id_orden'] = $waterSample->id_orden;
+        $editedSample = handleSingularCasesOnUpdateWaterSample($request, $editedSample);
+        foreach ($editedSample as $key => $value) {
+            $waterSample->{$key} = $value;
         }
-
-        if ($isTipoMuestreoCompuesto4 || $isTipoMuestreoCompuesto6) {
-            $sample->fecha_final_muestreo = $editedSample['fecha_final_muestreo'];
-            $sample->hora_final_muestreo = $editedSample['hora_final_muestreo'];
-            $sample->fecha_composicion = $editedSample['fecha_composicion'];
-            $sample->hora_composicion = $editedSample['hora_composicion'];
-            $sample->flujo_1 = $editedSample['flujo_1'];
-            $sample->flujo_2 = $editedSample['flujo_2'];
-            $sample->flujo_3 = $editedSample['flujo_3'];
-            $sample->flujo_4 = $editedSample['flujo_4'];
-            if ($editedSample['tipo_muestreo'] == 'Compuesto_6') {
-                $sample->flujo_5 = $editedSample['flujo_5'];
-                $sample->flujo_6 = $editedSample['flujo_6'];
-            } else {
-                $sample->flujo_5 = 'NA';
-                $sample->flujo_6 = 'NA';
-            }
-        } else {
-            $sample->fecha_final_muestreo = null;
-            $sample->hora_final_muestreo = null;
-            $sample->fecha_composicion = null;
-            $sample->hora_composicion = null;
-            $sample->flujo_1 = 'NA';
-            $sample->flujo_2 = 'NA';
-            $sample->flujo_3 = 'NA';
-            $sample->flujo_4 = 'NA';
-            $sample->flujo_5 = 'NA';
-            $sample->flujo_6 = 'NA';
-        }
-
-        if ($isParametroOtro) {
-            $sample->otros_parametros = 1;
-            $sample->parametros = $editedSample['otros'];
-        } else {
-            $sample->otros_parametros = 0;
-            $sample->parametros = $editedSample['parametros'];
-        }
-
-        $sample->update();
+        $waterSample->save();
         return redirect()
-            ->route('orders.show', $sample->id_orden)
+            ->route('orders.show', ['id' => $waterSample->id_orden])
             ->with('message', "Muestra editada correctamente");
 
     }

@@ -44,10 +44,13 @@ class WaterSampleUpdateRequest extends FormRequest
             "id_identificacion_muestra" => 'required|exists:identificacion_muestras,id',
             "caracteristicas" => 'required',
             "muestreador" => 'required',
-            "ph" => "required",
+            "pH" => "required",
             "tratada_biologicamente" => "boolean",
             "cloro" => "required",
-            "valor_cloro" => "sometimes:tipo_muestreo,Simple|required_if:cloro,Presente,Ausente",
+            "valor_cloro" => [
+                "required_if:tipo_muestreo,Simple",
+                "required_if:cloro,Presente,Ausente"
+            ],
             "ph_cromo_hexavalente" => "required",
             "tipo_muestreo" => "required",
             "fecha_muestreo" => "required|date",

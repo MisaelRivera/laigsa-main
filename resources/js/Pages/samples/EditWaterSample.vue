@@ -1,15 +1,18 @@
 <script setup>
     import { ref } from 'vue';
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
 
     const props = defineProps({
         sample: Object,
-        identificacionesMuestras: Object
+        identificacionesMuestras: Object,
+        errors: Object,
     });
 
-    const formState = useForm({});
+    const formState = useForm({
+        tipo_muestra: '', id_identificacion_muestra: null,
+    });
 
     const muestreadores = [
         {value: null, label: 'Elija un muestreador'},
@@ -44,20 +47,7 @@
     ];
 
     const handleEdit = (form$) => {
-        formState.tipo_muestra = form$.requestData.tipo_muestra;
-        formState.id_identificacion_muestra = form$.requestData.id_identificacion_muestra;
-        formState.caracteristicas = form$.requestData.caracteristicas;
-        formState.muestreador = form$.requestData.muestreador;
-        formState.pH = form$.requestData.pH;
-        formState.tratada_biologicamente = form$.requestData.tratada_biologicamente;
-        formState.cloro = form$.requestData.cloro;
-        formState.ph_cromo_hexavalente = form$.requestData.ph_cromo_hexavalente;
-        formState.tipo_muestreo = form$.requestData.tipo_muestreo;
-        formState.fecha_muestreo = form$.requestData.fecha_muestreo;
-        formState.hora_muestreo = form$.requestData.hora_muestreo;
-        formState.parametros = form$.requestData.parametros;
-        formState.preservacion_correcta = form$.requestData.preservacion_correcta;
-        formState.post(`/water_samples/{${props.sample.id}}/edit`);
+       router.post(`/water_samples/${props.sample.id}/update`, form$.requestData);
     };
 </script>
 <template>
@@ -82,8 +72,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.tipo_muestra">
-                            {{ formState.errors.tipo_muestra }}
+                            v-if="errors.tipo_muestra">
+                            {{ errors.tipo_muestra }}
                         </p>
                     </template>
                 </TextElement>
@@ -98,8 +88,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.id_identificacion_muestra">
-                            {{ formState.errors.id_identificacion_muestra }}
+                            v-if="errors.id_identificacion_muestra">
+                            {{ errors.id_identificacion_muestra }}
                         </p>
                     </template>
                 </SelectElement>
@@ -115,8 +105,8 @@
                     <template>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.caracteristicas">
-                            {{ formState.errors.caracteristicas }}
+                            v-if="errors.caracteristicas">
+                            {{ errors.caracteristicas }}
                         </p>
                     </template>
                 </TextElement>
@@ -131,8 +121,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.muestreador">
-                            {{ formState.errors.muestreador }}
+                            v-if="errors.muestreador">
+                            {{ errors.muestreador }}
                         </p>
                     </template>
                 </SelectElement>
@@ -146,8 +136,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.pH">
-                            {{ formState.errors.pH }}
+                            v-if="errors.pH">
+                            {{ errors.pH }}
                         </p>
                     </template>
                 </TextElement>
@@ -177,8 +167,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.cloro">
-                            {{ formState.errors.cloro }}
+                            v-if="errors.cloro">
+                            {{ errors.cloro }}
                         </p>
                     </template>
                 </RadiogroupElement>
@@ -197,8 +187,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.valor_cloro">
-                            {{ formState.errors.valor_cloro }}
+                            v-if="errors.valor_cloro">
+                            {{ errors.valor_cloro }}
                         </p>
                     </template>
                 </TextElement>
@@ -212,8 +202,8 @@
                     <template #description>
                         <p 
                             class="bg-red-400"
-                            v-if="formState.errors.ph_cromo_hexavalente">
-                            {{ formState.errors.ph_cromo_hexavalente }}
+                            v-if="errors.ph_cromo_hexavalente">
+                            {{ errors.ph_cromo_hexavalente }}
                         </p>
                     </template>
                 </TextElement>
@@ -228,8 +218,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.tipo_muestreo">
-                            {{ formState.errors.tipo_muestreo }}
+                            v-if="errors.tipo_muestreo">
+                            {{ errors.tipo_muestreo }}
                         </p>
                     </template>
                 </SelectElement>
@@ -250,8 +240,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.fecha_muestreo">
-                            {{ formState.errors.fecha_muestreo }}
+                            v-if="errors.fecha_muestreo">
+                            {{ errors.fecha_muestreo }}
                         </p>
                     </template>
                 </DateElement>
@@ -266,8 +256,8 @@
                     <template #default>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.hora_muestreo">
-                            {{ formState.errors.hora_muestreo }}
+                            v-if="errors.hora_muestreo">
+                            {{ errors.hora_muestreo }}
                         </p>
                     </template>
                 </TextElement>
@@ -284,8 +274,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.fecha_final_muestreo">
-                            {{ formState.errors.fecha_final_muestreo }}
+                            v-if="errors.fecha_final_muestreo">
+                            {{ errors.fecha_final_muestreo }}
                         </p>
                     </template>
                 </DateElement>
@@ -303,8 +293,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.hora_final_muestreo">
-                            {{ formState.errors.hora_final_muestreo }}
+                            v-if="errors.hora_final_muestreo">
+                            {{ errors.hora_final_muestreo }}
                         </p>
                     </template>
                 </TextElement>
@@ -321,8 +311,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.fecha_composicion">
-                            {{ formState.errors.fecha_composicion }}
+                            v-if="errors.fecha_composicion">
+                            {{ errors.fecha_composicion }}
                         </p>
                     </template>
                 </DateElement>
@@ -340,8 +330,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.hora_composicion">
-                            {{ formState.errors.hora_composicion }}
+                            v-if="errors.hora_composicion">
+                            {{ errors.hora_composicion }}
                         </p>
                     </template>
                 </TextElement>
@@ -364,8 +354,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.flujo_1">
-                            {{ formState.errors.flujo_1 }}
+                            v-if="errors.flujo_1">
+                            {{ errors.flujo_1 }}
                         </p>
                     </template>
                 </TextElement>
@@ -382,8 +372,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.flujo_2">
-                            {{ formState.errors.flujo_2 }}
+                            v-if="errors.flujo_2">
+                            {{ errors.flujo_2 }}
                         </p>
                     </template>
                 </TextElement>
@@ -400,8 +390,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.flujo_3">
-                            {{ formState.errors.flujo_3 }}
+                            v-if="errors.flujo_3">
+                            {{ errors.flujo_3 }}
                         </p>
                     </template>
                 </TextElement>
@@ -418,8 +408,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.flujo_4">
-                            {{ formState.errors.flujo_4 }}
+                            v-if="errors.flujo_4">
+                            {{ errors.flujo_4 }}
                         </p>
                     </template>
                 </TextElement>
@@ -436,8 +426,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.flujo_5">
-                            {{ formState.errors.flujo_5 }}
+                            v-if="errors.flujo_5">
+                            {{ errors.flujo_5 }}
                         </p>
                     </template>
                 </TextElement>
@@ -454,8 +444,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.flujo_6">
-                            {{ formState.errors.flujo_6 }}
+                            v-if="errors.flujo_6">
+                            {{ errors.flujo_6 }}
                         </p>
                     </template>
                 </TextElement>
@@ -468,9 +458,9 @@
                     </template>
                     <template #description>
                         <p 
-                            v-if="formState.errors.parametros"
+                            v-if="errors.parametros"
                             class="text-red-400">
-                            {{ formState.errors.parametros }}
+                            {{ errors.parametros }}
                         </p>
                     </template>
                 </SelectElement>
@@ -488,8 +478,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.otros">
-                            {{ formState.errors.otros }}
+                            v-if="errors.otros">
+                            {{ errors.otros }}
                         </p>
                     </template>
                 </TextareaElement>
@@ -510,8 +500,8 @@
                     <template #description>
                         <p 
                             class="text-red-400"
-                            v-if="formState.errors.preservacion_correcta">
-                            {{ formState.errors.preservacion_correcta }}
+                            v-if="errors.preservacion_correcta">
+                            {{ errors.preservacion_correcta }}
                         </p>
                     </template>
                 </RadiogroupElement>

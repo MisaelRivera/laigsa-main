@@ -5,7 +5,8 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     
     const props = defineProps({
-        parameters: Object
+        parameters: Object,
+        errors: Object
     });
     
     const isDeleteOpen = ref(false);
@@ -35,7 +36,7 @@
                 content: '<div class="text-sm">Name</div>'
             },
             description: {
-                content: formState.errors.name ? `<p class="text-red-400">${formState.errors.name}</p>`:''
+                content: props.errors.name ? `<p class="text-red-400">${props.errors.name}</p>`:''
             },
 
             placeholder: 'Your name',
@@ -51,7 +52,11 @@
 
     const handleSubmit = (form$) => {
         formState.name = form$.requestData.name;
-        formState.post('/vue-form-tests/test2');
+        formState.post('/vue-form-tests/test2', {
+            onError: (errors) => {
+                
+            }
+        });
     };
 
 </script>
