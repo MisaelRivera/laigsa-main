@@ -14,7 +14,6 @@
         parametersProp: Array,
         errors: Object,
     });
-    const formTest = ref(null);
     
     const tabsContainer = ref(null);
     onMounted(() => {
@@ -37,8 +36,6 @@
         { value: 'Compuesto_6', label: 'Compuesto 6' },
         'N/A'
     ];
-
-    const params = props.order.v_libreta_resultados ? parametersProp.map(parameter => parameter.parametro):oldParams;
 
     const phRange = class extends Validator {
         get msg() {

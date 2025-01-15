@@ -119,7 +119,7 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.update');
             Route::get('/{sample}/edit', 'edit')
                 ->name('water_samples.edit');
-            Route::get('/editAll/{folio}/{aguas_alimentos}', 'editAllWater')
+            Route::get('/editAll/{folio}', 'editAllWater')
                 ->name('water_samples.edit_all');
             Route::delete('/{waterSample}', 'destroy')
                 ->name('water_samples.destroy');

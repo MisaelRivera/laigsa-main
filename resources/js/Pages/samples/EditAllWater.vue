@@ -321,7 +321,8 @@
                                 ]"
                                 :columns="{ container: 2, offset:4, wrapper: 12 }"
                                 v-for="(muestra, i) in order.muestras_aguas"
-                                display-format="MMMM DD, YYYY">
+                                display-format="MMMM DD, YYYY"
+                                :default="muestra.fecha_composicion">
                                 <template #before>
                                     <div class="text-sm">{{ `Fecha de composicion ${i + 1}` }}</div>
                                 </template>
@@ -333,7 +334,8 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="(muestra, i) in order.muestras_aguas">
+                                v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.hora_composicion">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de composicion ${i + 1}` }}</div>
                                 </template>
@@ -344,6 +346,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
+                                :default="muestra.folio_1"
                                 v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 1 (l/s) ${i + 1}` }}</div>
@@ -355,6 +358,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
+                                :default="muestra.folio_2"
                                 v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 2 (l/s) ${i + 1}` }}</div>
@@ -366,6 +370,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
+                                :default="muestra.folio_3"
                                 v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 3 (l/s) ${i + 1}` }}</div>
@@ -377,6 +382,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
+                                :default="muestra.folio_4"
                                 v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 4 (l/s) ${i + 1}` }}</div>
@@ -388,6 +394,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
+                                :default="muestra.folio_5"
                                 v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 5 (l/s) ${i + 1}` }}</div>
@@ -399,6 +406,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
+                                :default="muestra.folio_6"
                                 v-for="(muestra, i) in order.muestras_aguas">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 6 (l/s) ${i + 1}` }}</div>
@@ -408,14 +416,15 @@
                                 :items="oldParams"
                                 :name="`parametros_${i}`"
                                 :columns="{ container:12, wrapper:12 }"
-                                v-for="(muestra, i) in order.muestras_aguas"/>
+                                v-for="(muestra, i) in order.muestras_aguas"
+                                :default="muestra.otros_parametros ? 'Otro':muestra.parametros"/>
                             <TextareaElement 
                                 :name="`otros_${i}`"
                                 v-for="(muestra, i) in order.muestras_aguas"
                                 :conditions="[
                                     [`parametros_${i}`, 'Otro']
                                 ]"
-                                >
+                                :default="muestra.otros_parametros ? muestra.parametros:''">
                                 <template #before>
                                     <div class="text-sm">{{ `Otros ${i + 1}` }}</div>
                                 </template>
@@ -423,6 +432,7 @@
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"
+                                :default="muestra.preservacion_correcta"
                                 :remove-class="{
                                     wrapper: 'flex-col'
                                 }"
@@ -442,12 +452,11 @@
                             submits
                             name="create_water_samples"
                             class="mt-3">
-                            Crear
+                            Editar
                         </ButtonElement>
                     </FormElements>
                 </template>
             </Vueform>
         </div>
-        
     </AuthenticatedLayout>
 </template>

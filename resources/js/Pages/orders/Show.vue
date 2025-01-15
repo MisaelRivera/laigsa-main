@@ -1,6 +1,6 @@
 <script setup>
     import { ref, reactive } from 'vue';
-    import { usePage, router } from '@inertiajs/vue3';
+    import { usePage, router, Link } from '@inertiajs/vue3';
     import EditLink from '@/Components/Shared/EditLink.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';  
@@ -232,37 +232,42 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
                     </tbody>
                 </table>
                 <div class="flex items-center">
-                    <section class="grid grid-cols-12 gap-2 w-5/12">
+                    <section class="grid grid-cols-12 gap-2">
                         <CustomInput 
                             label="No. cotizacion"
                             :disabled="orderInfoEditDisable"
                             v-model="partialOrderInfo.numero_cotizacion"
                             :label-classes="['text-xs']"
-                            size="col-span-5"/>
+                            size="col-span-2"/>
                         <CustomInput 
                             :disabled="orderInfoEditDisable"
-                            size="col-span-2"
+                            size="col-span-1"
                             :label-classes="['text-xs']"
                             v-model="partialOrderInfo.numero_termometro"
                             label="No. termómetro"/>
                         <CustomInput 
                             :disabled="orderInfoEditDisable"
-                            size="col-span-2"
+                            size="col-span-1"
                             :label-classes="['text-xs']"
                             :input-classes="['bg-red-300', 'disabled:bg-slate-300']"
                             v-model="partialOrderInfo.temperatura"
                             label="Temperatura °C"/>
                         <button 
-                            class="py-1 px-3 bg-yellow-500 text-white rounded-md h-10 mt-5"
+                            class="py-1 px-3 bg-yellow-500 text-white rounded-md h-10 mt-5 col-span-1"
                             @click="orderInfoEditDisable = !orderInfoEditDisable">
                             ¶
                         </button>
                         <button 
-                            class="py-1 px-3 bg-blue-500 text-white rounded-md h-10 mt-5 col-span-2 disabled:opacity-70"
+                            class="py-1 px-3 bg-blue-500 text-white rounded-md h-10 mt-5 disabled:opacity-70 col-span-1"
                             :disabled="orderInfoEditDisable"
                             @click="() => handleEditPartialInfo(order.id)">
                             Editar
                         </button>
+                        <Link 
+                            class="col-start-11 col-span-2 rounded text-white bg-blue-500 py-1 px-2 row-start-1 self-center text-center"
+                            :href="route('water_samples.edit_all', {folio: order.folio})">
+                            Editar todas las muestras
+                        </Link>
                     </section>
                 </div>
                 <div class="grid grid-cols-3 gap-4 items-start">

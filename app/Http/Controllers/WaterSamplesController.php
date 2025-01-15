@@ -55,27 +55,17 @@ class WaterSamplesController extends Controller
         ]);
     }
 
-    public function editAllWater ($folio, $aguas_alimentos) 
+    public function editAllWater ($folio) 
     {
-        $order = null;
-        
-        if ($aguas_alimentos === 'Aguas') {
-            $order = Order::with(['cliente.identificaciones_muestra', 'muestras_aguas'])->where('folio', $folio)->first();
-        } else {
-            $order = Order::with(['muestras_alimentos'])->where('folio', $folio)->first();
-        }
+        $order = Order::with(['cliente.identificaciones_muestra', 'muestras_aguas'])->where('folio', $folio)->first();
         
         $data = [
             'order' => $order,
+            'parametersProp' => Rule::where('aguas', 1)
+            ->get()
         ];
       
-        if ($order->aguas_alimentos === 'Aguas') {
-            $data['parametersProp'] = Rule::where('aguas', 1)
-                ->get();
-            return Inertia::render('samples/EditAllWater', $data);
-        } else {
-
-        }
+       return Inertia::render('samples/EditAllWater', $data);
     }
 
     public function createV2 ($folio, $numero_muestras, $inicio_muestras)
@@ -179,6 +169,47 @@ class WaterSamplesController extends Controller
             ->route('orders.show', ['id' => $waterSample->id_orden])
             ->with('message', "Muestra editada correctamente");
 
+    }
+
+    public function updateAll ($id_orden, WaterSampleUpdateRequest $request)
+    {
+        $samples = WaterSample::where('id_orden', $id_orden);
+        $samplesValidated = [];
+        for ($i = 0; $i < count($samples); $i++) {
+            $waterSampleRequest = new WaterSampleStoreRequest();
+            $waterSampleRequest->setIteration($i);
+            $validator = Validator::make(
+                $waterSampleRequest->values($request),
+                $waterSampleRequest->rules(),
+                $waterSampleRequest->messages()
+            );
+
+            if ($validator->fails()) {
+                return redirect()
+                    ->back()
+                    ->withErrors($validator);
+            }
+
+            $validatedData = $validator->validate();
+
+            if ($validatedData["parametros_$i"] === "Otro") {
+                $validatedData["parametros_$i"] = $request->input("otros_$i");
+                $validatedData["otros_$i"] = 1;
+            }
+            $validatedData["id_orden_$i"] = (int)$id_orden;
+            $validatedData["numero_muestra_$i"] = $i;
+            $sample = removeDynamicPostfixFromKeys($validatedData);
+            array_push($samplesValidated, $sample);
+
+        }
+        
+        foreach ($validatedData as $sampleInstance) {
+            $sampleInstance->save();
+        }
+        
+        return redirect()
+            ->route('orders.show', ['id' => $id_orden])
+            ->with('message', 'La orden y sus muestras se han creado correctamente');
     }
 
     public function destroy (WaterSample $waterSample)
