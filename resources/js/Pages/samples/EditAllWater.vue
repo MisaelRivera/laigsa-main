@@ -55,7 +55,7 @@
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
         console.log(vueFormData);
-        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
+        router.put(`/water_samples/update_all/${props.order.id}`, vueFormData);
     };
     console.log(props.order.muestras);
 </script>

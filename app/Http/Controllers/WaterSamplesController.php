@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WaterSampleStoreRequest;
 use App\Http\Requests\WaterSampleUpdateRequest;
+use App\Http\Requests\WaterSampleUpdateAllRequest;
 use App\Models\WaterSample;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -171,12 +172,12 @@ class WaterSamplesController extends Controller
 
     }
 
-    public function updateAll ($id_orden, WaterSampleUpdateRequest $request)
+    public function updateAll ($id_orden, Request $request)
     {
         $samples = WaterSample::where('id_orden', $id_orden);
         $samplesValidated = [];
-        for ($i = 0; $i < count($samples); $i++) {
-            $waterSampleRequest = new WaterSampleStoreRequest();
+        for ($i = 0; $i < $samples->count(); $i++) {
+            $waterSampleRequest = new WaterSampleUpdateAllRequest();
             $waterSampleRequest->setIteration($i);
             $validator = Validator::make(
                 $waterSampleRequest->values($request),
@@ -192,24 +193,30 @@ class WaterSamplesController extends Controller
 
             $validatedData = $validator->validate();
 
-            if ($validatedData["parametros_$i"] === "Otro") {
-                $validatedData["parametros_$i"] = $request->input("otros_$i");
-                $validatedData["otros_$i"] = 1;
-            }
-            $validatedData["id_orden_$i"] = (int)$id_orden;
-            $validatedData["numero_muestra_$i"] = $i;
-            $sample = removeDynamicPostfixFromKeys($validatedData);
-            array_push($samplesValidated, $sample);
-
+            $sampleData = removeDynamicPostfixFromKeys($validatedData);
+            $sampleData = handleSingularCasesOnUpdateAllWaterSamples($sampleData);
+            array_push($samplesValidated, $sampleData);
         }
         
-        foreach ($validatedData as $sampleInstance) {
-            $sampleInstance->save();
-        }
+        $samples->each(function ($item, $index) use($samplesValidated) {
+            foreach ($samplesValidated[$index] as $key => $value) {
+                $item->{$key} = $value; 
+            }
+            $item->save();
+        });
         
         return redirect()
             ->route('orders.show', ['id' => $id_orden])
-            ->with('message', 'La orden y sus muestras se han creado correctamente');
+            ->with('message', 'La orden y sus muestras se han editado correctamente');
+    }
+
+    public function handlePreservationSubmit (WaterSample $waterSample, Request $request)
+    {
+        $waterSample->preservacion_correcta = $request->input('preservacion_correcta');
+        $waterSample->save();
+        return redirect()
+            ->route('orders.show', ['id' => $waterSample->id_orden])
+            ->with('message', "La preservacion correcta de la muestra $waterSample->numero_muestra ha sido editada correctamente");
     }
 
     public function destroy (WaterSample $waterSample)

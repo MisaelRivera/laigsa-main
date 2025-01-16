@@ -50,8 +50,9 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
         }
         router.visit(url);
     }; 
-    const handlePreservationSubmit = (form$, FormData) => {
+    const handlePreservationSubmit = (form$) => {
         console.log(form$.requestData);
+        //router.put(`/orders/edit-preservation/${form$.requestData.id_muestra}`, form$.requestData);
     };
 
     const handleToggleEditPreservation = (index) => {
@@ -453,23 +454,8 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
                                             },
                                         }"
                                         :columns="{container: 4, wrapper:12}"
-                                        :disabled="isPreservationDisable[index]">
-                                         <template v-slot:radio="{ item, value, el$, classes, isDisabled, id, name, items, index }">
-                                            <span 
-                                                :class="classes.text"
-                                                v-html="item.label"
-                                            />
-                                            <input
-                                                type="radio"
-                                                v-model="el$.value"
-                                                :value="value"
-                                                :class="classes.input"
-                                                :name="name"
-                                                :id="id"
-                                                :disabled="isDisabled"
-                                                :aria-label="item.label"
-                                            />
-                                            </template>    
+                                        :disabled="isPreservationDisable[index]"
+                                        :default="sample.preservacion_correcta">  
                                     </RadiogroupElement>
                                     <HiddenElement 
                                         name="id_muestra"

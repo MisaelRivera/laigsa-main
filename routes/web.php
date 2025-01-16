@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/show/{id}', [OrdersController::class, 'show'])->name('orders.show');
         Route::get('/edit/{id}', [OrdersController::class, 'edit'])->name('orders.edit');
         Route::get('/change-page', [OrdersController::class, 'changePage']);
+        Route::put('/edit-preservations/{waterSample}', [OrdersController::class, 'changePage']);
         Route::get('/get-client-for-order', [OrdersController::class, 'getClientForOrder']);
         /*Route::get('/test', [TestController::class, 'test']);
         Route::get('/test-dynamic-form', [TestController::class, 'viewTestDynamicForm']);
@@ -121,6 +122,8 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.edit');
             Route::get('/editAll/{folio}', 'editAllWater')
                 ->name('water_samples.edit_all');
+            Route::put('/update_all/{id_orden}', 'updateAll')
+                ->name('water_samples.update_all');
             Route::delete('/{waterSample}', 'destroy')
                 ->name('water_samples.destroy');
                 Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')
