@@ -10,7 +10,7 @@
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
     import MyModal from '@/Components/Shared/MyModal.vue';
-import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
+
     const props = defineProps({
         order: Object,
     });
@@ -51,8 +51,12 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
         router.visit(url);
     }; 
     const handlePreservationSubmit = (form$) => {
-        console.log(form$.requestData);
-        //router.put(`/orders/edit-preservation/${form$.requestData.id_muestra}`, form$.requestData);
+        router.put(`/orders/edit-preservation/${form$.data.id_muestra}`, form$.requestData, {
+            onSuccess: () => {
+                push.success(`La preservacion de la muestra se ha editado correctamente`);
+            },
+            preserveScroll: true,
+        });
     };
 
     const handleToggleEditPreservation = (index) => {
@@ -459,7 +463,7 @@ import { ButtonElement, RadiogroupRadio } from '@vueform/vueform';
                                     </RadiogroupElement>
                                     <HiddenElement 
                                         name="id_muestra"
-                                        :value="sample.id"/>
+                                        :default="sample.id"/>
                                     <button 
                                         class="py-1 px-2 rounded bg-yellow-500 text-white col-span-2 cursor-pointer"
                                         @click="() => handleToggleEditPreservation(index)"

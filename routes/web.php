@@ -91,7 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/show/{id}', [OrdersController::class, 'show'])->name('orders.show');
         Route::get('/edit/{id}', [OrdersController::class, 'edit'])->name('orders.edit');
         Route::get('/change-page', [OrdersController::class, 'changePage']);
-        Route::put('/edit-preservations/{waterSample}', [OrdersController::class, 'changePage']);
+        Route::put('/edit-preservation/{waterSample}', [OrdersController::class, 'handlePreservationSubmit']);
         Route::get('/get-client-for-order', [OrdersController::class, 'getClientForOrder']);
         /*Route::get('/test', [TestController::class, 'test']);
         Route::get('/test-dynamic-form', [TestController::class, 'viewTestDynamicForm']);

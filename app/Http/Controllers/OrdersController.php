@@ -27,6 +27,15 @@ class OrdersController extends Controller
         ]);
     }
 
+    public function handlePreservationSubmit (WaterSample $waterSample, Request $request)
+    {
+        $waterSample->preservacion_correcta = $request->input('preservacion_correcta');
+        $waterSample->save();
+        return redirect()
+            ->route('orders.show', ['id' => $waterSample->id_orden])
+            ->with('message', "La preservacion correcta de la muestra $waterSample->numero_muestra ha sido editada correctamente");
+    }
+
     public function create ()
     {
         $last_order = Order::getOrderWithLastFolio();

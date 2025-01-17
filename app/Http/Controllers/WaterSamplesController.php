@@ -23,15 +23,11 @@ class WaterSamplesController extends Controller
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
+            'parametersProp' => Rule::where('aguas', 1)
+            ->get()
         ];
-      
-        if ($order->aguas_alimentos === 'Aguas') {
-            $data['parametersProp'] = Rule::where('aguas', 1)
-                ->get();
-            return Inertia::render('samples/CreateWater', $data);
-        } else {
 
-        }
+        return Inertia::render('samples/CreateWater', $data);
     }
 
     public function edit (WaterSample $sample)
@@ -208,15 +204,6 @@ class WaterSamplesController extends Controller
         return redirect()
             ->route('orders.show', ['id' => $id_orden])
             ->with('message', 'La orden y sus muestras se han editado correctamente');
-    }
-
-    public function handlePreservationSubmit (WaterSample $waterSample, Request $request)
-    {
-        $waterSample->preservacion_correcta = $request->input('preservacion_correcta');
-        $waterSample->save();
-        return redirect()
-            ->route('orders.show', ['id' => $waterSample->id_orden])
-            ->with('message', "La preservacion correcta de la muestra $waterSample->numero_muestra ha sido editada correctamente");
     }
 
     public function destroy (WaterSample $waterSample)
