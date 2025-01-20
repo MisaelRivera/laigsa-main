@@ -31,7 +31,7 @@
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
         console.log(vueFormData);
-        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
+        router.post(`/food_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
     };
 </script>
 
@@ -70,14 +70,17 @@
                                 `tipo_muestreo_${i}`,
                                 `peso_${i}`,
                                 `temperatura_${i}`,
+                                `mostrar_coordenadas_${i}`,
                                 `latitud_label_${i}`,
                                 `latitud_grados_${i}`,
                                 `latitud_minutos_${i}`,
                                 `latitud_segundos_${i}`,
+                                `latitud_orientacion_${i}`,
                                 `longitud_label_${i}`,
                                 `longitud_grados_${i}`,
                                 `longitud_minutos_${i}`,
                                 `longitud_segundos_${i}`,
+                                `longitud_orientacion_${i}`,
                                 `fecha_muestreo_${i}`,
                                 `hora_muestreo_${i}`,
                                 `parametros_${i}`,
@@ -166,18 +169,23 @@
                                 </template>
                             </TextElement>
                             <CheckboxElement
-                                name="tiene_coordinadas">
-                                Tiene coordenadas
+                                :name="`mostrar_coordenadas_${i}`"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                Agrerar coordenadas
                             </CheckboxElement>
                             <StaticElement
-                                name="latitud_label"
+                                :name="`latitud_label_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
                                 content="<div class='font-bold text-center'>Latitud</di>"
-                                :columns="{ container:12, wrapper:12 }"/>
+                                :columns="{ container:12, wrapper:12 }"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"/>
                             <TextElement
                                 :name="`latitud_grados_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
                                 input-type="number"
                                 :columns="{ container:3, wrapper:12 }"
-                                placeholder="°">
+                                placeholder="°"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
                                 <template #description>
                                     <p 
                                         class="text-red-500"
@@ -188,9 +196,11 @@
                             </TextElement>
                             <TextElement
                                 :name="`latitud_minutos_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
                                 input-type="number"
                                 :columns="{ container:3, wrapper:12 }"
-                                placeholder="'">
+                                placeholder="'"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
                                 <template #description>
                                     <p 
                                         class="text-red-500"
@@ -199,6 +209,108 @@
                                     </p>
                                 </template>
                             </TextElement>
+                            <TextElement
+                                :name="`latitud_segundos_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                input-type="number"
+                                :columns="{ container:3, wrapper:12 }"
+                                placeholder='"'
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                <template #description>
+                                    <p 
+                                        class="text-red-500"
+                                        v-if="errors[`latitud_segundos_${i}`]">
+                                        {{ errors[`latitud_segundos_${i}`] }}
+                                    </p>
+                                </template>
+                            </TextElement>
+                            <SelectElement
+                                :name="`latitud_orientacion_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                :columns="{ container:3, wrapper:12 }"
+                                :items="[
+                                    {label: 'Elija la orientacion', value: null},
+                                    'Norte',
+                                    'Sur'
+                                ]"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                <template #description>
+                                    <p 
+                                        class="text-red-500"
+                                        v-if="errors[`latitud_orientacion_${i}`]">
+                                        {{ errors[`latitud_orientacion_${i}`] }}
+                                    </p>
+                                </template>
+                            </SelectElement>
+                            <StaticElement
+                                :name="`longitud_label_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                content="<div class='font-bold text-center'>Longitud</di>"
+                                :columns="{ container:12, wrapper:12 }"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"/>
+                            <TextElement
+                                :name="`longitud_grados_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                input-type="number"
+                                :columns="{ container:3, wrapper:12 }"
+                                placeholder="°"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                <template #description>
+                                    <p 
+                                        class="text-red-500"
+                                        v-if="errors[`longitud_grados_${i}`]">
+                                        {{ errors[`longitud_grados_${i}`] }}
+                                    </p>
+                                </template>
+                            </TextElement>
+                            <TextElement
+                                :name="`longitud_minutos_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                input-type="number"
+                                :columns="{ container:3, wrapper:12 }"
+                                placeholder="'"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                <template #description>
+                                    <p 
+                                        class="text-red-500"
+                                        v-if="errors[`longitud_minutos_${i}`]">
+                                        {{ errors[`longitud_minutos_${i}`] }}
+                                    </p>
+                                </template>
+                            </TextElement>
+                            <TextElement
+                                :name="`longitud_segundos_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                input-type="number"
+                                :columns="{ container:3, wrapper:12 }"
+                                placeholder='"'
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                <template #description>
+                                    <p 
+                                        class="text-red-500"
+                                        v-if="errors[`longitud_segundos_${i}`]">
+                                        {{ errors[`longitud_segundos_${i}`] }}
+                                    </p>
+                                </template>
+                            </TextElement>
+                            <SelectElement
+                                :name="`longitud_orientacion_${i}`"
+                                :conditions="[[`mostrar_coordenadas_${i}`,true]]"
+                                :columns="{ container:3, wrapper:12 }"
+                                :items="[
+                                    {label: 'Elija la orientacion', value: null},
+                                    'Este (E)',
+                                    'Oeste (W)'
+                                ]"
+                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                <template #description>
+                                    <p 
+                                        class="text-red-500"
+                                        v-if="errors[`longitud_orientacion_${i}`]">
+                                        {{ errors[`longitud_orientacion_${i}`] }}
+                                    </p>
+                                </template>
+                            </SelectElement>
                             <DateElement
                                 :name="`fecha_muestreo_${i}`"
                                 :columns="{ container: 2, wrapper: 12 }"
@@ -237,27 +349,9 @@
                                     <div class="text-sm">{{ `Otros ${i}` }}</div>
                                 </template>
                             </TextareaElement>
-                            <RadiogroupElement
-                                :name="`preservacion_correcta_${i}`"
-                                :columns="{ container: 4, wrapper:12 }"
-                                :remove-class="{
-                                    wrapper: 'flex-col'
-                                }"
-                                :add-class="{
-                                    wrapper: 'gap-1'
-                                }"
-                                :items="[
-                                    'Si',
-                                    'No',
-                                    'N/A',
-                                ]" v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
-                                <template #before>
-                                    <div class="text-sm">{{ `Preservada correctamente ${i}` }}</div>
-                                </template>    
-                            </RadiogroupElement>
                         <ButtonElement 
                             submits
-                            name="create_water_samples"
+                            name="create_food_samples"
                             class="mt-3">
                             Crear
                         </ButtonElement>

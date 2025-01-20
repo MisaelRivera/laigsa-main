@@ -9,6 +9,7 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\SamplesController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\FoodSamplesController;
 use App\Http\Controllers\LcpController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\MethodsController;
@@ -132,6 +133,32 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.store_v2');
             Route::delete('/v2/{waterSample}', 'destroyV2')
                 ->name('water_samples.destroy_v2');
+            Route::get('/v2/get_rule_params/{ruleId}', 'getRuleParams');
+        });
+    });
+
+    Route::controller(FoodSamplesController::class)->group(function () {
+        Route::prefix('/food_samples')->group(function () {
+            Route::get('/create/{folio}/{numero_muestras}/{inicio_muestras}', 'create')
+                ->name('food_samples.create');
+            Route::post('/', 'store')
+                ->name('food_samples.store');
+            Route::post('/{foodSample}/update', 'update')
+                ->name('food_samples.update');
+            Route::get('/{sample}/edit', 'edit')
+                ->name('food_samples.edit');
+            Route::get('/editAll/{folio}', 'editAllFood')
+                ->name('food_samples.edit_all');
+            Route::put('/update_all/{id_orden}', 'updateAll')
+                ->name('food_samples.update_all');
+            Route::delete('/{foodSample}', 'destroy')
+                ->name('food_samples.destroy');
+                Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')
+                ->name('food_samples.create_v2');
+            Route::post('/v2', 'storeV2')
+                ->name('food_samples.store_v2');
+            Route::delete('/v2/{foodSample}', 'destroyV2')
+                ->name('food_samples.destroy_v2');
             Route::get('/v2/get_rule_params/{ruleId}', 'getRuleParams');
         });
     });

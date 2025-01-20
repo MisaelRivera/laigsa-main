@@ -34,7 +34,7 @@ class FoodSamplesController extends Controller
         $orden = Order::find($idOrden);
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-    
+            
             // Create an instance of the request and set the iteration
             $foodSampleRequest = new FoodSampleStoreRequest();
             $foodSampleRequest->setIteration($i);
@@ -60,8 +60,20 @@ class FoodSamplesController extends Controller
             array_push($samples, $sample);
         }
 
-        foreach ($samples as $sampleInstance) {
-            FoodSample::create($sampleInstance);
+        for ($i = 0; $i < $numero_muestras; $i++) {
+            if(array_key_exists("latitud_grados", $samples[$i])) {
+                $samples[$i]['latitud'] = '';
+                $samples[$i]['longitud'] = '';
+                $samples[$i]['latitud'] .= $samples[$i]["latitud_grados"] . '°';
+                $samples[$i]['latitud'] .= $samples[$i]["latitud_minutos"] . "'";
+                $samples[$i]['latitud'] .= $samples[$i]["latitud_segundos"] . '"';
+                $samples[$i]['latitud'] .= " " . $samples[$i]["latitud_orientacion"];
+                $samples[$i]['longitud'] .= $samples[$i]["longitud_grados"] . '°';
+                $samples[$i]['longitud'] .= $samples[$i]["longitud_minutos"] . "'";
+                $samples[$i]['longitud'] .= $samples[$i]["longitud_segundos"] . '"';
+                $samples[$i]['longitud'] .= " " . $samples[$i]["longitud_orientacion"];
+            }
+            FoodSample::create($samples[$i]);
         }
 
         if ($orden->v_libreta_resultados) {
@@ -74,5 +86,17 @@ class FoodSamplesController extends Controller
                 ->with('message', 'La orden y sus muestras se han creado correctamente');
         }
 
+    }
+
+    public function destroy (FoodSample $foodSample)
+    {
+        $sampleNumber = $foodSample->numero_muestra;
+        $order = Order::findOrFail($foodSample->id_orden);
+        $foodSample->delete();
+        return redirect()
+            ->route('orders.show', [
+                'id' => $order->id
+            ])
+            ->with('message', "Se ha eliminado la muestra $sampleNumber");
     }
 }

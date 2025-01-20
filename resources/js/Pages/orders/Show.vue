@@ -44,9 +44,17 @@
     const handleAddSubmit = () => {
         let url = '';
         if (props.order.v_libreta_resultados) {
-            url = `/water_samples/create/v2/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+            if (props.order.aguas_alimentos === 'Aguas') {
+                url = `/water_samples/create/v2/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+            } else {
+                url = `/food_samples/create/v2/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+            }
         } else {
-            url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+            if (props.order.aguas_alimentos === 'Aguas') {
+                url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+            } else {
+                url = `/food_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+            }
         }
         router.visit(url);
     }; 
@@ -343,7 +351,8 @@
                             <p class="font-bold py-1.5 px-2">Muestreador:</p>
                             <p class="py-1.5 px-2"> {{ sample.muestreador }}</p>
                         </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">Cloro:</p>
                             <p class="py-1.5 px-2"> {{ sample.cloro }}</p>
                         </div>
@@ -352,7 +361,8 @@
                             <p class="font-bold py-1.5 px-2">Valor del cloro:</p>
                             <p class="py-1.5 px-2"> {{ sample.valor_cloro === 'Si' ? sample.valor_cloro:'< 0.1' }}</p>
                         </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">SIRALAB:</p>
                             <p class="py-1.5 px-2"> {{ sample.siralab ? 'Si':'No' }}</p>
                         </div>
@@ -367,25 +377,30 @@
                             <p class="py-1.5 px-2"> {{ sample.hora_composicion }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">Tratada biológicamente:</p>
                             <p class="py-1.5 px-2"> {{ sample.tratada_biologicamente ? 'Si':'No' }}</p>
                         </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">pH:</p>
                             <p class="py-1.5 px-2"> {{ sample.pH }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                                v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">Conductividad (uS/cm):</p>
                             <p class="py-1.5 px-2"> {{ sample.conductividad }}</p>
                         </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">pH Cr VI:</p>
                             <p class="py-1.5 px-2"> {{ sample.ph_cromo_hexavalente }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">Preservación correcta:</p>
                             <p class="py-1.5 px-2"> {{ sample.preservacion_correcta }}</p>
                         </div>
@@ -426,7 +441,8 @@
                             <p class="py-1.5 px-2"> {{ sample.flujo_6 }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Aguas'">
                             <p class="font-bold py-1.5 px-2">Preservacion correcta</p>
                             <p class="py-1.5 px-2">
                                 <Vueform
