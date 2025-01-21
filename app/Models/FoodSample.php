@@ -20,7 +20,7 @@ class FoodSample extends Model
         'parametros',
         'otros_parametros',
         'identificacion_muestra',
-        'peso_meustra',
+        'peso_muestra',
         'temperatura',
         'latitud',
         'longitud'

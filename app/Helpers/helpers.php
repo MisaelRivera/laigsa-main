@@ -85,3 +85,27 @@
 
         return $filteredData;
     }
+
+    function implodingCoordinates ($grados, $minutos, $segundos, $orientacion)
+    {
+        $str = '';
+        $str .= $grados . '°' . $minutos . "'" . $segundos . '"' . ' ' . $orientacion;
+        return $str;
+    }
+
+    function explodingCoordinates ($str)
+    {
+        $strArr1 = explode('°', $str);
+        $grados = $strArr1[0];
+        $strArr2 = explode("'", $strArr1[1]);
+        $minutos = $strArr2[0];
+        $strArr3 = explode('"', $strArr2[1]);
+        $segundos = $strArr3[0];
+        $orientacion = trim($strArr3[1]);
+        return [
+            'grados' => $grados,
+            'minutos' => $minutos,
+            'segundos' => $segundos,
+            'orientacion' => $orientacion
+        ];
+    }

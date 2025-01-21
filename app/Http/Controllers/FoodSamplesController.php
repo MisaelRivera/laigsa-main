@@ -54,6 +54,10 @@ class FoodSamplesController extends Controller
                 $validatedData["parametros_$i"] = $request->input("otros_$i");
                 $validatedData["otros_$i"] = 1;
             }
+            
+            if ($request->has("peso_muestra_$i")) $validatedData["peso_muestra_$i"] = $request->input("peso_muestra_$i");
+            if ($request->has("temperatura_$i")) $validatedData["temperatura_$i"] = $request->input("temperatura_$i");
+           
             $validatedData["id_orden_$i"] = (int)$idOrden;
             $validatedData["numero_muestra_$i"] = $i;
             $sample = removeDynamicPostfixFromKeys($validatedData);
@@ -61,17 +65,10 @@ class FoodSamplesController extends Controller
         }
 
         for ($i = 0; $i < $numero_muestras; $i++) {
+            
             if(array_key_exists("latitud_grados", $samples[$i])) {
-                $samples[$i]['latitud'] = '';
-                $samples[$i]['longitud'] = '';
                 $samples[$i]['latitud'] .= $samples[$i]["latitud_grados"] . '°';
-                $samples[$i]['latitud'] .= $samples[$i]["latitud_minutos"] . "'";
-                $samples[$i]['latitud'] .= $samples[$i]["latitud_segundos"] . '"';
-                $samples[$i]['latitud'] .= " " . $samples[$i]["latitud_orientacion"];
                 $samples[$i]['longitud'] .= $samples[$i]["longitud_grados"] . '°';
-                $samples[$i]['longitud'] .= $samples[$i]["longitud_minutos"] . "'";
-                $samples[$i]['longitud'] .= $samples[$i]["longitud_segundos"] . '"';
-                $samples[$i]['longitud'] .= " " . $samples[$i]["longitud_orientacion"];
             }
             FoodSample::create($samples[$i]);
         }
@@ -86,6 +83,27 @@ class FoodSamplesController extends Controller
                 ->with('message', 'La orden y sus muestras se han creado correctamente');
         }
 
+    }
+
+    public function edit (FoodSample $foodSample)
+    {
+        $foodSample->orden = $foodSample->orden()->get()[0];
+        if ($foodSample->latitud !== 'N/A') {
+            $latitud = explodingCoordinates($foodSample->latitud);
+            $longitud = explodingCoordinates($foodSample->longitud);
+            $foodSample->latitud_segundos = $latitud['segundos'];
+            $foodSample->latitud_minutos = $latitud['minutos'];
+            $foodSample->latitud_grados = $latitud['grados'];
+            $foodSample->latitud_orientacion = $latitud['orientacion'];
+            $foodSample->longitud_segundos = $longitud['segundos'];
+            $foodSample->longitud_minutos = $longitud['minutos'];
+            $foodSample->longitud_grados = $longitud['grados'];
+            $foodSample->longitud_orientacion = $longitud['orientacion'];
+        }
+       
+        return Inertia::render('samples/EditFood', [
+            'foodSample' => $foodSample,
+        ]);
     }
 
     public function destroy (FoodSample $foodSample)

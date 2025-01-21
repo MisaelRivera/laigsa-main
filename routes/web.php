@@ -145,7 +145,7 @@ Route::middleware('auth')->group(function () {
                 ->name('food_samples.store');
             Route::post('/{foodSample}/update', 'update')
                 ->name('food_samples.update');
-            Route::get('/{sample}/edit', 'edit')
+            Route::get('/{foodSample}/edit', 'edit')
                 ->name('food_samples.edit');
             Route::get('/editAll/{folio}', 'editAllFood')
                 ->name('food_samples.edit_all');

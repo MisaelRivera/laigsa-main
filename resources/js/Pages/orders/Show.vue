@@ -41,6 +41,8 @@
         temperatura: props.order.temperatura,
     });
 
+    const editUrl = props.order.aguas_alimentos === 'Aguas' ? `/water_samples`:`/food_samples`;
+
     const handleAddSubmit = () => {
         let url = '';
         if (props.order.v_libreta_resultados) {
@@ -292,7 +294,7 @@
                             <p class="bg-slate-500 font-bold py-1.5 px-2">
                                 Folio
                                 <EditLink 
-                                    :url="`/water_samples/${sample.id}/edit`"/>
+                                    :url="`${editUrl}/${sample.id}/edit`"/>
                             </p>
                             <p class="bg-slate-500 py-1.5 px-2 flex justify-between">
                                 MFQ-{{ order.folio }} - {{ sample.numero_muestra }}
@@ -324,6 +326,18 @@
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Caracteristicas:</p>
                             <p class="py-1.5 px-2"> {{ sample.caracteristicas }}</p>
+                        </div> 
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Alimentos'">
+                            <p class="font-bold py-1.5 px-2">Peso/Vol de la muestra g./l:</p>
+                            <p class="py-1.5 px-2"> {{ sample.peso_muestra }}</p>
+                        </div>
+                        <div 
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
+                            v-if="order.aguas_alimentos === 'Alimentos'">
+                            <p class="font-bold py-1.5 px-2">Temperatura °C:</p>
+                            <p class="py-1.5 px-2"> {{ sample.temperatura }}</p>
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Fecha de muestreo:</p>
