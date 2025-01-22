@@ -13,6 +13,8 @@ use App\Models\Rule;
 use App\Models\RuleParameterCombinationWater;
 use App\Models\SampleIdentification;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 class WaterSamplesController extends Controller
 {
@@ -109,15 +111,33 @@ class WaterSamplesController extends Controller
         $numero_muestras = $request->query('numero_muestras');
         $idOrden = $request->query('id_orden');
         $orden = Order::find($idOrden);
+        $previousUrl = URL::previous();
+
+        // Create a request object for the previous URL
+        $previousRequest = Request::create($previousUrl);
+
+        // Match the previous request to a route
+        $previousRoute = Route::getRoutes()->match($previousRequest);
+
+        // Get the name of the previous route, if it has one
+        $previousRouteName = $previousRoute->getName();
+        var_dump($previousRouteName);
+        die();
+        $samplesCount = WaterSample::where('id_orden', $orden->id)
+            ->count();
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-    
+            if ($samplesCount) 
+            {
+                $orden->numero_muestras = (int)$orden->numero_muestras + 1;
+                $orden->save();
+            }
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
             $waterSampleRequest->setIteration($i);
             // Use Validator::make to validate the data
             $validator = Validator::make($waterSampleRequest->values($request), $waterSampleRequest->rules(), $waterSampleRequest->messages());
-    
+            
             // If validation fails, handle the errors
             if ($validator->fails()) {
                 return redirect()
@@ -218,5 +238,3 @@ class WaterSamplesController extends Controller
             ->with('message', "Se ha eliminado la muestra $sampleNumber");
     }
 }
-
-
