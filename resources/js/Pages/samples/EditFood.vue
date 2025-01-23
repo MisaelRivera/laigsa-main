@@ -134,7 +134,8 @@
                                     'APPC',
                                     'LMQH',
                                 ]"
-                                :columns="{container:2, wrapper:12}" >
+                                :columns="{container:2, wrapper:12}" 
+                                :default="foodSample.muestreador">
                                 <template #before>
                                     <div class="text-sm">{{ `Muestreador` }}</div>
                                 </template> 
@@ -355,7 +356,7 @@
                             submits
                             name="create_food_samples"
                             class="mt-3">
-                            Crear
+                            Editar
                         </ButtonElement>
                     </FormElements>
                 </template>

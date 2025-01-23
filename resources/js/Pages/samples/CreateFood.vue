@@ -11,6 +11,7 @@
         numeroMuestras: Number,
         inicioMuestras: Number,
         parametersProp: Array,
+        previousRouteName: String,
         errors: Object,
     });
     
@@ -31,7 +32,7 @@
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
         console.log(vueFormData);
-        router.post(`/food_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
+        router.post(`/food_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}&request_origin=${props.previousRouteName}`, vueFormData);
     };
 </script>
 

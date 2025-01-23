@@ -9,18 +9,31 @@ use App\Models\FoodSample;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\FoodSampleStoreRequest;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 class FoodSamplesController extends Controller
 {
     public function create ($folio, $numero_muestras, $inicio_muestras)
     {
         $order = Order::where('folio', $folio)->first();
+        $previousUrl = URL::previous();
+
+        // Create a request object for the previous URL
+        $previousRequest = Request::create($previousUrl);
+
+        // Match the previous request to a route
+        $previousRoute = Route::getRoutes()->match($previousRequest);
+
+        // Get the name of the previous route, if it has one
+        $previousRouteName = $previousRoute->getName();
         $data = [
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
             'parametersProp' => Rule::where('aguas', 0)
-            ->get()
+            ->get(),
+            'previousRouteName' => $previousRouteName
         ];
 
         return Inertia::render('samples/CreateFood', $data);
@@ -34,7 +47,7 @@ class FoodSamplesController extends Controller
         $orden = Order::find($idOrden);
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            
+            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras += 1;
             // Create an instance of the request and set the iteration
             $foodSampleRequest = new FoodSampleStoreRequest();
             $foodSampleRequest->setIteration($i);
@@ -64,11 +77,15 @@ class FoodSamplesController extends Controller
             array_push($samples, $sample);
         }
 
+        if ($request->query('request_origin') === 'orders.show') $orden->save();
+
         for ($i = 0; $i < $numero_muestras; $i++) {
             
             if(array_key_exists("latitud_grados", $samples[$i])) {
-                $samples[$i]['latitud'] .= $samples[$i]["latitud_grados"] . '°';
-                $samples[$i]['longitud'] .= $samples[$i]["longitud_grados"] . '°';
+                $samples[$i]['latitud'] = '';
+                $samples[$i]['longitud'] = '';
+                $samples[$i]['latitud'] .= implodingCoordinates($samples[$i]["latitud_grados"], $samples[$i]["latitud_minutos"], $samples[$i]["latitud_segundos"], $samples[$i]["latitud_orientacion"]);
+                $samples[$i]['longitud'] .= implodingCoordinates($samples[$i]["longitud_grados"], $samples[$i]["longitud_minutos"], $samples[$i]["longitud_segundos"], $samples[$i]["longitud_orientacion"]);
             }
             FoodSample::create($samples[$i]);
         }
@@ -100,7 +117,8 @@ class FoodSamplesController extends Controller
             $foodSample->longitud_grados = $longitud['grados'];
             $foodSample->longitud_orientacion = $longitud['orientacion'];
         }
-       
+       var_dump($foodSample->parametros);
+       die();
         return Inertia::render('samples/EditFood', [
             'foodSample' => $foodSample,
         ]);
@@ -111,6 +129,7 @@ class FoodSamplesController extends Controller
         $sampleNumber = $foodSample->numero_muestra;
         $order = Order::findOrFail($foodSample->id_orden);
         $foodSample->delete();
+        //$order->numero_muestras = $order->numero_muestras - 1;
         return redirect()
             ->route('orders.show', [
                 'id' => $order->id

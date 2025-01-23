@@ -21,12 +21,23 @@ class WaterSamplesController extends Controller
     public function create ($folio, $numero_muestras, $inicio_muestras)
     {
         $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
+        $previousUrl = URL::previous();
+
+        // Create a request object for the previous URL
+        $previousRequest = Request::create($previousUrl);
+
+        // Match the previous request to a route
+        $previousRoute = Route::getRoutes()->match($previousRequest);
+
+        // Get the name of the previous route, if it has one
+        $previousRouteName = $previousRoute->getName();
         $data = [
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
             'parametersProp' => Rule::where('aguas', 1)
-            ->get()
+            ->get(),
+            'previousRouteName' => $previousRouteName
         ];
 
         return Inertia::render('samples/CreateWater', $data);
@@ -111,27 +122,10 @@ class WaterSamplesController extends Controller
         $numero_muestras = $request->query('numero_muestras');
         $idOrden = $request->query('id_orden');
         $orden = Order::find($idOrden);
-        $previousUrl = URL::previous();
-
-        // Create a request object for the previous URL
-        $previousRequest = Request::create($previousUrl);
-
-        // Match the previous request to a route
-        $previousRoute = Route::getRoutes()->match($previousRequest);
-
-        // Get the name of the previous route, if it has one
-        $previousRouteName = $previousRoute->getName();
-        var_dump($previousRouteName);
-        die();
-        $samplesCount = WaterSample::where('id_orden', $orden->id)
-            ->count();
+        
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            if ($samplesCount) 
-            {
-                $orden->numero_muestras = (int)$orden->numero_muestras + 1;
-                $orden->save();
-            }
+            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras++;
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
             $waterSampleRequest->setIteration($i);
@@ -156,7 +150,7 @@ class WaterSamplesController extends Controller
             $sample = removeDynamicPostfixFromKeys($validatedData);
             array_push($samples, $sample);
         }
-
+        if($request->query('request_origin') === 'orders.show') $orden->save();
         foreach ($samples as $sampleInstance) {
             WaterSample::create($sampleInstance);
         }
@@ -231,6 +225,8 @@ class WaterSamplesController extends Controller
         $sampleNumber = $waterSample->numero_muestra;
         $order = Order::findOrFail($waterSample->id_orden);
         $waterSample->delete();
+        $order->numero_muestras -= 1;
+        $order->save();
         return redirect()
             ->route('orders.show', [
                 'id' => $order->id
