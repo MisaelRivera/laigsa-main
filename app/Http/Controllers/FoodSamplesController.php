@@ -31,8 +31,7 @@ class FoodSamplesController extends Controller
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
-            'parametersProp' => Rule::where('aguas', 0)
-            ->get(),
+            'parametersProp' => Rule::where('aguas', 0)->get(),
             'previousRouteName' => $previousRouteName
         ];
 
@@ -128,8 +127,15 @@ class FoodSamplesController extends Controller
     {
         $sampleNumber = $foodSample->numero_muestra;
         $order = Order::findOrFail($foodSample->id_orden);
+        
         $foodSample->delete();
-        //$order->numero_muestras = $order->numero_muestras - 1;
+        $order->numero_muestras = $order->numero_muestras - 1;
+        $order->save();
+        $samples = $order->muestras_alimentos;
+        for ($i = 0; $i < count($samples); $i++) {
+            $samples[$i]->numero_muestra = ($i + 1);
+            $samples[$i]->save();
+        }
         return redirect()
             ->route('orders.show', [
                 'id' => $order->id

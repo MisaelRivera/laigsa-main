@@ -225,8 +225,13 @@ class WaterSamplesController extends Controller
         $sampleNumber = $waterSample->numero_muestra;
         $order = Order::findOrFail($waterSample->id_orden);
         $waterSample->delete();
-        $order->numero_muestras -= 1;
+        $order->numero_muestras = $order->numero_muestras - 1;
         $order->save();
+        $samples = $order->muestras_aguas;
+        for ($i = 0; $i < count($samples); $i++) {
+            $samples[$i]->numero_muestra = ($i + 1);
+            $samples[$i]->save();
+        }
         return redirect()
             ->route('orders.show', [
                 'id' => $order->id
