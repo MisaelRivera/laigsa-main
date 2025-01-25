@@ -125,7 +125,7 @@ class WaterSamplesController extends Controller
         
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras++;
+            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras = $orden->numero_muestras + 1;
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
             $waterSampleRequest->setIteration($i);

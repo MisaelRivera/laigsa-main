@@ -46,7 +46,7 @@ class FoodSamplesController extends Controller
         $orden = Order::find($idOrden);
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras += 1;
+            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras = $orden->numero_muestras + 1;
             // Create an instance of the request and set the iteration
             $foodSampleRequest = new FoodSampleStoreRequest();
             $foodSampleRequest->setIteration($i);
@@ -116,11 +116,15 @@ class FoodSamplesController extends Controller
             $foodSample->longitud_grados = $longitud['grados'];
             $foodSample->longitud_orientacion = $longitud['orientacion'];
         }
-       var_dump($foodSample->parametros);
-       die();
+
         return Inertia::render('samples/EditFood', [
             'foodSample' => $foodSample,
         ]);
+    }
+
+    public function update (FoodSample $foodSample)
+    {
+
     }
 
     public function destroy (FoodSample $foodSample)

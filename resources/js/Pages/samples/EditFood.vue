@@ -58,7 +58,7 @@
                      ref="tabsContainer">
                         <FormTab
                             :name="`muestra`"
-                            :label="`MFQ-${foodSample.orden.folio} -`"
+                            :label="`MFQ-${foodSample.orden.folio} - ${foodSample.numero_muestra}`"
                             :elements="[
                                 `tipo_muestra`, 
                                 `identificacion_muestra`, 
@@ -336,14 +336,14 @@
                                 :items="oldParams"
                                 :name="`parametros`"
                                 :columns="{ container:12, wrapper:12 }"
-                                :default="foodSample.parametros">
+                                :default="foodSample.otros_parametros ? 'Otro':foodSample.parametros">
                                 <template #before>
                                     <p class="text-sm">{{ `Parametros` }}</p>
                                 </template>
                             </SelectElement>
                             <TextareaElement 
                                 :name="`otros`"
-                                
+                                :default="foodSample.otros_parametros ? foodSample.parametros:''"
                                 :conditions="[
                                     [`parametros`, 'Otro']
                                 ]"
