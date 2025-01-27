@@ -143,7 +143,7 @@ Route::middleware('auth')->group(function () {
                 ->name('food_samples.create');
             Route::post('/', 'store')
                 ->name('food_samples.store');
-            Route::put('/{foodSample}/update', 'update')
+            Route::put('/{foodSample}', 'update')
                 ->name('food_samples.update');
             Route::get('/{foodSample}/edit', 'edit')
                 ->name('food_samples.edit');

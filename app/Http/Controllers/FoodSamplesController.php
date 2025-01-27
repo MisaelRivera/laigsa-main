@@ -8,6 +8,7 @@ use App\Models\Rule;
 use App\Models\FoodSample;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\FoodSampleStoreRequest;
+use App\Http\Requests\FoodSampleUpdateRequest;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -122,9 +123,70 @@ class FoodSamplesController extends Controller
         ]);
     }
 
-    public function update (FoodSample $foodSample)
+    public function update (FoodSample $foodSample, FoodSampleUpdateRequest $request)
     {
+        $validatedData = $request->validated();
+        if (isset($validatedData['latitud_grados'])) {
+            $validatedData['latitud'] = implodingCoordinates(
+                $validatedData['latitud_grados'],
+                $validatedData['latitud_minutos'],
+                $validatedData['latitud_segundos'],
+                $validatedData['latitud_orientacion']
+            );
+            unset($validatedData['latitud_grados']);
+            unset($validatedData['latitud_minutos']);
+            unset($validatedData['latitud_segundos']);
+            unset($validatedData['latitud_orientacion']);
+    
+            $validatedData['longitud'] = implodingCoordinates(
+                $validatedData['longitud_grados'],
+                $validatedData['longitud_minutos'],
+                $validatedData['longitud_segundos'],
+                $validatedData['longitud_orientacion']
+            );
+            unset($validatedData['longitud_grados']);
+            unset($validatedData['longitud_minutos']);
+            unset($validatedData['longitud_segundos']);
+            unset($validatedData['longitud_orientacion']);
+        } else {
+            $validatedData['latitud'] = 'N/A';
+            $validatedData['longitud'] = 'N/A';
+        }
 
+        if ($request->has('peso_muestra')) {
+            $validatedData['peso_muestra'] = $request->input('peso_muestra');
+        } else {
+            $validatedData['peso_muestra'] = 'N/A';
+        }
+
+        if ($request->has('temperatura')) {
+            $validatedData['temperatura'] = $request->input('temperatura');
+        } else {
+            $validatedData['temperatura'] = null;
+        }
+
+        if ($request->has('otros')) {
+            $validatedData['parametros'] = $request->input('otros');
+            $validatedData['otros_parametros'] = 1;
+        } else {
+            $validatedData['otros_parametros'] = 0;
+        }
+
+        foreach ($validatedData as $key => $value)
+        {
+            $foodSample->{$key} = $value;
+        }
+
+        $foodSample->save();
+
+        return redirect()
+            ->route('orders.show', ['id' => $foodSample->id_orden])
+            ->with('message', "Se ha editado correctamente la muestra {$foodSample->numero_muestra}");
+    }
+
+    public function updateAll ()
+    {
+        
     }
 
     public function destroy (FoodSample $foodSample)
