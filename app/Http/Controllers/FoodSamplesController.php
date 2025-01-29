@@ -9,6 +9,7 @@ use App\Models\FoodSample;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\FoodSampleStoreRequest;
 use App\Http\Requests\FoodSampleUpdateRequest;
+use App\Http\Requests\FoodSampleUpdateAllRequest;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -43,11 +44,16 @@ class FoodSamplesController extends Controller
     {
         $inicio_muestras = $request->query('inicio_muestras');
         $numero_muestras = $request->query('numero_muestras');
+        $requestOrigin = $request->query('request_origin');
         $idOrden = $request->query('id_orden');
         $orden = Order::find($idOrden);
+        $numeroMuestras = $orden->numero_muestras;
+        if ($requestOrigin === 'orders.show') {
+            $orden->numero_muestras = $numeroMuestras + $numero_muestras;
+            $orden->save();
+        }
         $samples = [];
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras = $orden->numero_muestras + 1;
             // Create an instance of the request and set the iteration
             $foodSampleRequest = new FoodSampleStoreRequest();
             $foodSampleRequest->setIteration($i);
@@ -76,8 +82,6 @@ class FoodSamplesController extends Controller
             $sample = removeDynamicPostfixFromKeys($validatedData);
             array_push($samples, $sample);
         }
-
-        if ($request->query('request_origin') === 'orders.show') $orden->save();
 
         for ($i = 0; $i < $numero_muestras; $i++) {
             
@@ -120,6 +124,31 @@ class FoodSamplesController extends Controller
 
         return Inertia::render('samples/EditFood', [
             'foodSample' => $foodSample,
+        ]);
+    }
+
+    public function editAllFood ($folio)
+    {
+        $order = Order::where('folio', $folio)
+            ->get()[0];
+        $order->muestras = $order->muestras_alimentos;
+        foreach ($order->muestras as $muestra) {
+            if ($muestra->latitud !== 'N/A') {
+                $latitud = explodingCoordinates($muestra->latitud);
+                $longitud = explodingCoordinates($muestra->longitud);
+                $muestra->latitud_segundos = $latitud['segundos'];
+                $muestra->latitud_minutos = $latitud['minutos'];
+                $muestra->latitud_grados = $latitud['grados'];
+                $muestra->latitud_orientacion = $latitud['orientacion'];
+                $muestra->longitud_segundos = $longitud['segundos'];
+                $muestra->longitud_minutos = $longitud['minutos'];
+                $muestra->longitud_grados = $longitud['grados'];
+                $muestra->longitud_orientacion = $longitud['orientacion'];
+            }
+        }
+        
+        return Inertia::render('samples/EditAllFood', [
+            'order' => $order,
         ]);
     }
 
@@ -184,9 +213,41 @@ class FoodSamplesController extends Controller
             ->with('message', "Se ha editado correctamente la muestra {$foodSample->numero_muestra}");
     }
 
-    public function updateAll ()
+    public function updateAll ($id_orden, Request $request)
     {
+        $samples = FoodSample::where('id_orden', $id_orden);
+        $samplesValidated = [];
+        for ($i = 0; $i < $samples->count(); $i++) {
+            $foodSampleRequest = new FoodSampleUpdateAllRequest();
+            $foodSampleRequest->setIteration($i);
+            $validator = Validator::make(
+                $foodSampleRequest->values($request),
+                $foodSampleRequest->rules(),
+                $foodSampleRequest->messages()
+            );
+
+            if ($validator->fails()) {
+                return redirect()
+                    ->back()
+                    ->withErrors($validator);
+            }
+
+            $validatedData = $validator->validate();
+            $sampleData = removeDynamicPostfixFromKeys($validatedData);
+            $sampleData = handleSingularCasesOnUpdateAllFoodSamples($sampleData, $request, $i);
+            array_push($samplesValidated, $sampleData);
+        }
         
+        $samples->each(function ($item, $index) use($samplesValidated) {
+            foreach ($samplesValidated[$index] as $key => $value) {
+                $item->{$key} = $value; 
+            }
+            $item->save();
+        });
+        
+        return redirect()
+            ->route('orders.show', ['id' => $id_orden])
+            ->with('message', 'La orden y sus muestras se han editado correctamente');
     }
 
     public function destroy (FoodSample $foodSample)

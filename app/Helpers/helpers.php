@@ -109,3 +109,55 @@
             'orientacion' => $orientacion
         ];
     }
+
+    function handleSingularCasesOnUpdateAllFoodSamples($validatedData, $request, $number)
+    {
+        $filteredData = $validatedData;
+        if (isset($filteredData['latitud_grados'])) {
+            $filteredData['latitud'] = implodingCoordinates(
+                $filteredData['latitud_grados'],
+                $filteredData['latitud_minutos'],
+                $filteredData['latitud_segundos'],
+                $filteredData['latitud_orientacion']
+            );
+            unset($filteredData['latitud_grados']);
+            unset($filteredData['latitud_minutos']);
+            unset($filteredData['latitud_segundos']);
+            unset($filteredData['latitud_orientacion']);
+    
+            $filteredData['longitud'] = implodingCoordinates(
+                $filteredData['longitud_grados'],
+                $filteredData['longitud_minutos'],
+                $filteredData['longitud_segundos'],
+                $filteredData['longitud_orientacion']
+            );
+            unset($filteredData['longitud_grados']);
+            unset($filteredData['longitud_minutos']);
+            unset($filteredData['longitud_segundos']);
+            unset($filteredData['longitud_orientacion']);
+        } else {
+            $filteredData['latitud'] = 'N/A';
+            $filteredData['longitud'] = 'N/A';
+        }
+
+        if ($request->has("peso_muestra_" . $number)) {
+            $filteredData['peso_muestra'] = $request->input("peso_muestra_" . $number);
+        } else {
+            $filteredData['peso_muestra'] = 'N/A';
+        }
+
+        if ($request->has("temperatura_" . $number)) {
+            $filteredData['temperatura'] = $request->input("temperatura_" . $number);
+        } else {
+            $filteredData['temperatura'] = null;
+        }
+        
+        if (in_array('otros', array_keys($filteredData))) {
+            $otros_parametros = $filteredData['otros'];
+            unset($filteredData['otros']);
+            $filteredData['otros_parametros'] = 1;
+            $filteredData['parametros'] = $otros_parametros;
+        }
+
+        return $filteredData;
+    }

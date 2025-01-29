@@ -153,7 +153,7 @@ Route::middleware('auth')->group(function () {
                 ->name('food_samples.update_all');
             Route::delete('/{foodSample}', 'destroy')
                 ->name('food_samples.destroy');
-                Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')
+            Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')
                 ->name('food_samples.create_v2');
             Route::post('/v2', 'storeV2')
                 ->name('food_samples.store_v2');

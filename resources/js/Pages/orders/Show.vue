@@ -41,7 +41,8 @@
         temperatura: props.order.temperatura,
     });
 
-    const editUrl = props.order.aguas_alimentos === 'Aguas' ? `/water_samples`:`/food_samples`;
+    const editAllUrl = props.order.aguas_alimentos === 'Aguas' ? `water_samples.edit_all`:`food_samples.edit_all`,
+        editUrl = props.order.aguas_alimentos === 'Aguas' ? `/water_samples`:`/food_samples`;
 
     const handleAddSubmit = () => {
         let url = '';
@@ -280,7 +281,7 @@
                         </button>
                         <Link 
                             class="col-start-11 col-span-2 rounded text-white bg-blue-500 py-1 px-2 row-start-1 self-center text-center"
-                            :href="route('water_samples.edit_all', {folio: order.folio})">
+                            :href="route(editAllUrl, {folio: order.folio})">
                             Editar todas las muestras
                         </Link>
                     </section>

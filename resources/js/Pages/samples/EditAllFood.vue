@@ -19,10 +19,7 @@
       // Add the class to the FormTabs container
         tabsContainer.value.$el.classList.add('overflow-x-scroll');
     });
-    const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
-        return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
-    });
-    identificaciones_muestra.unshift({ value: null, label: 'Elija una opcion' });
+    
     const oldParams = [
         { value: null, label: 'Elija un parametro' },
         "Mesofílicos Aerobios", "Mohos", "Levaduras", "Salmonella s.p.p.", 
@@ -34,7 +31,7 @@
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
         console.log(vueFormData);
-        router.put(`/water_samples/update_all/${props.order.id}`, vueFormData);
+        router.put(`/food_samples/update_all/${props.order.id}`, vueFormData);
     };
     console.log(props.order.muestras);
 </script>
@@ -77,6 +74,7 @@
                                 `peso_muestra_${i}`,
                                 `temperatura_${i}`,
                                 `offset2_${i}`,
+                                `mostrar_coordenadas_${i}`,
                                 `latitud_label_${i}`,
                                 `latitud_grados_${i}`,
                                 `latitud_minutos_${i}`,
@@ -95,32 +93,31 @@
                             :add-class="{
                                 wrapper_active: ['border-b-4', 'bg-red-100'],
                             }"
-                            v-for="(muestra, i) in order.muestras_aguas"/>
+                            v-for="(muestra, i) in order.muestras"/>
                     </FormTabs>
                     <FormElements>
                             <TextElement 
                                 :name="`tipo_muestra_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.tipo_muestra">
                                  <template #before>
                                     <div class="text-sm">{{ `Tipo de muestra ${i + 1}` }}</div>
                                 </template>
                             </TextElement>
-                            <SelectElement 
-                                :name="`id_identificacion_muestra_${i}`"
+                            <TextElement 
+                                :name="`identificacion_muestra_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="(muestra, i) in order.muestras_aguas"
-                                 :items="identificaciones_muestra"
-                                 :default="muestra.id_identificacion_muestra">
+                                 v-for="(muestra, i) in order.muestras"
+                                 :default="muestra.identificacion_muestra">
                                  <template #before>
                                     <div class="text-sm">{{ `Identificacion de muestra ${i + 1}` }}</div>
                                 </template>
-                            </SelectElement>
+                            </TextElement>
                             <TextElement 
                                 :name="`caracteristicas_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="(muestra, i) in order.muestras_aguas"
+                                 v-for="(muestra, i) in order.muestras"
                                  :default="muestra.caracteristicas">
                                  <template #before>
                                     <div class="text-sm">{{ `Caracteristicas ${i + 1}` }}</div>
@@ -141,21 +138,25 @@
                                     'LMQH',
                                 ]"
                                 :default="muestra.muestreador"
-                                :columns="{container:2, wrapper:12}" v-for="(muestra, i) in order.muestras_aguas">
+                                :columns="{container:2, wrapper:12}" v-for="(muestra, i) in order.muestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Muestreador ${i + 1}` }}</div>
                                 </template> 
                             </SelectElement>
-                            <SelectElement
+                            <StaticElement 
+                                content="<div></div>"
+                                :columns="{ container: 4, wrapper:12}"
+                                :name="`offset_${i}`"
+                                v-for="(muestra, i) in order.muestras"/>
+                            <TextElement
                                 :name="`tipo_muestreo_${i}`"
                                 :default="muestra.tipo_muestreo"
                                 :columns="{ container: 2, wrapper: 12}"
-                                :items="tiposMuestreo"
-                                v-for="(muestra, i) in order.muestras_aguas">
+                                v-for="(muestra, i) in order.muestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Tipo de muestreo ${i + 1}` }}</div>
                                 </template>
-                            </SelectElement>
+                            </TextElement>
                             <TextElement
                                 :name="`peso_muestra_${i}`"
                                 :columns="{container:3, wrapper:12}"
@@ -167,7 +168,7 @@
                             </TextElement>
                             <TextElement
                                 :name="`temperatura_${i}`"
-                                :columns="{container:3, wrapper:12}"
+                                :columns="{container:2, wrapper:12}"
                                 v-for="(muestra, i) in order.muestras_alimentos"
                                 :default="muestra.temperatura">
                                 <template #before>
@@ -177,16 +178,16 @@
                             <StaticElement 
                                 content="<div></div>"
                                 :columns="{ container: 5, wrapper:12}"
-                                :name="`offset_${i}`"
-                                v-for="(muestra, i) in order.muestras_aguas"/>
+                                :name="`offset2_${i}`"
+                                v-for="(muestra, i) in order.muestras"/>
                             <CheckboxElement
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :name="`mostrar_coordenadas_${i}`"
-                                :default="foodSample.latitud !== 'N/A'">
+                                :default="muestra.latitud !== 'N/A'">
                                 Agregar coordenadas
                             </CheckboxElement>
                             <StaticElement
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :name="`latitud_label_${i}`"
                                 :conditions="[[`mostrar_coordenadas_${i}`,true]]"
                                 :content="`<div class='font-bold text-center'>Latitud ${i + 1}</div>`"
@@ -196,7 +197,7 @@
                                 input-type="number"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.latitud_grados"
                                 placeholder="°"/>
                             <TextElement
@@ -204,7 +205,7 @@
                                 input-type="number"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.latitud_minutos"
                                 placeholder="'"/>
                             <TextElement
@@ -212,14 +213,14 @@
                                 input-type="number"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.latitud_segundos"
                                 placeholder='"'/>
                             <SelectElement
                                 :name="`latitud_orientacion_${i}`"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.latitud_orientacion"
                                 :items="[
                                     {label:'Elija una orientacion', value:null},
@@ -227,7 +228,7 @@
                                     'Sur',
                                 ]"/>
                             <StaticElement
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :name="`longitud_label_${i}`"
                                 :conditions="[[`mostrar_coordenadas_${i}`,true]]"
                                 :content="`<div class='font-bold text-center'>longitud ${i + 1}</div>`"
@@ -237,7 +238,7 @@
                                 input-type="number"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.longitud_grados"
                                 placeholder="°"/>
                             <TextElement
@@ -245,7 +246,7 @@
                                 input-type="number"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.longitud_minutos"
                                 placeholder="'"/>
                             <TextElement
@@ -253,14 +254,14 @@
                                 input-type="number"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.longitud_segundos"
                                 placeholder='"'/>
                             <SelectElement
                                 :name="`longitud_orientacion_${i}`"
                                 :conditions="[[`mostrar_coordenadas_${i}`, true]]"
                                 :columns="{container:3, wrapper:12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.longitud_orientacion"
                                 :items="[
                                     {label:'Elija una orientacion', value:null},
@@ -270,7 +271,7 @@
                             <DateElement
                                 :name="`fecha_muestreo_${i}`"
                                 :columns="{ container: 2, wrapper: 12 }"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.fecha_muestreo"
                                 display-format="MMMM DD, YYYY">
                                 <template #before>
@@ -281,7 +282,7 @@
                                 :name="`hora_muestreo_${i}`"
                                 input-type="time"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.hora_muestreo">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de muestreo ${i + 1}` }}</div>
@@ -291,11 +292,11 @@
                                 :items="oldParams"
                                 :name="`parametros_${i}`"
                                 :columns="{ container:12, wrapper:12 }"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :default="muestra.otros_parametros ? 'Otro':muestra.parametros"/>
                             <TextareaElement 
                                 :name="`otros_${i}`"
-                                v-for="(muestra, i) in order.muestras_aguas"
+                                v-for="(muestra, i) in order.muestras"
                                 :conditions="[
                                     [`parametros_${i}`, 'Otro']
                                 ]"

@@ -14,7 +14,6 @@
         previousRouteName: String,
         errors: Object,
     });
-    
     const tabsContainer = ref(null);
     onMounted(() => {
       // Add the class to the FormTabs container

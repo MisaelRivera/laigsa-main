@@ -122,10 +122,14 @@ class WaterSamplesController extends Controller
         $numero_muestras = $request->query('numero_muestras');
         $idOrden = $request->query('id_orden');
         $orden = Order::find($idOrden);
-        
+        $requestOrigin = $request->query('request_origin');
         $samples = [];
+        $numeroMuestras = $orden->numero_muestras;
+        if ($requestOrigin === 'orders.show') {
+            $orden->numero_muestras = $numeroMuestras + $numero_muestras;
+            $orden->save();
+        }
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
-            if ($request->query('request_origin') === 'orders.show') $orden->numero_muestras = $orden->numero_muestras + 1;
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
             $waterSampleRequest->setIteration($i);
@@ -145,12 +149,13 @@ class WaterSamplesController extends Controller
                 $validatedData["parametros_$i"] = $request->input("otros_$i");
                 $validatedData["otros_$i"] = 1;
             }
+
             $validatedData["id_orden_$i"] = (int)$idOrden;
             $validatedData["numero_muestra_$i"] = $i;
             $sample = removeDynamicPostfixFromKeys($validatedData);
             array_push($samples, $sample);
         }
-        if($request->query('request_origin') === 'orders.show') $orden->save();
+
         foreach ($samples as $sampleInstance) {
             WaterSample::create($sampleInstance);
         }
