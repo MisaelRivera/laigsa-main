@@ -17,6 +17,9 @@
         push.success(getMessage());
      }
 
+    const clientFilter = ref(null),
+          samplingSiteFilter = ref(null);
+
      const isVisibleEditCesavedac = ref(false);
      const editCesavedacClient = ref(null);
      const cesavedacValue = ref(false);
@@ -52,6 +55,22 @@
         push.success(`Se ha editado el valor de cesavedac del cliente ${editCesavedacClient.value.cliente}`);
         handleCloseUpdateCesavedacModal();
      };
+
+     const handleClientFilter = (ev) => {
+        const value = ev.target.value;
+        const samplingSiteValue = samplingSiteFilter.value.value;
+        router.visit(route('clients.index', {
+                cliente: encodeURIComponent(value),
+                direccion_muestreo: encodeURIComponent(samplingSiteValue),
+            }),
+            {
+                method: 'get',
+                preserveState: true,
+                onSuccess: () => {
+                    console.log(props.clients);
+                },
+            });
+     };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -85,7 +104,9 @@
                                 name="cliente"
                                 id="cliente"
                                 placeholder="Buscar..."
-                                class="border w-full">
+                                class="border w-full"
+                                ref="clientFilter"
+                                @input="handleClientFilter">
                         </th>
                         <th scope="col" class="px-2 py-3">
                             <label for="sitio-muestreo">
@@ -95,6 +116,7 @@
                                 type="text"
                                 name="sitio_muestreo"
                                 id="sitio-muestreo"
+                                ref="samplingSiteFilter"
                                 placeholder="Buscar..."
                                 class="border w-full">
                         </th>
