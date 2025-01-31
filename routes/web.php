@@ -71,9 +71,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [ClientsController::class, 'create'])->name('clients.create');
         Route::post('/', [ClientsController::class, 'store'])->name('clients.store');
         Route::get('/{client}/edit', [ClientsController::class, 'edit'])->name('clients.edit');
+        Route::get('/{client}', [ClientsController::class, 'show'])->name('clients.show');
         Route::put('/{client}/{cesavedac}/set-cesavedac', [ClientsController::class, 'setCesavedac'])->name('clients.set-cesavedac');
         Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
     });
+    
     Route::controller(UserController::class)->group(function () {
         Route::prefix('/users')->group(function () {
             Route::get('/', 'index')->name('users.index');

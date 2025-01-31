@@ -47,6 +47,14 @@ class ClientsController extends Controller
             ->with('message', "Se ha creado el cliente $newClient->cliente correctamente!");
     }
 
+    public function show (Client $client)
+    {
+        $client->identificacionesMuestra = $client->identificaciones_muestra;
+        return Inertia::render('clients/Show', [
+            'client' => $client
+        ]);
+    }
+
     public function clientsByName ()
     {
         try {

@@ -71,6 +71,22 @@
                 },
             });
      };
+
+     const handleSamplingSiteFilter = (ev) => {
+        const value = ev.target.value;
+        const clientValue = clientFilter.value.value;
+        router.visit(route('clients.index', {
+                cliente: encodeURIComponent(clientValue),
+                direccion_muestreo: encodeURIComponent(value),
+            }),
+            {
+                method: 'get',
+                preserveState: true,
+                onSuccess: () => {
+                    console.log(props.clients);
+                },
+            });
+     };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -118,7 +134,8 @@
                                 id="sitio-muestreo"
                                 ref="samplingSiteFilter"
                                 placeholder="Buscar..."
-                                class="border w-full">
+                                class="border w-full"
+                                @input="handleSamplingSiteFilter">
                         </th>
                         <th scope="col" class="px-2 py-3 w-[35%]">
                             Observaciones
@@ -142,7 +159,7 @@
                         v-for="client in clients.data"
                         class="border-b">
                         <td class="px-3 py-2">
-                            <Link :href="route('clients.edit', {client: client.id})">
+                            <Link :href="route('clients.show', {client: client.id})">
                                 <i class="fas fa-eye text-blue-500"></i>
                             </Link>
                         </td>
