@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{client}', [ClientsController::class, 'show'])->name('clients.show');
         Route::put('/{client}/{cesavedac}/set-cesavedac', [ClientsController::class, 'setCesavedac'])->name('clients.set-cesavedac');
         Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
+        Route::post('/create_sample_identification', [ClientsController::class, 'createSampleIdentificacion']);
     });
     
     Route::controller(UserController::class)->group(function () {

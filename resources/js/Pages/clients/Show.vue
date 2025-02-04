@@ -1,10 +1,10 @@
 <script setup>
     import { ref } from 'vue';
-    import { Link } from '@inertiajs/vue3';
+    import { Link, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import EditDetailsTitle from '@/Components/Shared/EditDetailsTitle.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
-import MyModal from '@/Components/Shared/MyModal.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     const props = defineProps({
         client: {
             type: Object
@@ -27,6 +27,11 @@ import MyModal from '@/Components/Shared/MyModal.vue';
 
     const handleCloseDeleteClientModal = () => {
         isDeleteClientModalVisible.value = false;
+    };
+
+    const handleSubmitCreate = (form$) => {
+        //console.log(form$.requestData);
+        router.post('/clientes/create_sample_identification', {...form$.requestData, id_cliente:props.client.id});
     };
 </script>
 <template>
@@ -91,7 +96,7 @@ import MyModal from '@/Components/Shared/MyModal.vue';
                 <Vueform 
                     :endpoint="false"
                     :columns="{container:12, wrapper:12}"
-                    @submit="">
+                    @submit="handleSubmitCreate">
                     <TextElement
                         name="identificacion_muestra"
                         placeholder="Identificacion de muestra">
@@ -100,19 +105,256 @@ import MyModal from '@/Components/Shared/MyModal.vue';
                         </template>
                         <template #description>
                             <p 
-                                class="text-red-500">
+                                class="text-red-500"
+                                v-if="errors['identificacion_muestra']">
                                 {{ errors['identificacion_muestra'] }}
                             </p>
                         </template>
                     </TextElement>
                     <TextElement
                         name="latitud_grados"
-                        :columns="{container:1, wrapper:12}"
-                        placeholder="°">
+                        :columns="{container:1, label: 2, wrapper:12}"
+                        placeholder="°"
+                        :conditions="[['show_coordinates', true]]"
+                        input-type="number"
+                        label="°"
+                        :remove-classes="{
+                            ElementLabel: {
+                                container: 'items-start',
+                                container_md: 'form-text'
+                            }
+                        }"
+                        :add-classes="{
+                            ElementLabel: {
+                                container: ['items-center', 'mt-7'],
+                                container_md: ['text-3xl', 'mr-2'],
+                            }
+                        }">
                         <template #before>
                             <p>Latitud</p>
                         </template>
+                        <template #description>
+                            <p 
+                                v-if="errors['latitud_grados']"
+                                class="text-red-500">
+                                {{ errors['latitud_grados'] }}
+                            </p>
+                        </template>
                     </TextElement>
+                    <TextElement
+                        name="latitud_minutos"
+                        :columns="{container:1, label: 2, wrapper:12}"
+                        placeholder="'"
+                        :conditions="[['show_coordinates', true]]"
+                        input-type="number"
+                        label="'"
+                        :remove-classes="{
+                            ElementLabel: {
+                                container: 'items-start',
+                                container_md: 'form-text'
+                            }
+                        }"
+                        :add-classes="{
+                            ElementLabel: {
+                                container: ['items-center', 'mt-7'],
+                                container_md: 'text-3xl',
+                            },
+                            ElementLayout: {
+                                innerWrapper: 'mt-6'
+                            }
+                        }">
+                        <template #description>
+                            <p v-if="errors['latitud_minutos']"
+                                class="text-red-500">
+                                {{ errors['latitud_minutos'] }}
+                            </p>
+                        </template>
+                    </TextElement>
+                    <TextElement
+                        name="latitud_segundos"
+                        :columns="{container:1, label: 2, wrapper:12}"
+                        placeholder='"'
+                        :conditions="[['show_coordinates', true]]"
+                        input-type="number"
+                        label='"'
+                        :remove-classes="{
+                            ElementLabel: {
+                                container: 'items-start',
+                                container_md: 'form-text'
+                            }
+                        }"
+                        :add-classes="{
+                            ElementLabel: {
+                                container: ['items-center', 'mt-7'],
+                                container_md: 'text-3xl',
+                            },
+                            ElementLayout: {
+                                innerWrapper: 'mt-6'
+                            }
+                        }">
+                        <template #description>
+                            <p v-if="errors['latitud_segundos']"
+                                class="text-red-500">
+                                {{ errors['latitud_segundos'] }}
+                            </p>
+                        </template>
+                    </TextElement>
+                    <SelectElement
+                        name="latitud_orientacion"
+                        :columns="{container:2, wrapper:12}"
+                        :conditions="[['show_coordinates', true]]"
+                        :items="[
+                            {value: null, label: 'Elija orientacion'},
+                            'Norte',
+                            'Sur'
+                        ]"
+                        :add-classes="{
+                            ElementLayout: {
+                                innerWrapper: 'mt-7'
+                            }
+                        }">
+                        <template #description>
+                            <p v-if="errors['latitud_orientacion']"
+                                class="text-red-500">
+                                {{ errors['latitud_orientacion'] }}
+                            </p>
+                        </template>
+
+                    </SelectElement>
+                    <TextElement
+                        name="longitud_grados"
+                        :columns="{container:1, label: 2, wrapper:12}"
+                        placeholder="°"
+                        :conditions="[['show_coordinates', true]]"
+                        input-type="number"
+                        label="°"
+                        :remove-classes="{
+                            ElementLabel: {
+                                container: 'items-start',
+                                container_md: 'form-text'
+                            }
+                        }"
+                        :add-classes="{
+                            ElementLabel: {
+                                container: ['items-center', 'mt-7'],
+                                container_md: ['text-3xl', 'mr-2'],
+                            },
+                        }">
+                        <template #before>
+                            <p>Longitud</p>
+                        </template>
+                        <template #description>
+                            <p v-if="errors['longitud_grados']"
+                                class="text-red-500">
+                                {{ errors['longitud_grados'] }}
+                            </p>
+                        </template>
+                    </TextElement>
+                    <TextElement
+                        name="longitud_minutos"
+                        :columns="{container:1, label: 2, wrapper:12}"
+                        placeholder="'"
+                        :conditions="[['show_coordinates', true]]"
+                        input-type="number"
+                        label="'"
+                        :remove-classes="{
+                            ElementLabel: {
+                                container: 'items-start',
+                                container_md: 'form-text'
+                            }
+                        }"
+                        :add-classes="{
+                            ElementLabel: {
+                                container: ['items-center', 'mt-7'],
+                                container_md: 'text-3xl',
+                            },
+                            ElementLayout: {
+                                innerWrapper: 'mt-6'
+                            }
+                        }">
+                        <template #description>
+                            <p v-if="errors['longitud_minutos']"
+                                class="text-red-500">
+                                {{ errors['longitud_minutos'] }}
+                            </p>
+                        </template>
+                    </TextElement>
+                    <TextElement
+                        name="longitud_segundos"
+                        :columns="{container:1, label: 2, wrapper:12}"
+                        placeholder='"'
+                        :conditions="[['show_coordinates', true]]"
+                        input-type="number"
+                        label='"'
+                        :remove-classes="{
+                            ElementLabel: {
+                                container: 'items-start',
+                                container_md: 'form-text'
+                            }
+                        }"
+                        :add-classes="{
+                            ElementLabel: {
+                                container: ['items-center', 'mt-7'],
+                                container_md: 'text-3xl',
+                            },
+                            ElementLayout: {
+                                innerWrapper: 'mt-6'
+                            }
+                        }">
+                        <template #description>
+                            <p v-if="errors['longitud_segundos']"
+                                class="text-red-500">
+                                {{ errors['longitud_segundos'] }}
+                            </p>
+                        </template>
+                    </TextElement>
+                    <SelectElement
+                        name="longitud_orientacion"
+                        :columns="{container:2, wrapper:12}"
+                        :conditions="[['show_coordinates', true]]"
+                        :items="[
+                            {value: null, label: 'Elija orientacion'},
+                            'Este (E)',
+                            'Oeste (W)'
+                        ]"
+                        :add-classes="{
+                            ElementLayout: {
+                                innerWrapper: 'mt-7'
+                            }
+                        }">
+                        <template #description>
+                            <p v-if="errors['longitud_orientacion']"
+                                class="text-red-500">
+                                {{ errors['longitud_orientacion'] }}
+                            </p>
+                        </template>
+
+                    </SelectElement>
+                    <CheckboxElement
+                        name="show_coordinates"
+                        :add-classes="{
+                            ElementLayout: {
+                                container: 'mt-8'
+                            },
+                            CheckboxElement: {
+                                text: ['text-xs', 'mt-1']
+                            }
+                        }"
+                        :columns="{container:1, wrapper:12}">
+                        Coordenadas
+                    </CheckboxElement>
+                    <CheckboxElement
+                        name="siralab"
+                        :columns="{container:1, wrapper:12}"
+                        before="Siralab"
+                        :add-classes="{
+                           ElementLayout: {
+                                innerWrapper: 'mt-2'
+                            },
+                        }">
+                        Si
+                    </CheckboxElement>
+                    <button class="bg-green-500 text-white rounded-md py-2 px-2">Crear</button>
                 </Vueform>
             </div>
         </div>

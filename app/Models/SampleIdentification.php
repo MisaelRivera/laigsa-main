@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SampleIdentification extends Model
 {
     protected $table = 'identificacion_muestras';
+    protected $guarded = ['id_cliente'];
     public $timestamps = false;
     use HasFactory;
 

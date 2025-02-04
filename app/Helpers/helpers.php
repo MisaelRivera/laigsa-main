@@ -110,6 +110,18 @@
         ];
     }
 
+    function unsettingCoordinates ($data) {
+        unset($data['latitud_grados']);
+        unset($data['latitud_minutos']);
+        unset($data['latitud_segundos']);
+        unset($data['latitud_orientacion']);
+        unset($data['longitud_grados']);
+        unset($data['longitud_minutos']);
+        unset($data['longitud_segundos']);
+        unset($data['longitud_orientacion']);
+        return $data;
+    }
+
     function handleSingularCasesOnUpdateAllFoodSamples($validatedData, $request, $number)
     {
         $filteredData = $validatedData;

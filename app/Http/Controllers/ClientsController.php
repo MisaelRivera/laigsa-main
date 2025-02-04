@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Client;
 use App\Api\ClientsApi;
 use Inertia\Inertia;
+use App\Http\Requests\SampleIdentificationStoreRequest;
+use App\Models\SampleIdentification;
 
 class ClientsController extends Controller
 {
@@ -79,5 +81,32 @@ class ClientsController extends Controller
         $client->cesavedac = filter_var($cesavedac, FILTER_VALIDATE_BOOLEAN);;
         $client->save();
         return response(200);
+    }
+
+    public function createSampleIdentificacion (SampleIdentificationStoreRequest $request)
+    {
+        $clientID = $request->input('id_cliente');
+        $validatedData = $request->validated();
+        if ($request->has('latitud_grados')) {
+            $validatedData['latitud'] = implodingCoordinates(
+                $validatedData['latitud_grados'],
+                $validatedData['latitud_minutos'],
+                $validatedData['latitud_segundos'],
+                $validatedData['latitud_orientacion'],
+            );
+            $validatedData['longitud'] = implodingCoordinates(
+                $validatedData['longitud_grados'],
+                $validatedData['longitud_minutos'],
+                $validatedData['longitud_segundos'],
+                $validatedData['longitud_orientacion'],
+            );
+            $validatedData = unsettingCoordinates($validatedData);
+        }
+        var_dump($validatedData);
+        die();
+        SampleIdentification::create($validatedData);
+        return redirect()
+            ->route('clients.show', ['client' => $clientID])
+            ->with('message', "Se ha creado la identificacion de muestra " . $request->input('identificacion_muestra') . " correctamente!");
     }
 }
