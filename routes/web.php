@@ -65,16 +65,26 @@ Route::controller(PagesController::class)->group(function () {
     Route::delete('/logout', 'logout')->name('logout');
 });
 
+/*Route::controller(ClientsController::class)->group(function () {
+    Route::get('/clientes/test', 'testing');
+});*/
+
+
 Route::middleware('auth')->group(function () {
-    Route::prefix('/clientes')->group(function () {
-        Route::get('/', [ClientsController::class, 'index'])->name('clients.index');
-        Route::get('/create', [ClientsController::class, 'create'])->name('clients.create');
-        Route::post('/', [ClientsController::class, 'store'])->name('clients.store');
-        Route::get('/{client}/edit', [ClientsController::class, 'edit'])->name('clients.edit');
-        Route::get('/{client}', [ClientsController::class, 'show'])->name('clients.show');
-        Route::put('/{client}/{cesavedac}/set-cesavedac', [ClientsController::class, 'setCesavedac'])->name('clients.set-cesavedac');
-        Route::get('/clients_by_name', [ClientsController::class, 'clientsByName']);
-        Route::post('/create_sample_identification', [ClientsController::class, 'createSampleIdentificacion']);
+    Route::controller(ClientsController::class)->group(function () {
+        Route::get('/clientes/filter_sample_identifications/{idCliente}', 'filterSampleIdentification');
+        Route::prefix('clientes')->group(function () {
+            Route::get('/', 'index')->name('clients.index');
+            Route::get('/create', 'create')->name('clients.create');
+            Route::post('/', 'store')->name('clients.store');
+            Route::get('/{client}/edit', 'edit')->name('clients.edit');
+            Route::get('/{client}', 'show')->name('clients.show');
+            Route::get('/clients_by_name', 'clientsByName');
+            Route::put('/{client}/{cesavedac}/set-cesavedac', 'setCesavedac')->name('clients.set-cesavedac');
+            Route::post('/create_sample_identification', 'createSampleIdentificacion');
+            Route::delete('/destroy_sample_identification/{sampleIdentification}', 'destroySampleIdentification');
+
+        }); 
     });
     
     Route::controller(UserController::class)->group(function () {

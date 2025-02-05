@@ -102,11 +102,31 @@ class ClientsController extends Controller
             );
             $validatedData = unsettingCoordinates($validatedData);
         }
-        var_dump($validatedData);
-        die();
+        
         SampleIdentification::create($validatedData);
         return redirect()
             ->route('clients.show', ['client' => $clientID])
             ->with('message', "Se ha creado la identificacion de muestra " . $request->input('identificacion_muestra') . " correctamente!");
+    }
+
+    public function testing ()
+    {
+        return 'Hello';
+    }
+
+    public function filterSampleIdentification (Request $request, $idCliente)
+    {
+        $sampleIdentifications = SampleIdentification::where('id_cliente', $idCliente)
+            ->where('identificacion_muestra', 'like', "%" . $request->query('val') . "%")->get();
+        return response()
+            ->json($sampleIdentifications);
+
+    }
+
+    public function destroySampleIdentification (SampleIdentification $sampleIdentification)
+    {
+        $sampleIdentification->delete();
+        return redirect()
+            ->route('clients.show', ['client' => $sampleIdentification->id_cliente]);
     }
 }
