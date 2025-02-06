@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, reactive } from 'vue';
     import { Link, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import EditDetailsTitle from '@/Components/Shared/EditDetailsTitle.vue';
@@ -8,6 +8,7 @@
     import { useMessages } from '@/composables/messages';
     import { Notivue, Notification, push } from 'notivue';
     import axios from 'axios';
+    import { explodeCoordinates, implodeCoordinates } from '@/helpers/string_helper';
     const { getMessage } = useMessages();
     const props = defineProps({
         client: {
@@ -27,13 +28,29 @@
 
     const isDeleteClientModalVisible = ref(false);
     const isDeleteSampleIdentificationModalVisible = ref(false);
+    const isEditSampleIdentificationVisible = ref(false);
 
     const deleteSampleIdentification = ref(null);
+
+    let editSampleIdentification = reactive({
+        identificacion_muestra: '',
+        latitud_grados: '',
+        latitud_minutos: '',
+        latitud_segundos: '',
+        latitud_orientacion: null,
+        longitud_grados: '',
+        longitud_minutos: '',
+        longitud_segundos: '',
+        longitud_orientacion: null,
+        id_cliente: null,
+        siralab: false,
+        obsoleta: false,
+    });
 
     const handleSampleIdentificationFilter = async(ev) => {
         const value = ev.target.value;
         const result = await axios.get(`/clientes/filter_sample_identifications/${props.client.id}?val=${value}`);
-        props.client.identificaciones_muestra = result.data;
+        props.client.identificaciones_muestra_activas = result.data;
     };
     
     const handleDeleteClient = () => {
@@ -42,11 +59,28 @@
 
     const handleDeleteSampleIdentification = () => {
         isDeleteSampleIdentificationModalVisible.value = false;
-        router.delete(`/clientes/destroy_sample_identification/${deleteSampleIdentification.value.id}`, {
+        router.put(`/clientes/set_sample_identification_obsolete/${deleteSampleIdentification.value.id}`, {
             onSuccess: () => {
-                push.success(`La identificacion de mustra ${deleteSampleIdentification.value.identificacion_muestra} ha sido eliminada correctamente`);
+                push.success(`La identificacion de mustra ${deleteSampleIdentification.value.identificacion_muestra} ha sido puesta obsoleta correctamente`);
             }
         });
+    };
+
+    const handleOpenEditSampleIdentificationModal = (sampleIdentification) => {
+        isEditSampleIdentificationVisible.value = true;
+        const latitudInfo = explodeCoordinates(sampleIdentification.latitud);
+        const longitudInfo = explodeCoordinates(sampleIdentification.longitud);
+        editSampleIdentification.latitud_grados = latitudInfo.grados;
+        editSampleIdentification.latitud_minutos = latitudInfo.minutos;
+        editSampleIdentification.latitud_segundos = latitudInfo.segundos;
+        editSampleIdentification.latitud_orientacion = latitudInfo.orientacion;
+        editSampleIdentification.longitud_grados = longitudInfo.grados;
+        editSampleIdentification.longitud_minutos = longitudInfo.minutos;
+        editSampleIdentification.longitud_segundos = longitudInfo.segundos;
+        editSampleIdentification.longitud_orientacion = longitudInfo.orientacion;
+        editSampleIdentification.siralab = sampleIdentification.siralab;
+        editSampleIdentification.obsoleta = sampleIdentification.obsoleta;
+        console.log(editSampleIdentification);
     };
 
     const handleOpenDeleteClientModal = () => {
@@ -414,14 +448,15 @@
                             <th class="py-1 px-2 text-left">SIRALAB</th>
                             <th class="py-1 px-2 text-left">Obsoleta</th>
                             <th class="py-1 px-2 text-left"></th>
+                            <th class="py-1 px-2 text-left"></th>
                         </tr>
                     </thead>
                     <tbody class="[&>*:nth-child(odd)]:bg-gray-50 [&>*:nth-child(even)]:bg-white">
                         <tr 
-                            v-for="(identificacion_muestra, index) in client.identificaciones_muestra"
+                            v-for="(identificacion_muestra, index) in client.identificaciones_muestra_activas"
                             :key="index"
                             class="border-2">
-                            <td class="py-1 px-2" 
+                            <td class="py-1 px-2"
                                 :class="{'text-green-500':identificacion_muestra.siralab,
                                  'text-red-500': identificacion_muestra.obsoleta}">
                                 {{ identificacion_muestra.identificacion_muestra }}
@@ -447,6 +482,13 @@
                                 {{ identificacion_muestra.obsoleta ? 'Si':'No' }}
                             </td>
                             <td class="py-1 px-2">
+                                <button 
+                                    class="py-1 px-3 bg-yellow-500 text-white rounded-md h-10 col-span-1"
+                                    @click="() => handleOpenEditSampleIdentificationModal(identificacion_muestra)">
+                                    ¶
+                                </button>
+                            </td>
+                            <td class="py-1 px-2">
                                 <DeleteButton
                                     :funct="() => handleOpenDeleteSampleIdentificationModal(identificacion_muestra)"
                                     :args="[]"/>
@@ -456,6 +498,61 @@
                 </table>
             </div>
         </div>
+        <MyModal
+            title="Editar identificacion de muestra"
+            v-model="isEditSampleIdentificationVisible"
+            :cancel-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :ok-button-props="{
+                class: ['bg-yellow-500', 'text-white']
+            }"
+            @close-from="handleCloseDeleteClientModal"
+            @ok="handleDeleteClient">
+            <Vueform
+                :endpoint="false"
+                :columns="{container:12, wrapper:12}">
+                <TextElement
+                    name="latitud_grados"
+                    input-type="number"
+                    :columns="{container:1, label:2, wrapper:12}"
+                    label="°">
+                    <template #description>
+                        <p 
+                            v-if="errors['latitud_grados']"
+                            class="text-sm text-red-500">
+                            {{ errors['latitud_grados'] }}
+                        </p>
+                    </template>
+                </TextElement>
+                <TextElement
+                    name="latitud_minutos"
+                    input-type="number"
+                    :columns="{container:1, label:2, wrapper:12}"
+                    label="'">
+                    <template #description>
+                        <p 
+                            v-if="errors['latitud_minutos']"
+                            class="text-sm text-red-500">
+                            {{ errors['latitud_minutos'] }}
+                        </p>
+                    </template>
+                </TextElement>
+                <TextElement
+                    name="latitud_segundos"
+                    input-type="number"
+                    :columns="{container:1, label:2, wrapper:12}"
+                    label='"'>
+                    <template #description>
+                        <p 
+                            v-if="errors['latitud_segundos']"
+                            class="text-sm text-red-500">
+                            {{ errors['latitud_segundos'] }}
+                        </p>
+                    </template>
+                </TextElement>
+            </Vueform>
+        </MyModal>
         <MyModal
             title="Eliminar cliente"
             v-model="isDeleteClientModalVisible"
@@ -480,7 +577,7 @@
             }"
             @close-from="handleCloseDeleteSampleIdentificationModal"
             @ok="handleDeleteSampleIdentification">
-            <p>Seguro que deseas eliminar la identificacion de muestra {{ deleteSampleIdentification.identificacion_muestra }}?</p>
+            <p>Seguro que deseas hacer obsoleta la identificacion de muestra {{ deleteSampleIdentification.identificacion_muestra }}?</p>
         </MyModal>
         <Notivue v-slot="item">
             <Notification :item="item"/>

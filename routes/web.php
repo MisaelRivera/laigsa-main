@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/clients_by_name', 'clientsByName');
             Route::put('/{client}/{cesavedac}/set-cesavedac', 'setCesavedac')->name('clients.set-cesavedac');
             Route::post('/create_sample_identification', 'createSampleIdentificacion');
-            Route::delete('/destroy_sample_identification/{sampleIdentification}', 'destroySampleIdentification');
+            Route::put('/set_sample_identification_obsolete/{sampleIdentification}', 'setSampleIdentificationObsolete');
 
         }); 
     });

@@ -51,7 +51,8 @@ class ClientsController extends Controller
 
     public function show (Client $client)
     {
-        $client->identificacionesMuestra = $client->identificaciones_muestra;
+        $client->identificacionesMuestra = $client->identificaciones_muestra_activas;
+        $client->identificaciones_muestra_obsoletas;
         return Inertia::render('clients/Show', [
             'client' => $client
         ]);
@@ -117,15 +118,18 @@ class ClientsController extends Controller
     public function filterSampleIdentification (Request $request, $idCliente)
     {
         $sampleIdentifications = SampleIdentification::where('id_cliente', $idCliente)
-            ->where('identificacion_muestra', 'like', "%" . $request->query('val') . "%")->get();
+            ->where('identificacion_muestra', 'like', "%" . $request->query('val') . "%")
+            ->where('obsoleta', 0)
+            ->get();
         return response()
             ->json($sampleIdentifications);
 
     }
 
-    public function destroySampleIdentification (SampleIdentification $sampleIdentification)
+    public function setSampleIdentificationObsolete (SampleIdentification $sampleIdentification)
     {
-        $sampleIdentification->delete();
+        $sampleIdentification->obsoleta = 1;
+        $sampleIdentification->save();
         return redirect()
             ->route('clients.show', ['client' => $sampleIdentification->id_cliente]);
     }

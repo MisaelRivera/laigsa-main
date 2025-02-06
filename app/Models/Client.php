@@ -18,6 +18,18 @@ class Client extends Model
         return $this->hasMany(SampleIdentification::class, 'id_cliente');
     }
 
+    public function identificaciones_muestra_activas()
+    {
+        return $this->hasMany(SampleIdentification::class, 'id_cliente')
+            ->where('obsoleta', 0);
+    }
+
+    public function identificaciones_muestra_obsoletas()
+    {
+        return $this->hasMany(SampleIdentification::class, 'id_cliente')
+            ->where('obsoleta', 1);
+    }
+
     public function nombreIdentificacionesMuestra()
 {
     return SampleIdentification::select('id', 'identificacion_muestra')
