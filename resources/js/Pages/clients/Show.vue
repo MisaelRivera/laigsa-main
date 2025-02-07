@@ -33,6 +33,7 @@
     const deleteSampleIdentification = ref(null);
 
     let editSampleIdentification = reactive({
+        id: null,
         identificacion_muestra: '',
         latitud_grados: '',
         latitud_minutos: '',
@@ -68,19 +69,63 @@
 
     const handleOpenEditSampleIdentificationModal = (sampleIdentification) => {
         isEditSampleIdentificationVisible.value = true;
-        const latitudInfo = explodeCoordinates(sampleIdentification.latitud);
-        const longitudInfo = explodeCoordinates(sampleIdentification.longitud);
-        editSampleIdentification.latitud_grados = latitudInfo.grados;
-        editSampleIdentification.latitud_minutos = latitudInfo.minutos;
-        editSampleIdentification.latitud_segundos = latitudInfo.segundos;
-        editSampleIdentification.latitud_orientacion = latitudInfo.orientacion;
-        editSampleIdentification.longitud_grados = longitudInfo.grados;
-        editSampleIdentification.longitud_minutos = longitudInfo.minutos;
-        editSampleIdentification.longitud_segundos = longitudInfo.segundos;
-        editSampleIdentification.longitud_orientacion = longitudInfo.orientacion;
-        editSampleIdentification.siralab = sampleIdentification.siralab;
+        editSampleIdentification.id = sampleIdentification.id;
         editSampleIdentification.obsoleta = sampleIdentification.obsoleta;
-        console.log(editSampleIdentification);
+        editSampleIdentification.identificacion_muestra = sampleIdentification.identificacion_muestra;
+        if (editSampleIdentification.latitud !== 'Sin Dato' && editSampleIdentification.latitud !== '') {
+            const latitudInfo = explodeCoordinates(sampleIdentification.latitud);
+            const longitudInfo = explodeCoordinates(sampleIdentification.longitud);
+            editSampleIdentification.latitud_grados = latitudInfo.grados;
+            editSampleIdentification.latitud_minutos = latitudInfo.minutos;
+            editSampleIdentification.latitud_segundos = latitudInfo.segundos;
+            editSampleIdentification.latitud_orientacion = latitudInfo.orientacion;
+            editSampleIdentification.longitud_grados = longitudInfo.grados;
+            editSampleIdentification.longitud_minutos = longitudInfo.minutos;
+            editSampleIdentification.longitud_segundos = longitudInfo.segundos;
+            editSampleIdentification.longitud_orientacion = longitudInfo.orientacion;
+            editSampleIdentification.id_cliente = sampleIdentification.id_cliente;
+            console.log(editSampleIdentification);
+        }
+    };
+
+    const handleCloseEditSampleIdentificationModal = () => {
+        editSampleIdentification.id = null;
+        editSampleIdentification.identificacion_muestra = '';
+        editSampleIdentification.latitud_grados = '';
+        editSampleIdentification.latitud_minutos = '';
+        editSampleIdentification.latitud_segundos = '';
+        editSampleIdentification.latitud_orientacion = null;
+        editSampleIdentification.longitud_grados = '';
+        editSampleIdentification.longitud_minutos = '';
+        editSampleIdentification.longitud_segundos = '';
+        editSampleIdentification.longitud_orientacion = null;
+        editSampleIdentification.id_cliente = null;
+        editSampleIdentification.siralab = false;
+        editSampleIdentification.obsoleta = false;
+        isEditSampleIdentificationVisible.value = false;
+    };
+
+    const handleEditSample = () => {
+        router.put(`/clientes/edit_sample_identification/${editSampleIdentification.id}`, editSampleIdentification, {
+            onSuccess: () => {
+                const sampleIdentificationName = editSampleIdentification.identificacion_muestra;
+                editSampleIdentification.id = null;
+                editSampleIdentification.identificacion_muestra = '';
+                editSampleIdentification.latitud_grados = '';
+                editSampleIdentification.latitud_minutos = '';
+                editSampleIdentification.latitud_segundos = '';
+                editSampleIdentification.latitud_orientacion = null;
+                editSampleIdentification.longitud_grados = '';
+                editSampleIdentification.longitud_minutos = '';
+                editSampleIdentification.longitud_segundos = '';
+                editSampleIdentification.longitud_orientacion = null;
+                editSampleIdentification.id_cliente = null;
+                editSampleIdentification.siralab = false;
+                editSampleIdentification.obsoleta = false;
+                isEditSampleIdentificationVisible.value = false;
+                push.success(`La identificacion de muestra ${sampleIdentificationName} se ha editado correctamente`);
+            }
+        });
     };
 
     const handleOpenDeleteClientModal = () => {
@@ -280,8 +325,8 @@
                         :conditions="[['show_coordinates', true]]"
                         :items="[
                             {value: null, label: 'Elija orientacion'},
-                            'Norte',
-                            'Sur'
+                            { label: 'Norte', value: 'N'},
+                            { label: 'Sur', value: 'S'}
                         ]"
                         :add-classes="{
                             ElementLayout: {
@@ -505,18 +550,58 @@
                 class: ['bg-blue-500', 'text-white']
             }"
             :ok-button-props="{
-                class: ['bg-yellow-500', 'text-white']
+                class: ['bg-yellow-500', 'text-white'],
+                innerText: 'Editar'
             }"
-            @close-from="handleCloseDeleteClientModal"
-            @ok="handleDeleteClient">
+            @close-from="handleCloseEditSampleIdentificationModal"
+            @ok="handleEditSample"
+            size="75%">
             <Vueform
                 :endpoint="false"
                 :columns="{container:12, wrapper:12}">
+                <StaticElement
+                    name="coordinates_gap"
+                    content="<div></div>"
+                    :columns="{container:2, wrapper:12}"
+                    :conditions="[['coordenadas', true]]"/>
+                <StaticElement
+                    name="latitud_label"
+                    content="<p class='font-bold text-center'>Latitud</p>"
+                    :columns="{container:5, wrapper:12}"
+                    :conditions="[['coordenadas', true]]"/>
+                <StaticElement
+                    name="longitud_label"
+                    content="<p class='font-bold text-center'>Longitud</p>"
+                    :columns="{container:5, wrapper:12}"
+                    :conditions="[['coordenadas', true]]"/>
+                <CheckboxElement
+                    name="obsoleta"
+                    :columns="{container:1, wrapper:12}"
+                    :add-classes="{
+                        ElementLayout: {
+                            innerWrapper: ['mt-2']
+                        }
+                    }">
+                    Obsoleta
+                </CheckboxElement>
+                <CheckboxElement
+                    name="coordenadas"
+                    :columns="{container:1, wrapper:12}"
+                    :add-classes="{
+                        ElementLayout: {
+                            innerWrapper: ['mt-2']
+                        }
+                    }"
+                    :default="editSampleIdentification.latitud_grados !== 'Sin Dato'">
+                    Coordenadas
+                </CheckboxElement>
                 <TextElement
                     name="latitud_grados"
                     input-type="number"
                     :columns="{container:1, label:2, wrapper:12}"
-                    label="°">
+                    label="°"
+                    :default="editSampleIdentification.latitud_grados"
+                    :conditions="[['coordenadas', true]]">
                     <template #description>
                         <p 
                             v-if="errors['latitud_grados']"
@@ -529,7 +614,9 @@
                     name="latitud_minutos"
                     input-type="number"
                     :columns="{container:1, label:2, wrapper:12}"
-                    label="'">
+                    label="'"
+                    :default="editSampleIdentification.latitud_minutos"
+                    :conditions="[['coordenadas', true]]">
                     <template #description>
                         <p 
                             v-if="errors['latitud_minutos']"
@@ -542,7 +629,9 @@
                     name="latitud_segundos"
                     input-type="number"
                     :columns="{container:1, label:2, wrapper:12}"
-                    label='"'>
+                    label='"'
+                    :default="editSampleIdentification.latitud_segundos"
+                    :conditions="[['coordenadas', true]]">
                     <template #description>
                         <p 
                             v-if="errors['latitud_segundos']"
@@ -551,6 +640,87 @@
                         </p>
                     </template>
                 </TextElement>
+                <SelectElement
+                    name="latitud_orientacion"
+                    :columns="{container:2, wrapper:12}"
+                    :default="editSampleIdentification.latitud_orientacion"
+                    :items="[
+                        {label: 'Elija la orientacion', value: null},
+                        { label: 'Norte', value: 'N'},
+                        { label: 'Sur', value: 'S'}
+                    ]"
+                    :conditions="[['coordenadas', true]]">
+                    <template #description>
+                        <p 
+                            v-if="errors['latitud_orientacion']"
+                            class="text-red-500">
+                            {{ errors['latitud_orientacion'] }}
+                        </p>
+                    </template>
+                </SelectElement>
+                <TextElement
+                    name="longitud_grados"
+                    input-type="number"
+                    :columns="{container:1, label:2, wrapper:12}"
+                    label="°"
+                    :default="editSampleIdentification.longitud_grados"
+                    :conditions="[['coordenadas', true]]">
+                    <template #description>
+                        <p 
+                            v-if="errors['longitud_grados']"
+                            class="text-sm text-red-500">
+                            {{ errors['longitud_grados'] }}
+                        </p>
+                    </template>
+                </TextElement>
+                <TextElement
+                    name="longitud_minutos"
+                    input-type="number"
+                    :columns="{container:1, label:2, wrapper:12}"
+                    label="'"
+                    :default="editSampleIdentification.longitud_minutos"
+                    :conditions="[['coordenadas', true]]">
+                    <template #description>
+                        <p 
+                            v-if="errors['longitud_minutos']"
+                            class="text-sm text-red-500">
+                            {{ errors['longitud_minutos'] }}
+                        </p>
+                    </template>
+                </TextElement>
+                <TextElement
+                    name="longitud_segundos"
+                    input-type="number"
+                    :columns="{container:1, label:2, wrapper:12}"
+                    label='"'
+                    :default="editSampleIdentification.longitud_segundos"
+                    :conditions="[['coordenadas', true]]">
+                    <template #description>
+                        <p 
+                            v-if="errors['longitud_segundos']"
+                            class="text-sm text-red-500">
+                            {{ errors['longitud_segundos'] }}
+                        </p>
+                    </template>
+                </TextElement>
+                <SelectElement
+                    name="longitud_orientacion"
+                    :columns="{container:2, wrapper:12}"
+                    :default="editSampleIdentification.longitud_orientacion"
+                    :items="[
+                        {label: 'Elija la orientacion', value: null},
+                        'Este (E)',
+                        'Oeste (W)'
+                    ]"
+                    :conditions="[['coordenadas', true]]">
+                    <template #description>
+                        <p 
+                            v-if="errors['longitud_orientacion']"
+                            class="text-red-500">
+                            {{ errors['longitud_orientacion'] }}
+                        </p>
+                    </template>
+                </SelectElement>
             </Vueform>
         </MyModal>
         <MyModal

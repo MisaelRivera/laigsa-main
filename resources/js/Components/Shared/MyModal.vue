@@ -5,7 +5,7 @@
     const props = defineProps({
         size: {
             type: String,
-            default: 'md',
+            default: '720px',
         },
 
         title: {
@@ -49,7 +49,8 @@
             class="h-screen w-screen bg-black/40 flex fixed top-0 left-0 right-0 bottom-0 inset-0 z-10 justify-center items-center"
             v-if="modelValue">
             <div 
-                class="bg-slate-100 rounded-lg h-fit w-full max-w-[500px]"
+                :class="`bg-slate-100 rounded-lg h-fit w-full`"
+                :style="`max-width:${size};`"
                 ref="target">
                 <div class="bg-blue-600 rounded-ss-lg rounded-se-lg py-3 px-4 text-white font-semibold">
                     <h2>{{ title }}</h2>

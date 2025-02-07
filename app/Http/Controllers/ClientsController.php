@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Client;
 use App\Api\ClientsApi;
+use App\Http\Requests\SampleIdentificationEditRequest;
 use Inertia\Inertia;
 use App\Http\Requests\SampleIdentificationStoreRequest;
 use App\Models\SampleIdentification;
@@ -110,14 +111,36 @@ class ClientsController extends Controller
             ->with('message', "Se ha creado la identificacion de muestra " . $request->input('identificacion_muestra') . " correctamente!");
     }
 
-    public function testing ()
+    public function editSampleIdentification (SampleIdentification $sampleIdentification, SampleIdentificationEditRequest $request)
     {
-        return 'Hello';
+        $validatedData = $request->validated();
+        $sampleIdentification->obsoleta = $validatedData['obsoleta'];
+        if ($request->has('latitud_grados')) {
+            $sampleIdentification->latitud = implodingCoordinates(
+                $validatedData['latitud_grados'],
+                $validatedData['latitud_minutos'],
+                $validatedData['latitud_segundos'],
+                $validatedData['latitud_orientacion']
+            );
+            $sampleIdentification->longitud = implodingCoordinates(
+                $validatedData['longitud_grados'],
+                $validatedData['longitud_minutos'],
+                $validatedData['longitud_segundos'],
+                $validatedData['longitud_orientacion']
+            );
+        } else {
+            $sampleIdentification->latitud = 'Sin Dato';
+            $sampleIdentification->longitud = 'Sin Dato';
+        }
+        $sampleIdentification->save();
+        return redirect()
+            ->route('clients.show', ['client' => $sampleIdentification->id_cliente]);
     }
 
     public function filterSampleIdentification (Request $request, $idCliente)
     {
-        $sampleIdentifications = SampleIdentification::where('id_cliente', $idCliente)
+        $sampleIdentifications = SampleIdentification::where('id_cliente',
+         $idCliente)
             ->where('identificacion_muestra', 'like', "%" . $request->query('val') . "%")
             ->where('obsoleta', 0)
             ->get();
