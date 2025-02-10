@@ -89,7 +89,7 @@
     function implodingCoordinates ($grados, $minutos, $segundos, $orientacion)
     {
         $str = '';
-        $str .= $grados . '°' . $minutos . "'" . $segundos . '"' . ' ' . $orientacion;
+        $str .= $grados . '°' . $minutos . "'" . $segundos . "''" . ' ' . $orientacion;
         return $str;
     }
 

@@ -68,6 +68,7 @@
     };
 
     const handleOpenEditSampleIdentificationModal = (sampleIdentification) => {
+        console.log(sampleIdentification);
         isEditSampleIdentificationVisible.value = true;
         editSampleIdentification.id = sampleIdentification.id;
         editSampleIdentification.obsoleta = sampleIdentification.obsoleta;
