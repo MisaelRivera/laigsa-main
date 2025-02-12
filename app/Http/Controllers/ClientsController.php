@@ -128,9 +128,7 @@ class ClientsController extends Controller
                 $validatedData['longitud_segundos'],
                 $validatedData['longitud_orientacion']
             );
-            var_dump($validatedData['latitud_minutos']);
-            var_dump($sampleIdentification->longitud);
-            die();
+           
         } else {
             $sampleIdentification->latitud = 'Sin Dato';
             $sampleIdentification->longitud = 'Sin Dato';

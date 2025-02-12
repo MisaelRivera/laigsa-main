@@ -20,6 +20,27 @@
             :required="required"/>
         <p v-for="error in errors" class="text-red-500 font-bold text-md">{{ error }}</p>
     </div>
+    <template v-else>
+        <label 
+            :for="id"
+            v-if="label"
+            :class="[...labelClasses]">{{ label }}</label>
+        <input
+            :type="type"
+            :id="id"
+            :name="name"
+            :step="step"
+            :min="min"
+            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200"
+            :class="[...inputClasses]"
+            :value="modelValue"
+            @input="updateModelValue"
+            @blur="blur"
+            @focus=""
+            :disabled="disabled"
+            :required="required"/>
+        <p v-for="error in errors" class="text-red-500 font-bold text-md">{{ error }}</p>
+    </template>
 </template>
 <script>
     export default {

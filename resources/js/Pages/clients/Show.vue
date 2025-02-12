@@ -9,6 +9,8 @@
     import { Notivue, Notification, push } from 'notivue';
     import axios from 'axios';
     import { explodeCoordinates, implodeCoordinates } from '@/helpers/string_helper';
+    import CustomInput from '@/Components/Shared/CustomInput.vue';
+    import CustomCheckbox from '@/Components/Shared/CustomCheckbox.vue';
     const { getMessage } = useMessages();
     const props = defineProps({
         client: {
@@ -31,9 +33,8 @@
     const isEditSampleIdentificationVisible = ref(false);
 
     const deleteSampleIdentification = ref(null);
-
+    let editSampleIdentificationId = ref(null);
     let editSampleIdentification = reactive({
-        id: null,
         identificacion_muestra: '',
         latitud_grados: '',
         latitud_minutos: '',
@@ -53,6 +54,8 @@
         const result = await axios.get(`/clientes/filter_sample_identifications/${props.client.id}?val=${value}`);
         props.client.identificaciones_muestra_activas = result.data;
     };
+
+    const coordenadas = ref(false);
     
     const handleDeleteClient = () => {
         alert('Test');
@@ -69,17 +72,19 @@
 
     const handleOpenEditSampleIdentificationModal = (sampleIdentification) => {
         console.log(sampleIdentification);
+        editSampleIdentificationId.value = sampleIdentification.id;
         isEditSampleIdentificationVisible.value = true;
-        editSampleIdentification.id = sampleIdentification.id;
         editSampleIdentification.obsoleta = sampleIdentification.obsoleta;
         editSampleIdentification.identificacion_muestra = sampleIdentification.identificacion_muestra;
-        if (editSampleIdentification.latitud !== 'Sin Dato' && editSampleIdentification.latitud !== '') {
+        if (sampleIdentification.latitud_grados !== 'Sin Dato' && sampleIdentification.latitud_grados !== '') {
+            coordenadas.value = true;
             const latitudInfo = explodeCoordinates(sampleIdentification.latitud);
             const longitudInfo = explodeCoordinates(sampleIdentification.longitud);
             editSampleIdentification.latitud_grados = latitudInfo.grados;
             editSampleIdentification.latitud_minutos = latitudInfo.minutos;
             editSampleIdentification.latitud_segundos = latitudInfo.segundos;
             editSampleIdentification.latitud_orientacion = latitudInfo.orientacion;
+            console.log(latitudInfo);
             editSampleIdentification.longitud_grados = longitudInfo.grados;
             editSampleIdentification.longitud_minutos = longitudInfo.minutos;
             editSampleIdentification.longitud_segundos = longitudInfo.segundos;
@@ -90,7 +95,6 @@
     };
 
     const handleCloseEditSampleIdentificationModal = () => {
-        editSampleIdentification.id = null;
         editSampleIdentification.identificacion_muestra = '';
         editSampleIdentification.latitud_grados = '';
         editSampleIdentification.latitud_minutos = '';
@@ -107,10 +111,9 @@
     };
 
     const handleEditSample = () => {
-        router.put(`/clientes/edit_sample_identification/${editSampleIdentification.id}`, editSampleIdentification, {
+        router.put(`/clientes/edit_sample_identification/${editSampleIdentificationId.value}`, editSampleIdentification, {
             onSuccess: () => {
                 const sampleIdentificationName = editSampleIdentification.identificacion_muestra;
-                editSampleIdentification.id = null;
                 editSampleIdentification.identificacion_muestra = '';
                 editSampleIdentification.latitud_grados = '';
                 editSampleIdentification.latitud_minutos = '';
@@ -153,6 +156,10 @@
                 push.success(`Se ha creado la identificacion de muestra correctamente ${form$.requestData.identificacion_muestra}`);
             }
         });
+    };
+
+    const handleCoordenatesChangeState = (coordinates) => {
+        coordenadas.value = coordinates.value;
     };
 </script>
 <template>
@@ -557,9 +564,115 @@
             @close-from="handleCloseEditSampleIdentificationModal"
             @ok="handleEditSample"
             size="75%">
-            <Vueform
+            <form @submit.prevent="handleEditSample" class="w-full">
+                <div class="grid grid-cols-12">
+                    <div class="col-span-12 mb-4">
+                        <CustomInput
+                            name="identificacion_muestra"
+                            id="identificacion-muestra"
+                            label="Identificacion de muestra"
+                            v-model="editSampleIdentification.identificacion_muestra"/>
+                    </div>
+                </div>
+                <div class="grid grid-cols-12">
+                    <div class="col-span-1 mb-4">
+                        <label class="flex items-center">
+                            <CustomCheckbox 
+                                name="obsoleta"
+                                v-model="editSampleIdentification.obsoleta"
+                                label-text="Obsoleta"/>
+                        </label>
+                    </div>
+                    <div class="col-span-1 mb-4">
+                        <label class="flex items-center">
+                            <CustomCheckbox 
+                                v-model="editSampleIdentification.obsoleta"
+                                label-text="Coordenadas"
+                                name="coordenadas"
+                                :checked="coordenadas"
+                                @change-state="handleCoordenatesChangeState"/>
+                        </label>
+                    </div>
+                    <div class="col-span-1 mb-4" v-if="coordenadas">
+                        <CustomInput
+                            name="latitud_grados"
+                            id="latitud-grados"
+                            :input-classes="['w-8/12']"
+                            :inline="true"
+                            label="°"
+                            v-model="editSampleIdentification.latitud_grados"/>
+                    </div>
+                    <div class="col-span-1 mb-4" v-if="coordenadas">
+                        <CustomInput
+                            name="latitud_minutos"
+                            id="latitud-minutos"
+                            :input-classes="['w-8/12']"
+                            :inline="true"
+                            label="'"
+                            :label-classes="['text-2xl']"
+                            v-model="editSampleIdentification.latitud_minutos"/>
+                    </div>
+                    <div class="col-span-1 mb-4" v-if="coordenadas">
+                        <CustomInput
+                            name="latitud_segundos"
+                            id="latitud-segundos"
+                            :input-classes="['w-8/12']"
+                            :inline="true"
+                            label='"'
+                            :label-classes="['text-2xl']"
+                            v-model="editSampleIdentification.latitud_segundos"/>
+                    </div>
+                    <div class="col-span-2 mb-4" v-if="coordenadas">
+                        <select
+                            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200">
+                            <option :value="null">Elija orientacion</option>
+                            <option value="N" :selected="editSampleIdentification.latitud_orientacion === 'N'">Norte</option>
+                            <option value="S" :selected="editSampleIdentification.latitud_orientacion === 'S'">Sur</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1 mb-4" v-if="coordenadas">
+                        <CustomInput
+                            name="longitud_grados"
+                            id="longitud-grados"
+                            :input-classes="['w-8/12']"
+                            :inline="true"
+                            label="°"
+                            v-model="editSampleIdentification.longitud_grados"/>
+                    </div>
+                    <div class="col-span-1 mb-4" v-if="coordenadas">
+                        <CustomInput
+                            name="longitud_minutos"
+                            id="longitud-minutos"
+                            :input-classes="['w-8/12']"
+                            :inline="true"
+                            label="'"
+                            :label-classes="['text-2xl']"
+                            v-model="editSampleIdentification.longitud_minutos"/>
+                    </div>
+                    <div class="col-span-1 mb-4" v-if="coordenadas">
+                        <CustomInput
+                            name="longitud_segundos"
+                            id="longitud-segundos"
+                            :input-classes="['w-8/12']"
+                            :inline="true"
+                            label='"'
+                            :label-classes="['text-2xl']"
+                            v-model="editSampleIdentification.longitud_segundos"/>
+                    </div>
+                    <div class="col-span-2 mb-4" v-if="coordenadas">
+                        <select
+                            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200">
+                            <option :value="null">Elija orientacion</option>
+                            <option value="Este (E)" :selected="editSampleIdentification.longitud_orientacion === 'Este (E)'">Este (E)</option>
+                            <option value="Oeste (W)" :selected="editSampleIdentification.longitud_orientacion === 'Oeste (W)'">Oeste (W)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <!--<Vueform
                 :endpoint="false"
-                :columns="{container:12, wrapper:12}">
+                :columns="{container:12, wrapper:12}"
+                ref="editSampleIdentification">
                 <StaticElement
                     name="coordinates_gap"
                     content="<div></div>"
@@ -722,7 +835,7 @@
                         </p>
                     </template>
                 </SelectElement>
-            </Vueform>
+            </Vueform>-->
         </MyModal>
         <MyModal
             title="Eliminar cliente"

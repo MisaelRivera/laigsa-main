@@ -10,6 +10,9 @@ class SampleIdentification extends Model
     protected $table = 'identificacion_muestras';
     protected $guarded = [];
     public $timestamps = false;
+    protected $casts = [
+        'obsoleta' => 'boolean',
+    ];
     use HasFactory;
 
     public function cliente ()

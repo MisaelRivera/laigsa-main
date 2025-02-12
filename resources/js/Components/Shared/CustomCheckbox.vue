@@ -1,0 +1,54 @@
+<script setup>
+    import { ref } from 'vue';
+    const emits = defineEmits(['update:modelValue', 'change-state']);
+    const props = defineProps({
+        modelValue: {
+            required: true
+        },
+
+        name: {
+            type: String,
+            required: true,
+        },
+
+        id: {
+            type: String,
+        },
+
+        checked: {
+            type: Boolean,
+            default:false,
+        },
+
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+
+        labelText: {
+            type: String,
+        }
+    });
+    const propsChecked = ref(props.checked);
+    const handleChangeState = () => {
+        propsChecked.value = !propsChecked.value;
+        emits('update:modelValue', propsChecked.value);
+        emits('change-state', propsChecked);
+    };
+</script>
+<template>
+    <input 
+        type="checkbox"
+        :name="name"
+        :id="id"
+        :disabled="disabled"
+        :checked="propsChecked">
+    <label 
+        :for="id"
+        class="bg-white border rounded w-5 h-5 flex justify-center"
+        :class="{'bg-[#07bf9b]':propsChecked && !disabled}"
+        @click="handleChangeState">
+        <i class="fas fa-check text-white text-sm"></i>    
+    </label>
+    <span>{{ labelText }}</span>
+</template>
