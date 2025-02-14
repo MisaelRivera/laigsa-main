@@ -33,7 +33,8 @@
     const handleChangeState = () => {
         propsChecked.value = !propsChecked.value;
         emits('update:modelValue', propsChecked.value);
-        emits('change-state', propsChecked);
+        emits('change-state', propsChecked.value);
+        console.log(propsChecked.value);
     };
 </script>
 <template>
@@ -45,8 +46,8 @@
         :checked="propsChecked">
     <label 
         :for="id"
-        class="bg-white border rounded w-5 h-5 flex justify-center"
-        :class="{'bg-[#07bf9b]':propsChecked && !disabled}"
+        class="border rounded w-5 h-5 flex justify-center"
+        :class="{'bg-[#07bf9b]':propsChecked, 'bg-white':!propsChecked}"
         @click="handleChangeState">
         <i class="fas fa-check text-white text-sm"></i>    
     </label>

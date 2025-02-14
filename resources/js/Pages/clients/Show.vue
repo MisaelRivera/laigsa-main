@@ -159,7 +159,7 @@
     };
 
     const handleCoordenatesChangeState = (coordinates) => {
-        coordenadas.value = coordinates.value;
+        coordenadas.value = coordinates;
     };
 </script>
 <template>
@@ -549,6 +549,32 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="border py-1 text-center">
+                    <i class="fas fa-redo"></i>
+                </div>
+                <div>
+                    <table class="w-full border-2 bg-gray-100">
+                        <thead>
+                            <th class="py-1 px-2">Identificacion de muestra</th>
+                            <th class="py-1 px-2">Latitud</th>
+                            <th class="py-1 px-2">Longitud</th>
+                            <th class="py-1 px-2">SIRALAB</th>
+                            <th class="py-1 px-2">Obsoleta</th>
+                        </thead>
+                        <tbody class="[&>*:nth-child(odd)]:bg-gray-50 [&>*:nth-child(even)]:bg-white">
+                            <tr 
+                                v-for="(identificacion_muestra, index) in client.identificaciones_muestra_obsoletas"
+                                :key="index"
+                                class="border-2">
+                                <td class="py-1 px-2">{{ identificacion_muestra.identificacion_muestra }}</td>
+                                <td class="py-1 px-2 text-center">{{ identificacion_muestra.latitud }}</td>
+                                <td class="py-1 px-2 text-center">{{ identificacion_muestra.longitud }}</td>
+                                <td class="py-1 px-2 text-center">{{ identificacion_muestra.siralab ? 'Si':'No' }}</td>
+                                <td class="py-1 px-2 text-center">{{ identificacion_muestra.obsoleta ? 'Si':'No' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <MyModal
@@ -585,12 +611,11 @@
                     </div>
                     <div class="col-span-1 mb-4">
                         <label class="flex items-center">
-                            <CustomCheckbox 
-                                v-model="editSampleIdentification.obsoleta"
+                            <CustomCheckbox
+                                v-model="coordenadas"
                                 label-text="Coordenadas"
                                 name="coordenadas"
-                                :checked="coordenadas"
-                                @change-state="handleCoordenatesChangeState"/>
+                                :checked="editSampleIdentification.latitud_grados !== 'Sin dato'"/>
                         </label>
                     </div>
                     <div class="col-span-1 mb-4" v-if="coordenadas">
@@ -624,7 +649,8 @@
                     </div>
                     <div class="col-span-2 mb-4" v-if="coordenadas">
                         <select
-                            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200">
+                            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200"
+                            v-model="editSampleIdentification.latitud_orientacion">
                             <option :value="null">Elija orientacion</option>
                             <option value="N" :selected="editSampleIdentification.latitud_orientacion === 'N'">Norte</option>
                             <option value="S" :selected="editSampleIdentification.latitud_orientacion === 'S'">Sur</option>
@@ -661,7 +687,8 @@
                     </div>
                     <div class="col-span-2 mb-4" v-if="coordenadas">
                         <select
-                            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200">
+                            class="border-2 border-slate-300 rounded-lg py-2 px-4 text-gray-900 text-sm focus:outline-none focus:border-blue-200"
+                            v-model="editSampleIdentification.longitud_orientacion">
                             <option :value="null">Elija orientacion</option>
                             <option value="Este (E)" :selected="editSampleIdentification.longitud_orientacion === 'Este (E)'">Este (E)</option>
                             <option value="Oeste (W)" :selected="editSampleIdentification.longitud_orientacion === 'Oeste (W)'">Oeste (W)</option>
