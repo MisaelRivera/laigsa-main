@@ -56,6 +56,7 @@
     };
 
     const coordenadas = ref(false);
+    const areObsoletesVisible = ref(false);
     
     const handleDeleteClient = () => {
         alert('Test');
@@ -550,10 +551,11 @@
                     </tbody>
                 </table>
                 <div class="border py-1 text-center">
-                    <i class="fas fa-redo"></i>
+                    <i class="fas fa-redo" @click="areObsoletesVisible = !areObsoletesVisible"></i>
                 </div>
                 <div>
-                    <table class="w-full border-2 bg-gray-100">
+                <Transition>
+                    <table class="w-full border-2 bg-gray-100" v-if="areObsoletesVisible">
                         <thead>
                             <th class="py-1 px-2">Identificacion de muestra</th>
                             <th class="py-1 px-2">Latitud</th>
@@ -574,6 +576,7 @@
                             </tr>
                         </tbody>
                     </table>
+                </Transition>
                 </div>
             </div>
         </div>
@@ -895,3 +898,14 @@
         </Notivue>
     </AuthenticatedLayout>
 </template>
+<style scoped>
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity 0.5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0;
+    }
+</style>
