@@ -138,6 +138,15 @@ class ClientsController extends Controller
             ->route('clients.show', ['client' => $sampleIdentification->id_cliente]);
     }
 
+    public function restoreSampleIdentification (SampleIdentification $sampleIdentification)
+    {
+        $sampleIdentification->obsoleta = 0;
+        $sampleIdentification->save();
+        $name = $sampleIdentification->identificacion_muestra;
+        return redirect()
+            ->route('clients.show', $sampleIdentification->id_cliente);
+    }
+
     public function filterSampleIdentification (Request $request, $idCliente)
     {
         $sampleIdentifications = SampleIdentification::where('id_cliente',

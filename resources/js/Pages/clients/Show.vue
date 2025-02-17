@@ -31,6 +31,7 @@
     const isDeleteClientModalVisible = ref(false);
     const isDeleteSampleIdentificationModalVisible = ref(false);
     const isEditSampleIdentificationVisible = ref(false);
+    const isRestoreSampleIdentificationVisible = ref(false);
 
     const deleteSampleIdentification = ref(null);
     let editSampleIdentificationId = ref(null);
@@ -57,6 +58,7 @@
 
     const coordenadas = ref(false);
     const areObsoletesVisible = ref(false);
+    const restoreSimpleIdentification = ref(null);                                              
     
     const handleDeleteClient = () => {
         alert('Test');
@@ -151,6 +153,16 @@
         isDeleteSampleIdentificationModalVisible.value = false;
     };
 
+    const handleOpenRestoreSampleIdentificationModal = (sampleIdentification) => {
+        isRestoreSampleIdentificationVisible.value = true;
+        restoreSimpleIdentification.value = sampleIdentification;
+    };
+
+    const handleCloseRestoreSampleIdentificationModal = () => {
+        isRestoreSampleIdentificationVisible.value = false;
+        restoreSimpleIdentification.value = null;
+    };
+
     const handleSubmitCreate = (form$) => {
         router.post('/clientes/create_sample_identification', {...form$.requestData, id_cliente:props.client.id}, {
             onSuccess: () => {
@@ -161,6 +173,16 @@
 
     const handleCoordenatesChangeState = (coordinates) => {
         coordenadas.value = coordinates;
+    };
+
+    const handleRestoreSampleIdentification = () => {
+        router.put(`/clientes/restore_sample_identification/${restoreSimpleIdentification.value.id}`, {}, {
+            onSuccess: () => {
+                push.success(`Se ha restaurado la identificacion ${restoreSimpleIdentification.value.identificacion_muestra}`);
+                restoreSimpleIdentification.value = null;
+                isRestoreSampleIdentificationVisible.value = false;
+            }
+        });
     };
 </script>
 <template>
@@ -562,6 +584,7 @@
                             <th class="py-1 px-2">Longitud</th>
                             <th class="py-1 px-2">SIRALAB</th>
                             <th class="py-1 px-2">Obsoleta</th>
+                            <th class="py-1 px-2">Restaurar</th>
                         </thead>
                         <tbody class="[&>*:nth-child(odd)]:bg-gray-50 [&>*:nth-child(even)]:bg-white">
                             <tr 
@@ -573,6 +596,13 @@
                                 <td class="py-1 px-2 text-center">{{ identificacion_muestra.longitud }}</td>
                                 <td class="py-1 px-2 text-center">{{ identificacion_muestra.siralab ? 'Si':'No' }}</td>
                                 <td class="py-1 px-2 text-center">{{ identificacion_muestra.obsoleta ? 'Si':'No' }}</td>
+                                <td class="py-1 px-2 text-center">
+                                    <button 
+                                        class="py-1 px-2 rounded-full bg-green-500 text-white"
+                                        @click="() => handleOpenRestoreSampleIdentificationModal(identificacion_muestra)">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -892,6 +922,19 @@
             @close-from="handleCloseDeleteSampleIdentificationModal"
             @ok="handleDeleteSampleIdentification">
             <p>Seguro que deseas hacer obsoleta la identificacion de muestra {{ deleteSampleIdentification.identificacion_muestra }}?</p>
+        </MyModal>
+        <MyModal
+            title="Restaurar identificacion de muestra"
+            v-model="isRestoreSampleIdentificationVisible"
+            :cancel-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }"
+            :ok-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            @ok="handleRestoreSampleIdentification"
+            @close-from="handleCloseRestoreSampleIdentificationModal">
+            <p>Seguro que deseas restaurar la identificacion de muestra {{ restoreSimpleIdentification.identificacion_muestra }}?</p>
         </MyModal>
         <Notivue v-slot="item">
             <Notification :item="item"/>

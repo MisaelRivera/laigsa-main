@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/create_sample_identification', 'createSampleIdentificacion');
             Route::put('/set_sample_identification_obsolete/{sampleIdentification}', 'setSampleIdentificationObsolete');
             Route::put('/edit_sample_identification/{sampleIdentification}', 'editSampleIdentification');
+            Route::put('/restore_sample_identification/{sampleIdentification}', 'restoreSampleIdentification');
         }); 
     });
     
