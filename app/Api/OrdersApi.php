@@ -18,6 +18,7 @@
                 ->orderBy('hora_recepcion', 'desc')
                 ->orderBy('folio', 'desc')
                 ->when($filters['folio'] ?? false, fn ($query, $filter) => $query->where('folio', 'like', '%' . urldecode($filter) . '%'))
+                ->when($filters['cesavedac'] ?? false, fn ($query, $filter) => $query->where('cesavedac', 'like', '%' . (urldecode($filter) ? 1:0) . '%'))
                 ->when($filters['cliente'] ?? false, fn ($query, $filter) => $query->whereHas('cliente', function($query) use ($filter) {
                     // Apply filter on the 'clientes' table's 'cliente' column
                     $query->where('clientes.cliente', 'like', '%' . urldecode($filter) . '%');

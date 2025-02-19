@@ -10,6 +10,8 @@
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import IndexFilter from '@/Components/Shared/IndexFilter.vue';
+    import CustomCheckbox from '@/Components/Shared/CustomCheckbox.vue';
+    import AdvancedCustomInput from '@/Components/Shared/AdvancedCustomInput.vue';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
     const { getMessage, getError } = useMessages();
@@ -73,6 +75,16 @@
         });
     };
 
+    const handleCesavedacFilter = (value) => {
+        const folioVal = folioFilter.value.value;
+        const clientVal = clientFilter.value.value;
+        const muestreadorVal = muestreadorFilter.value.value;
+        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), cesavedac: encodeURIComponent(value)}), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
     if (getMessage()) {
         push.success(getMessage());
     }
@@ -107,16 +119,11 @@
                             class="border rounded-md w-20">
                     </div>
                     <div class="flex items-center ml-2">
-                        <label 
-                            for="cesavedac"
-                            class="text-xs">
-                            Cesavedac
-                        </label>
-                        <input 
-                            type="checkbox"
-                            name="cesavedac"
-                            ref="cesavedacFilter"
-                            class="border p-2 rounded">
+                        <CustomCheckbox
+                            name="cesavedac_filter"
+                            id="cesavedac-filter"
+                            label-text="cesavedac"
+                            @change-state="handleCesavedacFilter"/>
                     </div>
                     <div class="flex items-center ml-2">
                         <label 
@@ -305,7 +312,7 @@
                         </td>
                         <td class="px-2 py-3">
                             <CircleSwitch
-                                v-if="order.cesavedac === 1"
+                                v-if="order.cesavedac"
                                 :value="order.reporte_cesavedac_entregado"
                                 :key="order.id"
                                 url="/orders/toggle-cesavedac"
@@ -361,7 +368,13 @@
             </table>
             <div class="flex justify-center mt-8">
                 <button @click="push.success('Something good has been pushed!')">Push</button>
-
+                <div class="grid grid-cols-12 w-full">
+                    <AdvancedCustomInput 
+                        label-text="Test"
+                        :columns="6"
+                        error="Ingrese test"
+                        name="test"/>
+                </div>
                 <Notivue v-slot="item">
                     <Notification :item="item" />
                 </Notivue>
