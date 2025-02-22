@@ -18,7 +18,7 @@
                 ->orderBy('hora_recepcion', 'desc')
                 ->orderBy('folio', 'desc')
                 ->when($filters['folio'] ?? false, fn ($query, $filter) => $query->where('folio', 'like', '%' . urldecode($filter) . '%'))
-                ->when($filters['cesavedac'] ?? false, fn ($query, $filter) => $query->where('cesavedac', 'like', '%' . (urldecode($filter) ? 1:0) . '%'))
+                ->when($filters['cesavedac'] ?? false, fn ($query, $filter) => $query->where('cesavedac', urldecode($filter) === "true" ? 1:0))
                 ->when($filters['cliente'] ?? false, fn ($query, $filter) => $query->whereHas('cliente', function($query) use ($filter) {
                     // Apply filter on the 'clientes' table's 'cliente' column
                     $query->where('clientes.cliente', 'like', '%' . urldecode($filter) . '%');
@@ -31,6 +31,42 @@
                         })
                         ->orWhereHas('muestras_alimentos', function ($query) use ($filter) {
                             $query->where('muestreador', 'like', '%' . urldecode($filter) . '%');
+                        });
+                    });
+                })->when($filters['siralab'] ?? false, function ($query, $filter) {
+                    $query->where(function ($query) use ($filter) {
+                        $query->whereHas('muestras_aguas', function ($query) use ($filter) {
+                            $query->whereHas('identificacionMuestraRelacion', function ($query) use ($filter) {
+                                if ($filter === 'true') {
+                                    $query->where('siralab', 1);
+                                } else {
+                                    $query->where('siralab', 0);
+                                }
+                            });
+                        });
+                    });
+                })->when($filters['supervision'] ?? false, function ($query, $filter) {
+                    $query->where(function ($query) use ($filter) {
+                        $query->whereHas('muestras_aguas', function ($query) use ($filter) {
+                            if ($filter === 'true') {
+                                $query->whereNotIn('muestreador', [
+                                    'Irving (CESAVEDAC)', 'Pedro (CESAVEDAC)', 'Crisanta (CESAVEDAC)', 'Julio (CESAVEDAC)', 'Miguel (CESAVEDAC)', 'Lizeth (CESAVEDAC)', 'Cliente'
+                                ]);
+                            } else {
+                                $query->whereIn('muestreador', [
+                                    'Irving (CESAVEDAC)', 'Pedro (CESAVEDAC)', 'Crisanta (CESAVEDAC)', 'Julio (CESAVEDAC)', 'Miguel (CESAVEDAC)', 'Lizeth (CESAVEDAC)', 'Cliente'
+                                ]);  
+                            }
+                        })->orWhereHas('muestras_alimentos', function ($query) use ($filter) {
+                            if ($filter === 'true') {
+                                $query->whereNotIn('muestreador', [
+                                    'Irving (CESAVEDAC)', 'Pedro (CESAVEDAC)', 'Crisanta (CESAVEDAC)', 'Julio (CESAVEDAC)', 'Miguel (CESAVEDAC)', 'Lizeth (CESAVEDAC)', 'Cliente'
+                                ]);
+                            } else {
+                                $query->whereIn('muestreador', [
+                                    'Irving (CESAVEDAC)', 'Pedro (CESAVEDAC)', 'Crisanta (CESAVEDAC)', 'Julio (CESAVEDAC)', 'Miguel (CESAVEDAC)', 'Lizeth (CESAVEDAC)', 'Cliente'
+                                ]);  
+                            }
                         });
                     });
                 })

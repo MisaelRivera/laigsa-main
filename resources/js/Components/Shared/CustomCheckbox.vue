@@ -27,6 +27,10 @@
 
         labelText: {
             type: String,
+        },
+
+        labelClasses: {
+            type: Array,
         }
     });
     const propsChecked = ref(props.checked);
@@ -51,5 +55,5 @@
         @click="handleChangeState">
         <i class="fas fa-check text-white text-sm"></i>    
     </label>
-    <span>{{ labelText }}</span>
+    <span :class="labelClasses">{{ labelText }}</span>
 </template>

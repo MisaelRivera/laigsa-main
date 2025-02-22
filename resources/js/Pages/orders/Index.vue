@@ -49,7 +49,7 @@
         const value = ev.target.value;
         const folioVal = folioFilter.value.value;
         const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { cliente: encodeURIComponent(value), folio: encodeURIComponent(folioVal), muestreador: encodeURIComponent(muestreadorVal) }), {
+        router.visit(route('orders.index', { cliente: encodeURIComponent(value), folio: encodeURIComponent(folioVal), muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(cesavedacFilter.value) }), {
             preserveState: true,
             method: 'get',
         });
@@ -59,7 +59,7 @@
         const value = ev.target.value;
         const clientVal = clientFilter.value.value;
         const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(value), cliente: encodeURIComponent(clientVal), muestreador: encodeURIComponent(muestreadorVal) }), {
+        router.visit(route('orders.index', { folio: encodeURIComponent(value), cliente: encodeURIComponent(clientVal), muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(cesavedacFilter.value)}), {
             preserveState: true,
             method: 'get',
         });
@@ -69,7 +69,7 @@
         const folioVal = folioFilter.value.value;
         const clientVal = clientFilter.value.value;
         const value = ev.target.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(value)}), {
+        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(value), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(cesavedacFilter.value)}), {
             preserveState: true,
             method: 'get',
         });
@@ -79,7 +79,28 @@
         const folioVal = folioFilter.value.value;
         const clientVal = clientFilter.value.value;
         const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), cesavedac: encodeURIComponent(value)}), {
+        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(value)}), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
+    const handleSiralabFilter = (value) => {
+        const folioVal = folioFilter.value.value;
+        const clientVal = clientFilter.value.value;
+        const muestreadorVal = muestreadorFilter.value.value;
+        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(value)}), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
+    const handleSupervisionFilter = (value) => {
+        const folioVal = folioFilter.value.value;
+        const clientVal = clientFilter.value.value;
+        const muestreadorVal = muestreadorFilter.value.value;
+        console.log(value);
+        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), supervision:encodeURIComponent(value)}), {
             preserveState: true,
             method: 'get',
         });
@@ -122,32 +143,28 @@
                         <CustomCheckbox
                             name="cesavedac_filter"
                             id="cesavedac-filter"
+                            v-model="cesavedacFilter"
                             label-text="cesavedac"
+                            :label-classes="['text-xs']"
                             @change-state="handleCesavedacFilter"/>
                     </div>
                     <div class="flex items-center ml-2">
-                        <label 
-                            for="supervision"
-                            class="text-xs">
-                            Supervision
-                        </label>
-                        <input 
-                            type="checkbox"
-                            name="supervision"
-                            ref="supervisionFilter"
-                            class="border p-2 rounded">
+                        <CustomCheckbox
+                            name="supervision_filter"
+                            id="supervision-filter"
+                            label-text="supervision"
+                            v-model="supervisionFilter"
+                            :label-classes="['text-xs']"
+                            @change-state="handleSupervisionFilter"/>
                     </div>
                     <div class="flex items-center ml-2">
-                        <label 
-                            for="siralab"
-                            class="text-xs">
-                            Siralab
-                        </label>
-                        <input 
-                            type="checkbox"
-                            name="siralab"
-                            ref="siralabFilter"
-                            class="border p-2 rounded">
+                        <CustomCheckbox
+                            name="siralab_filter"
+                            id="siralab-filter"
+                            label-text="siralab"
+                            v-model="siralabFilter"
+                            :label-classes="['text-xs']"
+                            @change-state="handleSiralabFilter"/>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,6 @@
     import { reactive, ref } from 'vue';
     import axios from 'axios';
     import { Head, router } from '@inertiajs/vue3';
-    import { AutoComplete, Button, Textarea, Checkbox, Input, Form, Select, SelectOption, FormItem, Row, Col, InputNumber } from 'ant-design-vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import CustomInput from '@/Components/Shared/CustomInput.vue';
@@ -12,14 +11,15 @@
             type: Object,
             required: true,
         },
-        lastOrder: {
-                type: Object,
-                required: true,
-            },
 
-            aguas: {
-                type: Boolean,
-            },
+        lastOrder: {
+            type: Object,
+            required: true,
+        },
+
+        aguas: {
+            type: Boolean,
+        },
             errors: Object,
     });
   
@@ -58,143 +58,121 @@
                 title="Editar Orden"
                 :ownLink="`/orders/edit/${order.id}`"
                 :backLink="`/orders/show/${order.id}`"/>
-                <Form
-                    :model="order"
-                    @finish="handleSubmit"
-                    layout="vertical">
-                    <Row>
-                        <Col :span="5">
-                            <FormItem
-                                label="Folio"
-                                name="folio"
-                                :rules="[{required: true, message: 'Introduce el folio'}]">
-                                <Input 
-                                    v-model:value="order.folio"
-                                    placeholder="Folio"
-                                    disabled/>
-                            </FormItem>
-                        </Col>
-                        <Col 
-                            :span="5"
-                            :offset="1">
-                            <FormItem
-                                label="Numero de cotizacion"
-                                name="numero_cotizacion">
-                                <Input 
-                                    v-model:value="order.numero_cotizacion"
-                                    placeholder="Numero cotizacion"/>
-                            </FormItem>
-                        </Col>
-                        <Col 
-                            :span="5"
-                            :offset="1">
-                            <FormItem
-                                label="Numero de muestras"
-                                name="numero_muestras"
-                                :rules="[{required: true, message: 'Introduce el numero de muestras'}]">
-                                <InputNumber 
-                                    v-model:value="order.numero_muestras"
-                                    placeholder="Numero de muestras"
-                                    :min="0"
-                                    class="w-full"
-                                    :max="30"
-                                    disabled/>
-                            </FormItem>
-                        </Col>
-                        <Col 
-                            :span="5"
-                            :offset="1">
-                            <FormItem
-                                label="Aguas o alimentos"
-                                name="aguas_alimentos"
-                                :rules="[{required: true, message: 'Elije una de las opciones'}]">
-                                <Select 
-                                    v-model:value="order.aguas_alimentos">
-                                    <SelectOption :value="null">
-                                        Elije una opcion
-                                    </SelectOption>
-                                    <SelectOption value="Aguas">
-                                        Aguas
-                                    </SelectOption>
-                                    <SelectOption value="Alimentos">
-                                        Alimentos
-                                    </SelectOption>
-                                </Select>
-                            </FormItem>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col :span="11">
-                            <FormItem
-                                label="Cliente"
-                                name="cliente"
-                                :rules="[{ required: true, message: 'Seleccione un cliente'}]">
-                                <AutoComplete 
-                                    v-model:value="order.cliente.cliente"
-                                    @search="onSearch"
-                                    :options="clientOptions"/>
-                            </FormItem>
-                        </Col>
-                        <Col 
-                            :span="5"
-                            :offset="1">
-                            <FormItem
-                                label="Fecha de recepcion"
-                                name="fecha_recepcion">
-                                <Input 
-                                    type="date" 
-                                    v-model:value="order.fecha_recepcion"/>
-                            </FormItem>
-                        </Col>
-                        <Col 
-                            :span="5"
-                            :offset="1">
-                            <FormItem
-                                label="Hora de recepcion"
-                                name="hora_recepcion">
-                                <Input 
-                                    type="time" 
-                                    v-model:value="order.hora_recepcion"/>
-                            </FormItem>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col :span="5">
-                            <FormItem
-                                label="Termometro no."
-                                name="numero_termometro">
-                                <Input 
-                                    v-model:value="order.numero_termometro"/>
-                            </FormItem>
-                        </Col>
-                        <Col :span="5" :offset="1">
-                            <FormItem
-                                label="Temperatura °C"
-                                name="temperatura">
-                                <Input 
-                                    v-model:value="order.temperatura"/>
-                            </FormItem>
-                        </Col>
-                    </Row>
-                    <FormItem 
-                        label="Observaciones"
-                        name="observaciones">
-                        <Textarea 
-                            :style="{'width': '400px', 'height': '100px', 'min-height': '100px', 'max-height': '100px'}"
-                            v-model:value="order.observaciones"></Textarea>
-                    </FormItem>
-                    <Row>
-                        <Col :span="3">
-                            <Checkbox v-model:checked="order.cesavedac">Cesavedac</Checkbox>
-                        </Col>
-                        <Col :span="15">
-                            <Checkbox v-model:checked="order.area_recepcion_muestras_limpia">Se realizó desinfección en el areá de recepción después de recibir la última muestra.</Checkbox>
-                        </Col>
-                    </Row>
-                    <button class="bg-blue-600 text-white py-2 px-4 rounded">
-                        Editar 
-                    </button>
-                </Form>
+                <Vueform
+                    :columns="{ container:12, wrapper:12 }"
+                    :scroll-to-invalid="false"
+                    :endpoint="false"
+                    ref="form$"
+                    @submit="handleSubmit">
+                    <TextElement 
+                        name="folio"
+                        before="Folio"
+                        :columns="{ container: 3, wrapper:12 }"
+                        rules="required">
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.folio">{{ formState.errors.folio }}</p>
+                        </template>
+                    </TextElement>
+                    <TextElement 
+                        name="numero_cotizacion"
+                        before="Número cotización"
+                        :columns="{ container: 3, wrapper:12 }"/>
+                    <TextElement 
+                        input-type="number"
+                        name="numero_muestras"
+                        before="Número de muestras"
+                        rules="required|numeric|min:0"
+                        :columns="{ container: 3, wrapper:12 }">
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.numero_muestras">
+                                {{ formState.errors.numero_muestras }}
+                            </p>
+                        </template>
+                    </TextElement>
+                    <SelectElement 
+                        name="aguas_alimentos"
+                        before="Aguas o alimentos"
+                        :items="[
+                            {
+                                value: null,
+                                label: 'Elija una opcion',
+                            },
+                            {
+                                value: 'Aguas',
+                                label: 'Aguas'
+                            },
+                            {
+                                value: 'Alimentos',
+                                label: 'Alimentos'
+                            }
+                        ]"
+                        :columns="{ container: 3, wrapper:12 }">
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.aguas_alimentos">
+                                {{ formState.errors.aguas_alimentos }}
+                            </p>
+                        </template>
+                    </SelectElement>
+                    <SelectElement 
+                        name="id_cliente"
+                        before="Cliente"
+                        :columns="{ container:6, wrapper: 12 }"
+                        :items="clientOptions"
+                        :search="true"
+                        rules="required"
+                        @search-change="handleClientSearch">
+                        <template #description>
+                            <p 
+                                class="text-red-500"
+                                v-if="formState.errors.cliente">
+                                {{ formState.errors.cliente }}
+                            </p>
+                        </template>
+                    </SelectElement>
+                    <DateElement 
+                        name="fecha_recepcion"
+                        before="Fecha de recepcion"
+                        :columns="{ container: 3, wrapper: 12}"
+                        display-format="MMMM DD, YYYY" />
+                    <TextElement 
+                        name="hora_recepcion"
+                        before="Hora de recepcion"
+                        :columns="{ container: 3, wrapper: 12}"
+                        input-type="time"/>
+                    <TextElement 
+                        name="numero_termometro"
+                        before="Termometro no."
+                        :columns="{ container: 3, wrapper: 12}"/>
+                    <TextElement 
+                        name="temperatura"
+                        before="Temperatura °C"
+                        :columns="{ container: 3, wrapper: 12}"/>
+                    <TextareaElement 
+                        name="observaciones"
+                        before="Observaciones"
+                        :columns="{ container: 6, wrapper: 12}"/>
+                    <CheckboxElement 
+                        name="cesavedac"
+                        :columns="{ container: 3, wrapper: 12}">
+                        Cesavedac
+                    </CheckboxElement>
+                    <CheckboxElement 
+                        name="area_recepcion_muestras_limpia"
+                        :columns="{ container: 9, wrapper: 12}">
+                        Se realizó desinfección en el areá de recepción después de recibir la última muestra.
+                    </CheckboxElement>
+                    <ButtonElement 
+                        submits
+                        name="create_order">
+                        Crear
+                    </ButtonElement>
+                </Vueform>
         </div>
     </AuthenticatedLayout>
 </template>

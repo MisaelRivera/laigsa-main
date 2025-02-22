@@ -2,7 +2,6 @@
     import { ref } from 'vue';
     import { router } from '@inertiajs/vue3';
     import GuestLayout from '@/Layouts/GuestLayout.vue';
-    import { FormKit } from '@formkit/vue';
     import axios from 'axios';
     const props = defineProps({
         orders: {
