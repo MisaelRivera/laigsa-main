@@ -20,10 +20,10 @@ class OrdersController extends Controller
     public function index (Request $request)
     {
        $orders = OrdersApi::getIndexOrders($request->all());
-        
+        $filters = $request->all();
         return Inertia::render('orders/Index', [
             'ordersProp' => $orders,
-            'totalItems' => Order::count()
+            'filtersProp' => $filters
         ]);
     }
 

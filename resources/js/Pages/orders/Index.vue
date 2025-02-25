@@ -1,6 +1,7 @@
 <script setup>
     import { ref, reactive } from 'vue';
     import { router } from '@inertiajs/vue3';
+    import VueMultiselect from 'vue-multiselect';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowLink from '@/Components/Shared/ShowLink.vue';
     import Dropdown from '@/Components/Dropdown.vue';
@@ -21,7 +22,8 @@
             ordersProp: {
                 required: true,
             },
-            filters: Object
+            
+            filtersProp: Object
         }
     );
     
@@ -32,10 +34,21 @@
     const supervisionFilter = ref(null);
     const siralabFilter = ref(null);
     const filters = reactive({
-        client: '',
-        folio: '',
-        cesavedac: false,
+        cliente: Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp:null,
+        folio: Object.keys(props.filtersProp).includes('folio') ? props.filtersProp:null,
+        muestreador: Object.keys(props.filtersProp).includes('muestreador') ? props.filtersProp:null,
+        cesavedac: Object.keys(props.filtersProp).includes('cesavedac') ? props.filtersProp:null,
+        supervision: Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp:null,
+        siralab: Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp:null,
     });
+
+    const filterOptions = ref([
+        'cesavedac',
+        'supervisar',
+        'siralab'
+    ]);
+
+    const activeFilters = ref([]);
 
     const handleFilter = (ev) => {
         const value = ev.target.value;
@@ -46,61 +59,96 @@
     };
 
     const handleClientFilter = (ev) => {
+        const filtersCopy = {};
         const value = ev.target.value;
-        const folioVal = folioFilter.value.value;
-        const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { cliente: encodeURIComponent(value), folio: encodeURIComponent(folioVal), muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(cesavedacFilter.value) }), {
+        filters['cliente'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
         });
     };
 
     const handleFolioFilter = (ev) => {
+        const filtersCopy = {};
         const value = ev.target.value;
-        const clientVal = clientFilter.value.value;
-        const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(value), cliente: encodeURIComponent(clientVal), muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(cesavedacFilter.value)}), {
+        filters['folio'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
         });
     };
 
     const handleMuestreadorFilter = (ev) => {
-        const folioVal = folioFilter.value.value;
-        const clientVal = clientFilter.value.value;
+        const filtersCopy = {};
         const value = ev.target.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(value), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(cesavedacFilter.value)}), {
+        filters['muestreador'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
         });
     };
 
     const handleCesavedacFilter = (value) => {
-        const folioVal = folioFilter.value.value;
-        const clientVal = clientFilter.value.value;
-        const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), cesavedac: encodeURIComponent(value)}), {
+        const filtersCopy = {};
+        if (!activeFilters.value.includes('cesavedac')) {
+            activeFilters.value.push('cesavedac');
+        }
+        filters['cesavedac'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
         });
     };
 
     const handleSiralabFilter = (value) => {
-        const folioVal = folioFilter.value.value;
-        const clientVal = clientFilter.value.value;
-        const muestreadorVal = muestreadorFilter.value.value;
-        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(value)}), {
+        const filtersCopy = {};
+        if (!activeFilters.value.includes('siralab')) {
+            activeFilters.value.push('siralab');
+        }
+        filters['siralab'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
         });
     };
 
     const handleSupervisionFilter = (value) => {
-        const folioVal = folioFilter.value.value;
-        const clientVal = clientFilter.value.value;
-        const muestreadorVal = muestreadorFilter.value.value;
-        console.log(value);
-        router.visit(route('orders.index', { folio: encodeURIComponent(folioVal), cliente: encodeURIComponent(clientVal),  muestreador: encodeURIComponent(muestreadorVal), siralab: encodeURIComponent(siralabFilter.value), supervision:encodeURIComponent(value)}), {
+        const filtersCopy = {};
+        if (!activeFilters.value.includes('supervision')) {
+            activeFilters.value.push('supervision');
+        }
+        filters['supervision'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
         });
@@ -114,6 +162,24 @@
         push.success(getError());
     }
 
+    const handleRemove = (removedOption) => {
+        filters[removedOption] = null;
+        const filtersCopy = {};
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
+    const handleClick = () => {
+        if (!multiselectTest.value.includes('Texas'))
+        multiselectTest.value.push('Texas');
+    };
 
 </script>
 <template>
@@ -127,6 +193,16 @@
                 
                 <Pagination 
                     :links="ordersProp.links"/>
+                <div class="flex items-center" v-if="activeFilters.length > 0">
+                    <VueMultiselect
+                        :options="filterOptions"
+                        :class="['col-span-6']"
+                        v-model="activeFilters"
+                        :multiple="true"
+                        @remove="handleRemove"
+                        placeholder="Elije una opcion">
+                    </VueMultiselect>
+                </div>
                 <div class="flex items-center">
                     <div>
                         <label 
@@ -386,11 +462,8 @@
             <div class="flex justify-center mt-8">
                 <button @click="push.success('Something good has been pushed!')">Push</button>
                 <div class="grid grid-cols-12 w-full">
-                    <AdvancedCustomInput 
-                        label-text="Test"
-                        :columns="6"
-                        error="Ingrese test"
-                        name="test"/>
+                    
+                    <button @click="handleClick">add</button>
                 </div>
                 <Notivue v-slot="item">
                     <Notification :item="item" />
