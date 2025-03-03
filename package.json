@@ -19,6 +19,7 @@
         "@vueform/vueform": "^1.10.6",
         "@vueuse/core": "^11.1.0",
         "date-fns": "^3.6.0",
+        "jspdf": "^3.0.0",
         "notivue": "^2.4.5",
         "vue": "^3.4.37",
         "vue-multiselect": "^3.2.0"
