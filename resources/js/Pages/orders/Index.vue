@@ -7,7 +7,7 @@
     import Dropdown from '@/Components/Dropdown.vue';
     import Pagination from '@/Components/Shared/Pagination.vue';
     import CircleSwitch from '@/Components/Shared/CircleSwitch.vue';
-    import { Head } from '@inertiajs/vue3';
+    import { Head, Link } from '@inertiajs/vue3';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
     import IndexFilter from '@/Components/Shared/IndexFilter.vue';
@@ -35,8 +35,6 @@
     const cesavedacFilter = ref(Object.keys(props.filtersProp).includes('cesavedac') ? props.filtersProp:null);
     const supervisionFilter = ref(Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp:null);
     const siralabFilter = ref(Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp:null);
-    const isVisiblePDF = ref(false);
-    const pdfPreview = ref(null);
     const filters = reactive({
         cliente: Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp:null,
         folio: Object.keys(props.filtersProp).includes('folio') ? props.filtersProp:null,
@@ -203,78 +201,9 @@
         multiselectTest.value.push('Texas');
     };
 
-    const handlePDFGeneration = (order) => {
-        const doc = new jsPDF();
-        addImage(doc, '/img/logo.png', 'png', 15, 10, 10, 10);
-        text(doc, "LABORATORIO DE ANÁLISIS INDUSTRIALES DEL GUADIANA, S.A. DE C.V.", 27, 12, 12, 'bold');
-        text(doc, "ANÁLISIS FISICOQUIMICOS Y MICROBIOLÓGICOS DE AGUAS, ALIMENTOS Y RESIDUOS PC-14/R01", 32, 17, 8.5);
-        text(doc, "Libreta de recepción", 90, 30, 9, 'bold');
-        text(doc, "Dirigir informe a:", 15, 35, 9, 'bold');
-        text(doc, "no. de folio:", 154, 35, 9, 'bold');
-        text(doc, order.folio, 173, 35, 9);
-        text(doc, "Razón social/cliente:", 15, 39, 9);
-        text(doc, order.cliente.cliente, 59, 39, 9);
-        text(doc, "Dirección fiscal:", 15, 43, 9);
-        text(doc, order.cliente.direccion_fiscal, 59, 43, 9);
-        text(doc, "Sitio del muestreo:", 15, 47, 9);
-        text(doc, order.cliente.direccion_muestreo, 59, 47, 9);
-        text(doc, "Fecha y hora de entrega:", 15, 53, 9);
-        text(doc, order.fecha_recepcion + ' ' + order.hora_recepcion, 59, 53, 9);
-        text(doc, "No. de muestras:", 89, 53, 9);
-        text(doc, order.numero_muestras + '', 118, 53, 9);
-        text(doc, "Temperatura:", 15, 57, 9);
-        text(doc, `${order.temperatura}°C`, 59, 57, 9);
-        text(doc, "Termómetro No:", 89, 57, 9);
-        text(doc, order.numero_termometro, 118, 57, 9);
-        text(doc, "Fecha de entrega de resultados del analista:", 15, 61, 9);
-        text(doc, "2025-03-10", 85, 61, 9);
-        text(doc, "Fecha de entrega de resultados del cliente:", 15, 65, 9);
-        text(doc, "2024-10-16", 85, 65, 9);
-        text(doc, "Cotización No: 025 24", 15, 69, 9);
-        doc.line(15, 75, 194, 75);
-        doc.rect(15, 77, 179, 4);
-        text(doc, "MFQ-14975 - 1", 16, 80, 9);
-        text(doc, "Tipo de muestra:", 15, 84.5, 9);
-        text(doc, "Agua residual", 59, 84.5, 9);
-        text(doc, "Identificación de la muestra:", 15, 88.5, 9);
-        text(doc, "Impregnado 1", 59, 88.5, 9);
-        text(doc, "Latitud:", 15, 92.5, 9);
-        text(doc, "24°05'06.7'' N", 59, 92.5, 9);
-        text(doc, "Longitud:", 92, 92.5, 9);
-        text(doc, "24°05'06.7'' N", 130, 92.5, 9);
-        text(doc, "Caracteristicas de la muestra:", 15, 96.5, 9);
-        text(doc, "Turbia amarilla", 59, 96.5, 9);
-        text(doc, "Muestreador:", 15, 100.5, 9);
-        text(doc, "JHM", 59, 100.5, 9);
-        text(doc, "*pH:", 92, 100.5, 9);
-        text(doc, "9", 130, 100.5, 9);
-        text(doc, "pH Cr VI:", 145, 100.5, 9);
-        text(doc, "N/A", 164, 100.5, 9);
-        text(doc, "Tratada biologicamente:", 15, 104.5, 9);
-        text(doc, "No", 59, 104.5, 9);
-        text(doc, "Cloro:", 92, 104.5, 9);
-        text(doc, "N/A", 130, 104.5, 9);
-        text(doc, "Tipo de muestreo:", 15, 108.5, 9);
-        text(doc, "Simple", 59, 108.5, 9);
-        text(doc, "Fecha de muestreo:", 15, 112.5, 9);
-        text(doc, "2024-10-04", 59, 112.5, 9);
-        text(doc, "Preservación correcta:", 15, 116.5, 9);
-        text(doc, "Si", 59, 116.5, 9);
-        text(doc, "Parámetros:", 15, 120.5, 9);
-        const parametros = "Potencial Hidrógeno, SST, SDT, Turbidez, Temperatura, Cianuros, Nitratos, Nitritos, Fosforo, DBO, DQO, Sulfatos, Dureza Total como CaCO3, Fluoruros, Nitrógeno de Nitratos (N-NO3 ), Coliformes Fecales, Arsénico Total, Mercurio Total, Cobre Total, Fierro Total, Cromo Total, Manganeso Total, Cadmio Total, Plomo Total, Alcalinidad, Conductividad eléctrica, se contrata fenol.";
-        splitTextToSize(doc, parametros, 131, 59, 120.5);
-        //doc.line(15, );
-        isVisiblePDF.value = true;
-       const pdfBlob = doc.output('blob');
-       const pdfUrl = URL.createObjectURL(pdfBlob);
-       console.log(pdfPreview.value);
-       pdfPreview.value.src = pdfUrl;
-    };
-
 </script>
 <template>
     <AuthenticatedLayout>
-        <iframe ref="pdfPreview" style="width:100vw;height: 100vh;;" v-show="isVisiblePDF"></iframe>
         <div class="w-full mx-auto mt-3">
             <div class="flex justify-between items-center">
                 <IndexTitle 
@@ -553,11 +482,11 @@
                         </td>
                         <td class="px-2 py-3"></td>
                         <td class="px-2 py-3">
-                            <button 
+                            <a 
                                 class="text-white bg-green-500 py-1 px-2 rounded-lg"
-                                @click="() => handlePDFGeneration(order)">
+                                :href="`/orders/generate-pdf/${order.id}`">
                                 PDF
-                            </button>
+                            </a>
                         </td>
                     </tr>
                 </tbody>

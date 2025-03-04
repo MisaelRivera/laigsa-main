@@ -13,6 +13,11 @@ use App\Models\Client;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use App\Api\OrdersApi;
+use Mpdf\Mpdf;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Http;
+use Codedge\Fpdf\Fpdf\Fpdf;
 
 class OrdersController extends Controller
 {
@@ -306,5 +311,89 @@ class OrdersController extends Controller
                 }
              }
          return response()->json($orders);
+    }
+
+    public function generatePDF(Order $order)
+    {
+        $folio = 'MFQ-' . $order->folio;
+        $cliente = $order->cliente;
+        if ($order->aguas_alimentos === 'Aguas') {
+            $muestras = $order->muestras_aguas;
+        } else {
+            $muestras = $order->muestras_alimentos;
+        }
+        // Create a new Mpdf instance
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'Letter'
+        ]);
+
+        // Set the document title
+        $mpdf->SetTitle($folio . ' ' . $cliente->cliente);
+        $urlLogo = public_path('img/logo.png');
+        // Render the header using Blade template
+        $header = View::make('pdf.order.header', ['urlLogo' => $urlLogo])->render();
+        $mpdf->SetHTMLHeader($header);
+
+        // Set footer
+        $mpdf->SetFooter('Pag. <span style="font-weight:normal">{PAGENO} de {nb}</span>' . " Folio: <span style='font-weight:normal'>$folio</span>");
+
+        // Get the stylesheet content (optional if you want to style the PDF using CSS)
+        $stylesheetUrl = public_path('css/pdf/orden.css');
+        $stylesheet = file_get_contents($stylesheetUrl);  // Load the CSS from public folder
+        $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
+
+        // Render the body content using Blade template
+        $html = View::make('pdf.order.order', [
+            'order' => $order,
+            'cliente' => $cliente
+        ])->render();
+
+        $mpdf->WriteHTML($html);
+        $index = 1;
+        foreach($muestras as $muestra) {
+            if ($order->aguas_alimentos === 'Aguas') {
+                $muestra->identificacion_muestra = $muestra->identificacionMuestraRelacion;
+            }
+            $html = View::make('pdf.order.muestras', [
+                'muestra' => $muestra,
+                'order' => $order
+            ])->render();
+            
+            if ($index < count($muestras)) {
+                $html .= '<hr>';
+            }
+            if ($mpdf->_getHtmlHeight($html) > ($mpdf->h - $mpdf->y - $mpdf->bMargin - $mpdf->tMargin)) {
+                $mpdf->AddPage();
+                $html = "<br>$html";
+            }
+            if (isset($muestra->cloro)) {
+                switch($muestra->cloro) {
+                    case 'si':
+                        $muestra->cloro = 'Presente';
+                    break;
+                    case 'no':
+                        $muestra->cloro = 'Ausente';
+                    break;
+                    case 'laboratorio':
+                        $muestra->cloro = 'Laboratorio';
+                    break;
+                    default: 
+                        $muestra->cloro = 'N/A';
+                    break;
+                }
+                  
+              }
+            $mpdf->WriteHTML($html);
+            $index++;
+        }
+        // Output the PDF
+        $mpdf->Output($folio . '.pdf', 'I');
+        exit();
+    }
+
+    public function headerOrderPDF ()
+    {
+        return view('pdf.order.header');
     }
 }

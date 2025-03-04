@@ -173,3 +173,80 @@
 
         return $filteredData;
     }
+
+    function is_sunday ($date_in_time) {
+    return getdate($date_in_time)['wday'] == 0;
+}
+
+function is_laboral_date ($date_in_time) {
+    $day = getdate($date_in_time)['mday'];
+    $month = getdate($date_in_time)['mon'];
+    $holidays_dates = [[1, 1], [7, 2], [21, 3], [16, 9], [25, 12]];
+    return !in_array([$day, $month], $holidays_dates);
+}
+
+function get_future_day ($initial_date, $days) {
+    if (isset($initial_date)) {
+        $date_in_time = strtotime($initial_date);
+        $counter = 0;
+        while ($counter < $days) {
+            $date_in_time += (60 * 60 * 24);
+            if (!is_sunday($date_in_time) && is_laboral_date($date_in_time)) {
+                $counter++;
+            }
+        }
+        return date('Y-m-d', $date_in_time);
+    } else {
+        return '---';
+    }
+}
+
+function get_diff ($date_1, $date_2) {
+    if (!isset($date_1) || !isset($date_2)) return null;
+
+    if (gettype($date_1) === 'string' && $date_1 != 'today') {
+        $date_1 = strtotime($date_1);
+    } else if ($date_1 === 'today') {
+        $today = date('Y-m-d', time());
+        $date_1 = strtotime($today);
+    }
+
+    if (gettype($date_2) === 'string' && $date_2 != 'today') {
+        $date_2 = strtotime($date_2);
+    } else if ($date_2 === 'today') {
+        $today = date('Y-m-d', time());
+        $date_2 = strtotime($today);
+    }
+
+    return $date_1 - $date_2;
+}
+
+function calc_days ($time) {
+    if (!isset($time)) return null; 
+    return floor($time / (60 * 60 * 24));
+}
+
+function get_colors_by_date($remaining_days) {
+    if ($remaining_days <= 2 && $remaining_days > 0) return '#fff;background-color:#ec971f;';
+    
+    if ($remaining_days == 0) return '#fff;background-color:#d9534f;';
+
+    return 'black';
+
+}
+
+function horaValida($hora)
+{
+    if ($hora !== '-----' && $hora && $hora !== '---') {
+        $hora = explode(':', $hora);
+        return $hora[0] . ':' . $hora[1];
+    } else if ($hora == '---') {
+        return '---';
+    }
+    return '-----';
+}
+
+function snakeToSpace ($snakeCase) {
+    $snakeCase = explode('_', $snakeCase);
+    return implode(' ', $snakeCase);
+}

@@ -123,6 +123,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/toggle-croquis', [OrdersController::class, 'toggleCroquis']);
         Route::post('/toggle-reporte-entregado', [OrdersController::class, 'toggleReporteEntregado']);
         Route::post('/filter', [OrdersController::class, 'filter']);
+        Route::get('/generate-pdf/{order}', [OrdersController::class, 'generatePDF']);
+        Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
+        Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
     });
 
     Route::controller(WaterSamplesController::class)->group(function () {
