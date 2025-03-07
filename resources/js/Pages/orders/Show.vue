@@ -234,7 +234,7 @@
                                 {{ order.fecha_recepcion ?? '---' }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{ order.hora_recepcion ? order.hora_recepcion.substr(0, 5):'---' }}
+                                {{ order.hora_recepcion ? order.hora_recepcion:'---' }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ order.hora_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 8):'---' }}
@@ -346,19 +346,19 @@
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Hora de muestreo:</p>
-                            <p class="py-1.5 px-2"> {{ sample.hora_muestreo.substr(0, 5) }}</p>
+                            <p class="py-1.5 px-2"> {{ sample.hora_muestreo}}</p>
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Tipo de muestreo:</p>
                             <p class="py-1.5 px-2"> {{ sample.tipo_muestreo }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto 4' || sample.tipo_muestreo === 'Compuesto 6'">
                             <p class="font-bold py-1.5 px-2">Fecha de fin de muestreo:</p>
                             <p class="py-1.5 px-2"> {{ sample.fecha_final_muestreo }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto 4' || sample.tipo_muestreo === 'Compuesto 6'">
                             <p class="font-bold py-1.5 px-2">Hora de fin de muestreo:</p>
                             <p class="py-1.5 px-2"> {{ sample.hora_final_muestreo }}</p>
                         </div>
@@ -382,12 +382,12 @@
                             <p class="py-1.5 px-2"> {{ sample.siralab ? 'Si':'No' }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto 4' || sample.tipo_muestreo === 'Compuesto 6'">
                             <p class="font-bold py-1.5 px-2">Fecha de composicion:</p>
                             <p class="py-1.5 px-2"> {{ sample.fecha_composicion }}</p>
                         </div>
                         <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
+                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="sample.tipo_muestreo === 'Compuesto 4' || sample.tipo_muestreo === 'Compuesto 6'">
                             <p class="font-bold py-1.5 px-2">Hora de composicion:</p>
                             <p class="py-1.5 px-2"> {{ sample.hora_composicion }}</p>
                         </div>
@@ -419,42 +419,40 @@
                             <p class="font-bold py-1.5 px-2">Preservación correcta:</p>
                             <p class="py-1.5 px-2"> {{ sample.preservacion_correcta }}</p>
                         </div>
-                        <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
-                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="font-bold py-1.5 px-2">Flujo 1 (l/s):</p>
-                            <p class="py-1.5 px-2"> {{ sample.flujo_1 }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
-                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="font-bold py-1.5 px-2">Flujo 2 (l/s):</p>
-                            <p class="py-1.5 px-2"> {{ sample.flujo_2 }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
-                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="font-bold py-1.5 px-2">Flujo 3 (l/s):</p>
-                            <p class="py-1.5 px-2"> {{ sample.flujo_3 }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
-                            v-if="sample.tipo_muestreo === 'Compuesto_4' || sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="font-bold py-1.5 px-2">Flujo 4 (l/s):</p>
-                            <p class="py-1.5 px-2"> {{ sample.flujo_4 }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
-                            v-if="sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="font-bold py-1.5 px-2">Flujo 5 (l/s):</p>
-                            <p class="py-1.5 px-2"> {{ sample.flujo_5 }}</p>
-                        </div>
-                        <div 
-                            class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
-                            v-if="sample.tipo_muestreo === 'Compuesto_6'">
-                            <p class="font-bold py-1.5 px-2">Flujo 6 (l/s):</p>
-                            <p class="py-1.5 px-2"> {{ sample.flujo_6 }}</p>
-                        </div>
+                        <template v-if="sample.tipo_muestreo === 'Compuesto 4' || sample.tipo_muestreo === 'Compuesto 6'">
+                            <div 
+                                class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Flujo 1 (l/s):</p>
+                                <p class="py-1.5 px-2"> {{ sample.flujo_1 }}</p>
+                            </div>
+                            <div 
+                                class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Flujo 2 (l/s):</p>
+                                <p class="py-1.5 px-2"> {{ sample.flujo_2 }}</p>
+                            </div>
+                            <div 
+                                class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Flujo 3 (l/s):</p>
+                                <p class="py-1.5 px-2"> {{ sample.flujo_3 }}</p>
+                            </div>
+                            <div 
+                                class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Flujo 4 (l/s):</p>
+                                <p class="py-1.5 px-2"> {{ sample.flujo_4 }}</p>
+                            </div>
+                        </template>
+                        <template v-if="sample.tipo_muestreo === 'Compuesto 6'">
+                            <div 
+                                class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Flujo 5 (l/s):</p>
+                                <p class="py-1.5 px-2"> {{ sample.flujo_5 }}</p>
+                            </div>
+                            <div 
+                                class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Flujo 6 (l/s):</p>
+                                <p class="py-1.5 px-2"> {{ sample.flujo_6 }}</p>
+                            </div>
+                        </template>
                         <div 
                             class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300"
                             v-if="order.aguas_alimentos === 'Aguas'">

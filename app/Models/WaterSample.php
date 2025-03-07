@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Attribute;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class WaterSample extends Model
 {
@@ -40,10 +41,9 @@ class WaterSample extends Model
         'preservacion_correcta'
     ];
 
+    protected $dateFormat = 'H:i:s';
+
     protected $casts = [
-        'hora_muestreo' => 'datetime:H:i', // Casts time to Carbon instance,
-        'hora_final_muestreo' => 'datetime:H:i', // Casts time to Carbon instance,
-        'hora_composicion' => 'datetime:H:i', // Casts time to Carbon instance,
         'tratada_biologicamente' => 'boolean',
         'siralab' => 'boolean',
         'otros_parametros' => 'boolean'
@@ -51,9 +51,30 @@ class WaterSample extends Model
 
     protected function tipoMuestreo (): Attribute {
         return Attribute::make(
-            get: function (string $value) {
+            get: function ($value) {
                return str_replace('_', ' ', $value);
             }
+        );
+    }
+
+    protected function horaMuestreo ():Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::createFromFormat('H:i:s', $value)->format('H:i'):null
+        );
+    }
+
+    protected function horaFinalMuestreo ():Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::createFromFormat('H:i:s', $value)->format('H:i'):null
+        );
+    }
+
+    protected function horaComposicion ():Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::createFromFormat('H:i:s', $value)->format('H:i'):null
         );
     }
 

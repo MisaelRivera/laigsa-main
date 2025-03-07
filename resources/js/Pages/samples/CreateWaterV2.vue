@@ -60,6 +60,10 @@
 
     };
 
+    const handleGetExtraParams = (number) => {
+        
+    };
+
 </script>
 
 <template>
@@ -426,7 +430,9 @@
                                 :name="`parametros_seleccionados_${i}`"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"
                                 :native="false"
-                                :items="selectedParams[i - 1]"/>
+                                :items="selectedParams[i - 1]"
+                                :search="true"
+                                @search-change="() => handleGetExtraParams(i - 1)"/>
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"

@@ -14,10 +14,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use App\Api\OrdersApi;
 use Mpdf\Mpdf;
-use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Http;
-use Codedge\Fpdf\Fpdf\Fpdf;
+
 
 class OrdersController extends Controller
 {
@@ -342,7 +340,6 @@ class OrdersController extends Controller
         $stylesheetUrl = public_path('css/pdf/orden.css');
         $stylesheet = file_get_contents($stylesheetUrl);  // Load the CSS from public folder
         $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
-
         // Render the body content using Blade template
         $html = View::make('pdf.order.order', [
             'order' => $order,
@@ -352,8 +349,16 @@ class OrdersController extends Controller
         $mpdf->WriteHTML($html);
         $index = 1;
         foreach($muestras as $muestra) {
+            $order->hora_recepcion = horaValida($order->hora_recepcion);
+            $cliente = $order->cliente;
             if ($order->aguas_alimentos === 'Aguas') {
                 $muestra->identificacion_muestra = $muestra->identificacionMuestraRelacion;
+                if ($muestra->hora_final_muestreo) {
+                    $muestra->hora_final_muestreo = horaValida($muestra->hora_final_muestreo);
+                }
+                if ($muestra->hora_composicion) {
+                    $muestra->hora_composicion = horaValida($muestra->hora_composicion);
+                }
             }
             $html = View::make('pdf.order.muestras', [
                 'muestra' => $muestra,
@@ -387,6 +392,29 @@ class OrdersController extends Controller
             $mpdf->WriteHTML($html);
             $index++;
         }
+
+        if ($order->aguas === 'Aguas') {
+            $html = View::make('pdf.order.table', [
+                'order' => $order
+            ])->render();
+        } else {
+            $html = View::make('pdf.order.paragraph', [
+                'order' => $order
+            ])->render();
+        }
+
+        if ($mpdf->_getHtmlHeight($html) > ($mpdf->h - $mpdf->y - $mpdf->bMargin - $mpdf->tMargin)) {
+            $mpdf->AddPage();
+            $html = "<br>$html";
+        }
+        $mpdf->WriteHTML($html);
+        $contieneFirmaLupita = $order->fecha_recepcion > '2023-11-01' && $order->folio > 13932;
+        $html = View::make('pdf.order.signs', [
+            'order' => $order,
+            'contieneFirmaLupita' => $contieneFirmaLupita
+        ])->render();
+
+        $mpdf->WriteHTML($html);
         // Output the PDF
         $mpdf->Output($folio . '.pdf', 'I');
         exit();

@@ -116,6 +116,19 @@ class WaterSamplesController extends Controller
         return response()->json($params);
     }
 
+    public function getExtraParams ()
+    {
+        $params = RuleParameterCombinationWater::with(['combinacionParametro', 'parametro', 'metodo', 'unidad'])
+            ->all()
+            ->map(function ($item) {
+                return [
+                    'value' => $item->combinacionParametro->id,
+                    'label' => $item->combinacionParametro->alias,
+                ];
+            });
+        return response()->json($params);
+    }
+
     public function store (Request $request)
     {
         $inicio_muestras = $request->query('inicio_muestras');

@@ -10,12 +10,9 @@
     import { Head, Link } from '@inertiajs/vue3';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
-    import IndexFilter from '@/Components/Shared/IndexFilter.vue';
     import CustomCheckbox from '@/Components/Shared/CustomCheckbox.vue';
-    import AdvancedCustomInput from '@/Components/Shared/AdvancedCustomInput.vue';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
-    import { jsPDF } from 'jspdf';
     const { getMessage, getError } = useMessages();
 
     const props = defineProps(
@@ -28,7 +25,6 @@
         }
     );
 
-    console.log(props.filtersProp);
     const clientFilter = ref(Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp:null);
     const folioFilter = ref(Object.keys(props.filtersProp).includes('folio') ? props.filtersProp:null);
     const muestreadorFilter = ref(Object.keys(props.filtersProp).includes('muestreador') ? props.filtersProp:null);
@@ -51,32 +47,6 @@
     ]);
 
     const activeFilters = ref([]);
-
-    const addImage = (doc, src, extension, x, y, width, height) => {
-        const img = new Image();
-        img.src = src;
-        doc.addImage(img, extension, x, y, width, height);
-    };
-
-    const text = (doc, text, x, y, fontSize = 7.5, fontStyle = 'normal', fontFamily = 'helvetica') => {
-        doc.setFontSize(fontSize);
-        doc.setFont(fontFamily, fontStyle);
-        doc.text(text, x, y);
-    };
-
-    const splitTextToSize = (doc, str, len, x, y, fontSize = 9) => {
-        const wrappedText = doc.splitTextToSize(str, len);
-        doc.setFontSize(fontSize);
-        doc.text(wrappedText, x, y);
-    };
-
-    const handleFilter = (ev) => {
-        const value = ev.target.value;
-        router.visit(route('orders.index', { byOrder: encodeURIComponent(value) }), {
-            preserveState: true,
-            method: 'get'
-        });
-    };
 
     const handleClientFilter = (ev) => {
         const filtersCopy = {};
@@ -265,17 +235,6 @@
                 </div>
             </div>
             
-            <!--<Alert 
-                :message="usePageCons.props.flash.error"
-                v-if="usePageCons.props.flash.error"
-                type="error"
-                closable/>
-            <Alert 
-                :message="usePageCons.props.flash.message"
-                v-if="usePageCons.props.flash.message"
-                class="mb-2"
-                type="success"
-                closable/>-->
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 bg-gray-50">
                     <tr>
@@ -422,7 +381,7 @@
                             {{ order.fecha_recepcion ?? '---' }}
                         </td>
                         <td class="px-2 py-3 text-xs">
-                            {{ order.hora_recepcion ? order.hora_recepcion.substr(0, 5):'---' }}
+                            {{ order.hora_recepcion ? order.hora_recepcion:'---' }}
                         </td>
                         <td class="px-2 py-3 text-xs">
                             {{ order.cliente.cliente }}

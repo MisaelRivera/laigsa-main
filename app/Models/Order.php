@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Order extends Model
 {
+    use HasFactory;
     protected $table = 'ordenes';
     protected $dateFormat = 'H:i:s';
+    public $timestamps = false;
     protected $fillable = [
         'folio',
         'id_cliente',
@@ -28,13 +31,15 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'hora_recepcion' => 'datetime:H:i', // Casts time to Carbon instance,
         'cesavedac' => 'boolean',
         'area_recepcion_muestras_limpia' => 'boolean',
     ];
 
-    public $timestamps = false;
-    use HasFactory;
+    protected function horaRecepcion():Attribute {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::createFromFormat('H:i:s', $value)->format('H:i'):null
+        );
+    }
 
     public function cliente ()
     {

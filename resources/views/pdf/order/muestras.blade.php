@@ -82,7 +82,7 @@
             <div class="container">
                 <div class="lg">Flujo 4: </div>
                 <div class="medium"> {{ $muestra->flujo_4 . ' (l/s)' }}</div>
-                @if($muestra->tipo_muestreo === 'Compuesto_6') 
+                @if($muestra->tipo_muestreo === 'Compuesto 6') 
                     <div class="medium">Flujo 5: </div>
                     <div class="block small"> {{ $muestra->flujo_5 . ' (l/s)' }}</div>
                     <div class="block small">Flujo 6: </div>
