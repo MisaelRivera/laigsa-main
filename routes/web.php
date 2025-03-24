@@ -113,7 +113,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/testing', [TestController::class, 'viewTestingForm']);
         Route::post('/test-dynamic-form', [TestController::class, 'testDynamicForm']);*/
         Route::post('/', [OrdersController::class, 'store'])->name('orders.store');
-        Route::put('/{id}', [OrdersController::class, 'update'])->name('orders.update');
+        Route::put('/{order}', [OrdersController::class, 'update'])->name('orders.update');
         Route::delete('/{id}', [OrdersController::class, 'delete'])->name('orders.delete');
         Route::patch('/editPartialInfo/{id}', [OrdersController::class, 'editPartialInfo'])->name('orders.partialEdit');
         Route::post('/toggle-cesavedac', [OrdersController::class, 'toggleCesavedac']);
@@ -151,7 +151,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/v2/{waterSample}', 'destroyV2')
                 ->name('water_samples.destroy_v2');
             Route::get('/v2/get_rule_params/{ruleId}', 'getRuleParams');
-            Route::get('/v2/get_extra_params', 'getExtraParams');
+            Route::get('/v2/get_all_params', 'getAllParams')->name('params.get_all_params');
         });
     });
 

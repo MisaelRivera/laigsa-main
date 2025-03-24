@@ -59,7 +59,7 @@ class OrdersController extends Controller
         $order = $request->validated();
 
         $client = Client::where('id', $order['id_cliente'])->first();
-       $order['direccion_muestreo'] = $client->direccion_muestreo;
+        $order['direccion_muestreo'] = $client->direccion_muestreo;
         $order = Order::create($order);
         $folio = $request->input('folio');
         $numero_muestras = $request->input('numero_muestras');
@@ -106,23 +106,27 @@ class OrdersController extends Controller
         $order = Order::with(['cliente'])
             ->where('id', $id)
             ->first();
-        
+        $clients = Client::all()->map(function ($client) {
+            return ['value' => $client->id, 'label' => $client->cliente ];
+        });
+
         if (!isset($order)) {
             return back()->with('error', 'La orden indicada no existe');
         }
 
         $data = [
             'lastOrder' => Order::getOrderWithLastFolio(),
-            'orderProp' => $order,
+            'order' => $order,
+            'clients' => $clients
         ];
         $data['aguas'] = $data['lastOrder']->aguas_alimentos === 'Aguas'; 
         return Inertia::render('orders/Edit', $data);
     }
 
-    public function update (Request $request, $id)
+    public function update (Request $request, Order $order)
     {
-        $order = $request->validate([
-            'cliente' => 'required|exists:clientes,cliente',
+        $validatedOrder = $request->validate([
+            'id_cliente' => 'required|exists:clientes,id',
             'direccion_muestreo' => 'required|exists:clientes,direccion_muestreo',
             'numero_cotizacion' => 'nullable',
             'numero_termometro' => 'nullable',
@@ -135,17 +139,15 @@ class OrdersController extends Controller
             'area_recepcion_muestras_limpia' => 'required|boolean',
         ]);
 
-        $order['id_cliente'] = Client::select('id')
-            ->where('cliente', $order['cliente'])
-            ->first()['id'];
-        unset($order['cliente']);
+        foreach ($validatedOrder as $property => $value) {
+            $order->{$property} = $value;
+        }
 
-        Order::where('id', $id)
-            ->update($order);
+        $order->save();
 
         return redirect()
-        ->route("orders.show", [$id])
-        ->with('message', 'Se ha editado la orden  correctamente.');
+            ->route("orders.show", [$order->id])
+            ->with('message', 'Se ha editado la orden  correctamente.');
     }
 
     public function editPartialInfo (Request $request, $id)

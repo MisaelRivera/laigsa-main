@@ -1,5 +1,6 @@
 <script setup>
-    import { reactive, ref } from 'vue';
+    import { reactive, ref, onMounted } from 'vue';
+    import {useForm} from '@inertiajs/vue3';
     import axios from 'axios';
     import { Head, router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -7,7 +8,7 @@
     import CustomInput from '@/Components/Shared/CustomInput.vue';
 
     const props = defineProps({
-        orderProp: {
+        order: {
             type: Object,
             required: true,
         },
@@ -20,33 +21,50 @@
         aguas: {
             type: Boolean,
         },
-            errors: Object,
+
+        clients: {
+            type: Array
+        }
     });
   
-    const order = reactive(props.orderProp);
+    const formState = useForm({
+        folio: props.order.folio,
+        numero_cotizacion: props.order.numero_cotizacion,
+        numero_muestras: props.order.numero_muestras,
+        aguas_alimentos: props.order.aguas_alimentos,
+        id_cliente: props.order.cliente.id,
+        fecha_recepcion: props.order.fecha_recepcion,
+        hora_recepcion: props.order.hora_recepcion,
+        numero_termometro: props.order.numero_termometro,
+        temperatura: props.order.temperatura,
+        observaciones: props.order.observaciones,
+        cesavedac: props.order.cesavedac,
+        area_recepcion_muestras_limpia: props.order.area_recepcion_muestras_limpia,
+    });
 
     const clientOptions = ref([]);
 
-    const onSearch = async (value) => {
-        const clients = await axios.get(`/clients/clients_by_name?name=${value}`);
-        console.log(clients.data);
-        const clientsNames = clients.data;
-        clientOptions.value = clientsNames;
-    };
+    onMounted(() => {
+        clientOptions.value = props.clients;
+    });
 
-    const onSelect = (value) => {
-        const direccion_muestreo = clientOptions.value.find(client => client.value === value).direccion_muestreo;
-        order.direccion_muestreo = direccion_muestreo;
+    const handleClientSearch = async(searchQuery) => 
+    {
+        const res = await axios.get(`/orders/get-client-for-order?search=${searchQuery}`);
+        let clients = res.data.map((client) => {
+           return { value: client.id, label: client.cliente}
+        });
+        clientOptions.value = clients;
     };
 
     const handleSubmit = () => {
         
-        if (!order.fecha_recepcion)
-            order.fecha_recepcion = null;
-        if (!order.hora_recepcion)
-            order.hora_recepcion = null;
-        order.cliente = order.cliente.cliente;
-        router.put(`/orders/${order.id}`, order);
+        if (!props.order.fecha_recepcion)
+            props.order.fecha_recepcion = null;
+        if (!props.order.hora_recepcion)
+            props.order.hora_recepcion = null;
+        props.order.cliente = props.order.cliente.cliente;
+        router.put(`/orders/${props.order.id}`, props.order);
     }
 
 </script>
@@ -62,13 +80,14 @@
                     :columns="{ container:12, wrapper:12 }"
                     :scroll-to-invalid="false"
                     :endpoint="false"
-                    ref="form$"
                     @submit="handleSubmit">
                     <TextElement 
                         name="folio"
                         before="Folio"
+                        :default="formState.folio"
                         :columns="{ container: 3, wrapper:12 }"
-                        rules="required">
+                        rules="required"
+                        :disabled="true">
                         <template #description>
                             <p 
                                 class="text-red-500"
@@ -78,13 +97,16 @@
                     <TextElement 
                         name="numero_cotizacion"
                         before="Número cotización"
+                        :default="formState.numero_cotizacion"
                         :columns="{ container: 3, wrapper:12 }"/>
                     <TextElement 
                         input-type="number"
                         name="numero_muestras"
                         before="Número de muestras"
                         rules="required|numeric|min:0"
-                        :columns="{ container: 3, wrapper:12 }">
+                        :default="formState.numero_muestras"
+                        :columns="{ container: 3, wrapper:12 }"
+                        :disabled="true">
                         <template #description>
                             <p 
                                 class="text-red-500"
@@ -110,6 +132,7 @@
                                 label: 'Alimentos'
                             }
                         ]"
+                        :default="formState.aguas_alimentos"
                         :columns="{ container: 3, wrapper:12 }">
                         <template #description>
                             <p 
@@ -122,6 +145,7 @@
                     <SelectElement 
                         name="id_cliente"
                         before="Cliente"
+                        :default="formState.id_cliente "
                         :columns="{ container:6, wrapper: 12 }"
                         :items="clientOptions"
                         :search="true"
@@ -138,40 +162,46 @@
                     <DateElement 
                         name="fecha_recepcion"
                         before="Fecha de recepcion"
+                        :default="formState.fecha_recepcion"
                         :columns="{ container: 3, wrapper: 12}"
                         display-format="MMMM DD, YYYY" />
                     <TextElement 
                         name="hora_recepcion"
                         before="Hora de recepcion"
+                        :default="formState.hora_recepcion"
                         :columns="{ container: 3, wrapper: 12}"
                         input-type="time"/>
                     <TextElement 
                         name="numero_termometro"
                         before="Termometro no."
+                        :default="formState.numero_termometro"
                         :columns="{ container: 3, wrapper: 12}"/>
                     <TextElement 
                         name="temperatura"
                         before="Temperatura °C"
+                        :default="formState.temperatura"
                         :columns="{ container: 3, wrapper: 12}"/>
                     <TextareaElement 
                         name="observaciones"
                         before="Observaciones"
+                        :default="formState.observaciones"
                         :columns="{ container: 6, wrapper: 12}"/>
                     <CheckboxElement 
                         name="cesavedac"
-                        :columns="{ container: 3, wrapper: 12}">
+                        :columns="{ container: 3, wrapper: 12}"
+                        :default="formState.cesavedac">
                         Cesavedac
                     </CheckboxElement>
                     <CheckboxElement 
                         name="area_recepcion_muestras_limpia"
-                        :columns="{ container: 9, wrapper: 12}">
+                        :columns="{ container: 9, wrapper: 12}"
+                        :default="formState.area_recepcion_muestras_limpia">
                         Se realizó desinfección en el areá de recepción después de recibir la última muestra.
                     </CheckboxElement>
-                    <ButtonElement 
-                        submits
-                        name="create_order">
-                        Crear
-                    </ButtonElement>
+                    <button 
+                        class="py-2 px-4 text-white bg-blue-500 rounded col-span-2">
+                        Editar
+                    </button>
                 </Vueform>
         </div>
     </AuthenticatedLayout>

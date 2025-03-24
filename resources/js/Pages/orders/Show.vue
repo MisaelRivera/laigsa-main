@@ -108,67 +108,67 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-full mx-auto mt-8">
-            <div class="w-8/12 mx-auto">
+            <div class="w-9/12 mx-auto">
                 <CreateTitle 
                     title="Datos de la orden"
                     backLink="/orders"
                     :ownLink="`/orders/show/`"/>
-            </div>
-            <div class="bg-white p-3">
-                <section class="flex">
-                    <div class="w-4/12 mr-11 items-center">
-                        <form 
-                            class="grid grid-cols-4 gap-2"
-                            @submit.prevent="handleAddSubmit">
-                            <label 
-                                for="muestras-adicionales">
-                                Muestras a agregar
-                            </label>
-                            <input 
-                                type="number" 
-                                min="1"
-                                class="w-full py-1.5 px-3 h-8 rounded-md col-span-2 border-slate-300 border-2 outline-none focus:border-blue-300 focus:border-4"
-                                placeholder="Ingresa No."
-                                v-model="numeroMuestras"
-                                id="muestras-adicionales">
+                    <section class="grid grid-cols-12">
+                        <div class="col-span-4 mr-11 items-center">
+                            <form 
+                                class="grid grid-cols-4 gap-2"
+                                @submit.prevent="handleAddSubmit">
+                                <label 
+                                    for="muestras-adicionales">
+                                    Muestras a agregar
+                                </label>
+                                <input 
+                                    type="number" 
+                                    min="1"
+                                    class="w-full py-1.5 px-3 h-8 rounded-md col-span-2 border-slate-300 border-2 outline-none focus:border-blue-300 focus:border-4"
+                                    placeholder="Ingresa No."
+                                    v-model="numeroMuestras"
+                                    id="muestras-adicionales">
+                                <button 
+                                    class="py-1 px-2 font-bold text-white w-10 h-8 bg-yellow-500 text-xl rounded-lg">
+                                    +
+                                </button>
+                            </form>
                             <button 
-                                class="py-1 px-2 font-bold text-white w-10 h-8 bg-yellow-500 text-xl rounded-lg">
-                                +
+                                class="bg-green-500 text-white py-1 px-2"
+                                v-if="order.numero_cotizacion">
+                                PDF
                             </button>
-                        </form>
-                        <button 
-                            class="bg-green-500 text-white py-1 px-2"
-                            v-if="order.numero_cotizacion">
-                            PDF
-                        </button>
-                    </div>
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-4 py-3">Encargado</th>
-                                <th scope="col" class="px-4 py-3">Teléfono</th>
-                                <th scope="col" class="px-4 py-3">Correo</th>
-                                <th scope="col" class="px-4 py-3">Observaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b dark:border-gray-700">
-                                <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ order.cliente.encargado }}
-                                </td>
-                                <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ order.cliente.telefono }}
-                                </td>
-                                <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ order.cliente.correo_electronico }}
-                                </td>
-                                <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ order.cliente.observaciones }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+                        </div>
+                        <table class="col-span-8 text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 w-64">Encargado</th>
+                                    <th class="px-4 py-3 w-64">Teléfono</th>
+                                    <th class="px-4 py-3 w-64">Correo</th>
+                                    <th class="px-4 py-3 w-64">Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b dark:border-gray-700">
+                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                        {{ order.cliente.encargado }}
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                        {{ order.cliente.telefono }}
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                        {{ order.cliente.correo_electronico }}
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-normal">
+                                        {{ order.cliente.observaciones }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+            </div>
+            <div class="p-3">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 bg-gray-50">
                         <tr>
@@ -190,16 +190,16 @@
                     </thead>
                     <tbody>
                         <tr class="border-b dark:border-gray-700">
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                     MFQ-{{ order.folio }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.cliente.cuarto_transitorio ? 'Si':'No' }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                     {{ order.numero_cotizacion }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 <template v-if="order.aguas_alimentos === 'Aguas'">
                                     <div class="w-6 h-6 bg-blue-500 rounded-full">
 
@@ -211,32 +211,32 @@
                                     </div>
                                 </template>
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 <EditLink 
                                     :url="`/orders/edit/${order.id}`"/>
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.cliente.cliente }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.numero_muestras }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.direccion_muestreo }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.numero_termometro }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.temperatura }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.fecha_recepcion ?? '---' }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.hora_recepcion ? order.hora_recepcion:'---' }}
                             </td>
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.hora_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 8):'---' }}
                             </td>
                             <td>

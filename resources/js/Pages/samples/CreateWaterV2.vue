@@ -15,12 +15,16 @@
     });
     const selectedParams = ref([]);
     const tabsContainer = ref(null);
-    onMounted(() => {
+    const allParams = ref(null);
+    onMounted(async() => {
       // Add the class to the FormTabs container
       tabsContainer.value.$el.classList.add('overflow-x-scroll');
       createRange(props.inicioMuestras, props.numeroMuestras).forEach((number) => {
         selectedParams.value.push([]);
       });
+      allParams.value = await axios.get('/water_samples/v2/get_all_params');
+      allParams.value = allParams.value.data;
+      console.log(allParams.value);
     });
     const form$ = ref(null);
     
@@ -30,7 +34,32 @@
     identificaciones_muestra.unshift({ value: null, label: 'Elija una opcion' })
     const oldParams = [
         { value: null, label: 'Elija un parametro' },
-        "NOM-001-SEMARNAT-2021", "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales", "Nom-001-semarnat-1996", "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot", "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa", "NOM-127-SSA1-2021, Parte de la Norma",  "Nom-127-ssa1-1994. Parte de la norma", "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor", "Nom-127-ssa1-1994. Norma completa/con olor y sabor", "Nom-002-semarnat-1996", "Nom-003-semarnat-1996", "CT, As, Pb, Fluor", "CF, CT (purificada)", "CT (purificada)", "Salmonella. Contratar toxicidad", "Dureza, alcalinidad, ph, conductividad, metales.",  "E. Coli, cf, ct de nom-127-ssa1-1994.",  "Mesofilicos aerobios",  "Ph, cn",  "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",  "Nom-004-semarnat-2002",  "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",  "Nom-127: cn",  "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",  "Ph, cn", "Otro"
+        "NOM-001-SEMARNAT-2021",
+        "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales",
+        "Nom-001-semarnat-1996",
+        "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot",
+        "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa",
+        "NOM-127-SSA1-2021, Parte de la Norma",
+        "Nom-127-ssa1-1994. Parte de la norma",
+        "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor",
+        "Nom-127-ssa1-1994. Norma completa/con olor y sabor",
+        "Nom-002-semarnat-1996",
+        "Nom-003-semarnat-1996",
+        "CT, As, Pb, Fluor",
+        "CF, CT (purificada)",
+        "CT (purificada)",
+        "Salmonella. Contratar toxicidad",
+        "Dureza, alcalinidad, ph, conductividad, metales.",
+        "E. Coli, cf, ct de nom-127-ssa1-1994.",
+        "Mesofilicos aerobios",
+        "Ph, cn",
+        "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",
+        "Nom-004-semarnat-2002",
+        "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",
+        "Nom-127: cn",
+        "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",
+        "Ph, cn",
+        "Otro"
     ];
 
     const tiposMuestreo = [
