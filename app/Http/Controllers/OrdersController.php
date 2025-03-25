@@ -93,6 +93,9 @@ class OrdersController extends Controller
                 ->select('muestras_aguas.*', 'identificacion_muestras.identificacion_muestra', 'identificacion_muestras.latitud', 'identificacion_muestras.longitud', 'identificacion_muestras.siralab', 'identificacion_muestras.obsoleta')
                 ->where('id_orden', $order->id)
                 ->get();
+            foreach ($order->muestras as $muestra) {
+                $muestra->tipo_muestreo_show = str_replace(' ', '_', $muestra->tipo_muestreo);
+            }
         } else {
             $order->muestras = FoodSample::where('id_orden', $order->id)
             ->get();
@@ -127,7 +130,6 @@ class OrdersController extends Controller
     {
         $validatedOrder = $request->validate([
             'id_cliente' => 'required|exists:clientes,id',
-            'direccion_muestreo' => 'required|exists:clientes,direccion_muestreo',
             'numero_cotizacion' => 'nullable',
             'numero_termometro' => 'nullable',
             'temperatura' => 'nullable',

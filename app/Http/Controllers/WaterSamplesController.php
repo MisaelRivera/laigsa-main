@@ -58,7 +58,7 @@ class WaterSamplesController extends Controller
                 'value' => null,
                 'label' => 'Elija una identificacion de muestra'
             ]));
-
+            $sample->tipo_muestreo_show = str_replace(' ', '_', $sample->tipo_muestreo);
         return Inertia::render('samples/EditWaterSample', [
             'sample' => $sample,
             'identificacionesMuestras' => $identificacionesMuestras
@@ -72,7 +72,7 @@ class WaterSamplesController extends Controller
         $data = [
             'order' => $order,
             'parametersProp' => Rule::where('aguas', 1)
-            ->get()
+                ->get()
         ];
       
        return Inertia::render('samples/EditAllWater', $data);
@@ -186,7 +186,9 @@ class WaterSamplesController extends Controller
         $editedSample = handleSingularCasesOnUpdateWaterSample($request, $editedSample);
         foreach ($editedSample as $key => $value) {
             $waterSample->{$key} = $value;
+            echo $waterSample->{$key} . '<br>';
         }
+        die();
         $waterSample->save();
         return redirect()
             ->route('orders.show', ['id' => $waterSample->id_orden])

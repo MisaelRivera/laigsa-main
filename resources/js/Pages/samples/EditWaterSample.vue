@@ -49,6 +49,8 @@
     const handleEdit = (form$) => {
        router.post(`/water_samples/${props.sample.id}/update`, form$.requestData);
     };
+
+    console.log(props.sample)
 </script>
 <template>
     <AuthenticatedLayout>
@@ -210,7 +212,7 @@
                 <SelectElement
                     name="tipo_muestreo"
                     :columns="{container:2, wrapper:12}"
-                    :default="sample.tipo_muestreo"
+                    :default="sample.tipo_muestreo_show"
                     :items="tipoMuestreos">
                     <template #before>
                         <p class="text-sm">Tipo de muestreo</p>

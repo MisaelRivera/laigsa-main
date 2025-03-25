@@ -306,7 +306,7 @@
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Tipo de muestra</p>
-                            <p class="py-1.5 px-2"> {{ sample.tipo_muestra }}</p>
+                            <p class="py-1.5 px-2"> {{ sample.tipo_muestra_show }}</p>
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
