@@ -166,4 +166,12 @@ class ClientsController extends Controller
         return redirect()
             ->route('clients.show', ['client' => $sampleIdentification->id_cliente]);
     }
+
+    public function getSampleIdentificationsByClientId ($clientId) 
+    {
+        $sampleIdentifications = SampleIdentification::where('id_cliente', $clientId)
+            ->get();
+        return response()
+            ->json($sampleIdentifications);
+    }
 }

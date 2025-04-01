@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{client}', 'show')->name('clients.show');
             Route::get('/clients_by_name', 'clientsByName');
             Route::put('/{client}/{cesavedac}/set-cesavedac', 'setCesavedac')->name('clients.set-cesavedac');
+            Route::get('/get_by_client_id/{clientId}', 'getSampleIdentificationByClientId');
             Route::post('/create_sample_identification', 'createSampleIdentificacion');
             Route::put('/set_sample_identification_obsolete/{sampleIdentification}', 'setSampleIdentificationObsolete');
             Route::put('/edit_sample_identification/{sampleIdentification}', 'editSampleIdentification');

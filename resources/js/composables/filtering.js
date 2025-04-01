@@ -1,13 +1,36 @@
 import { router } from '@inertiajs/vue3';
 
-export function useFilter () {
-    const filterIndex = (ev, url, property) => {
+export function useFilter (ev, filterName, routeName) {
+    const textFilter = () => {
+        const filtersCopy = {};
         const value = ev.target.value;
-        const data = {};
-        data[property] = value;
-        router.visit(route(url, data), {
+        filters[filterName] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+
+        router.visit(route(routeName, filtersCopy), {
             preserveState: true,
-            method: 'get'
+            method: 'get',
+        });
+    }
+
+    const checkboxFilter = () => {
+        const filtersCopy = {};
+        if (!activeFilters.value.includes('cesavedac')) {
+            activeFilters.value.push('cesavedac');
+        }
+        filters['cesavedac'] = value;
+        Array.from(Object.keys(filters)).forEach(item => {
+            if (filters[item] !== null && filters[item] !== '') {
+                filtersCopy[item] = filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
+            preserveState: true,
+            method: 'get',
         });
     };
 }

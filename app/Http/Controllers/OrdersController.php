@@ -85,7 +85,9 @@ class OrdersController extends Controller
             ->first();
         
         if(!isset($order)) {
-            return redirect()->route('orders.index')->with('error', 'La orden especificada no existe!');
+            return redirect()
+                ->route('orders.index')
+                ->with('error', 'La orden especificada no existe!');
         } 
 
         if ($order->aguas_alimentos === 'Aguas') {
@@ -98,7 +100,7 @@ class OrdersController extends Controller
             }
         } else {
             $order->muestras = FoodSample::where('id_orden', $order->id)
-            ->get();
+                ->get();
         }
 
         return Inertia::render('orders/Show', ['order' => $order]);
