@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from 'vue';
-    import { useForm, Link, router } from '@inertiajs/vue3';
+    import { useForm, router } from '@inertiajs/vue3';
     import { useMessages } from '@/composables/messages';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import MyModal from '@/Components/Shared/MyModal.vue';
@@ -39,9 +39,9 @@
 
     const handleAdd = () => {
         addingForm.alias = form$.value.el$('alias').value;
-       addingForm.post(route('parameters-combinations.add_param_combination',  props.rule.id));
-       isAddOpen.value = false;
-       addingForm.reset();
+        addingForm.post(route('parameters-combinations.add_param_combination',  props.rule.id));
+        isAddOpen.value = false;
+        addingForm.reset();
     };
 
     const isDeleteOpen = ref(false);
@@ -56,8 +56,9 @@
     
     const handleOpenDeleteItem = (parameterCombination) => {
         isDeleteOpen.value = true;
-        deleteForm.id = parameterCombination.id;
+        deleteForm.id = parameterCombination.normas_combinaciones_parametros_aguas_id;
         deleteForm.alias = parameterCombination.alias;
+        
     };
     
     const handleCloseDeleteItem = () => {
@@ -68,7 +69,7 @@
     const handleDelete = () => {
         try {
             console.log(deleteForm.id);
-            deleteForm.delete(route('parameters-combinations.remove_param_combination', deleteForm.id));
+            deleteForm.delete(`/parameters-combinations/${deleteForm.id}/remove-param-combination`);
             isDeleteOpen.value = false;
         } catch (e) {
             console.log(e);

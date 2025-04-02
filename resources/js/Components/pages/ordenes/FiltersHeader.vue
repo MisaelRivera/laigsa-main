@@ -7,7 +7,8 @@
     import CustomCheckbox from '@/Components/Shared/CustomCheckbox.vue';
     const props = defineProps({
         links: Array,
-        filtersProp: Object
+        filtersProp: Object,
+        filters: Object,
     });
 
     const filterOptions = ref([
@@ -17,22 +18,15 @@
     ]);
     const activeFilters = ref([]);
     const muestreadorFilter = ref(Object.keys(props.filtersProp).includes('muestreador') ? props.filtersProp:null);
-    const filters = reactive({
-        cliente: Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp.cliente:null,
-        folio: Object.keys(props.filtersProp).includes('folio') ? props.filtersProp.folio:null,
-        muestreador: Object.keys(props.filtersProp).includes('muestreador') ? props.filtersProp.muestreador:null,
-        cesavedac: Object.keys(props.filtersProp).includes('cesavedac') ? props.filtersProp.cesavedac:null,
-        supervision: Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp.supervision:null,
-        siralab: Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp.siralab:null,
-    });
-
+    const supervisionFilter = ref(Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp:null);
+    const siralabFilter = ref(Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp:null);
     const handleMuestreadorFilter = (ev) => {
         const filtersCopy = {};
         const value = ev.target.value;
-        filters['muestreador'] = value;
-        Array.from(Object.keys(filters)).forEach(item => {
-            if (filters[item] !== null && filters[item] !== '') {
-                filtersCopy[item] = filters[item];
+        props.filters['muestreador'] = value;
+        Array.from(Object.keys(props.filters)).forEach(item => {
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
             }
         });
         router.visit(route('orders.index', filtersCopy), {
@@ -46,10 +40,10 @@
         if (!activeFilters.value.includes('cesavedac')) {
             activeFilters.value.push('cesavedac');
         }
-        filters['cesavedac'] = value;
-        Array.from(Object.keys(filters)).forEach(item => {
-            if (filters[item] !== null && filters[item] !== '') {
-                filtersCopy[item] = filters[item];
+        props.filters['cesavedac'] = value;
+        Array.from(Object.keys(props.filters)).forEach(item => {
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
             }
         });
         router.visit(route('orders.index', filtersCopy), {
@@ -63,10 +57,10 @@
         if (!activeFilters.value.includes('siralab')) {
             activeFilters.value.push('siralab');
         }
-        filters['siralab'] = value;
+        props.filters['siralab'] = value;
         Array.from(Object.keys(filters)).forEach(item => {
-            if (filters[item] !== null && filters[item] !== '') {
-                filtersCopy[item] = filters[item];
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
             }
         });
         router.visit(route('orders.index', filtersCopy), {
@@ -80,10 +74,10 @@
         if (!activeFilters.value.includes('supervision')) {
             activeFilters.value.push('supervision');
         }
-        filters['supervision'] = value;
-        Array.from(Object.keys(filters)).forEach(item => {
-            if (filters[item] !== null && filters[item] !== '') {
-                filtersCopy[item] = filters[item];
+        props.filters['supervision'] = value;
+        Array.from(Object.keys(props.filters)).forEach(item => {
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
             }
         });
         router.visit(route('orders.index', filtersCopy), {
@@ -93,11 +87,11 @@
     };
 
     const handleRemove = (removedOption) => {
-        filters[removedOption] = null;
+        props.filters[removedOption] = null;
         const filtersCopy = {};
-        Array.from(Object.keys(filters)).forEach(item => {
-            if (filters[item] !== null && filters[item] !== '') {
-                filtersCopy[item] = filters[item];
+        Array.from(Object.keys(props.filters)).forEach(item => {
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
             }
         });
         router.visit(route('orders.index', filtersCopy), {

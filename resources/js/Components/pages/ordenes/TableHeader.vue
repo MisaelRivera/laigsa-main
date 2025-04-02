@@ -1,7 +1,43 @@
 <script setup>
+    import { ref } from 'vue';
+    import { router } from '@inertiajs/vue3';
     const props = defineProps({
-        
+        filters: Object,
+        filtersProp: Object
     });
+
+    const clientFilter = ref(Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp:null);
+    const folioFilter = ref(Object.keys(props.filtersProp).includes('folio') ? props.filtersProp:null);
+
+    const handleClientFilter = (ev) => {
+        const filtersCopy = {};
+        const value = ev.target.value;
+        props.filters['cliente'] = value;
+        Array.from(Object.keys(props.filters)).forEach(item => {
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
+
+    const handleFolioFilter = (ev) => {
+        const filtersCopy = {};
+        const value = ev.target.value;
+        props.filters['folio'] = value;
+        Array.from(Object.keys(props.filters)).forEach(item => {
+            if (props.filters[item] !== null && props.filters[item] !== '') {
+                filtersCopy[item] = props.filters[item];
+            }
+        });
+        router.visit(route('orders.index', filtersCopy), {
+            preserveState: true,
+            method: 'get',
+        });
+    };
 </script>
 <template>
     <thead class="text-xs text-gray-700 bg-gray-50">
@@ -16,7 +52,7 @@
                     name="busqueda"
                     ref="folioFilter"
                     class="h-8 w-20 rounded border px-3"
-                    v-model="filters['folio']"
+                    v-model="props.filters['folio']"
                     @input="handleFolioFilter">
             </th>
             <th scope="col" class="px-2 py-3 w-[1%]">No.</th>
@@ -36,6 +72,7 @@
                         name="busqueda"
                         ref="clientFilter"
                         class="h-8 w-40 rounded border px-3"
+                        v-model="props.filters['cliente']"
                         @input="handleClientFilter">
                 </th>
                 <th scope="col" class="px-2 py-3 w-[1%]">

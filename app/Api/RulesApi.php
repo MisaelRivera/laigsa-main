@@ -40,7 +40,7 @@
                     ->join('parametros', "{$secTable}.id_parametro", '=', 'parametros.id')
                     ->join('unidades', "{$secTable}.id_unidad", '=', 'unidades.id')
                     ->join('metodos', "{$secTable}.id_metodo", '=', 'metodos.id_metodo')
-                    ->select('parametros.parametro', "{$secTable}.alias", DB::raw('unidades.nombre as nombre_unidad, metodos.nombre as nombre_metodo'))
+                    ->select('parametros.parametro', 'normas_combinaciones_parametros_aguas.id AS normas_combinaciones_parametros_aguas_id', "{$secTable}.alias", DB::raw('unidades.nombre as nombre_unidad, metodos.nombre as nombre_metodo'))
                     ->where("{$mainTable}.id_norma", $rule->id)
                     ->when(
                         $filter ?? false,

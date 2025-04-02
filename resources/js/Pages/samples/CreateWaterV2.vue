@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, nextTick } from 'vue';
     import { router, usePage, useForm } from '@inertiajs/vue3';
     import axios from 'axios';
     import { createRange } from '@/helpers/time_helper.js';
@@ -25,6 +25,7 @@
       allParams.value = await axios.get('/water_samples/v2/get_all_params');
       allParams.value = allParams.value.data;
       console.log(allParams.value);
+      
     });
     const form$ = ref(null);
     
@@ -80,12 +81,13 @@
         const number = el$.name.split('_')[len - 1];
         const res = await axios.get(`/water_samples/v2/get_rule_params/${newValue}`);
         selectedParams.value.splice(number - 1, 1, res.data);
+        console.log(selectedParams.value);
         const values = selectedParams.value[number - 1].map((value) => {
             return value.value;
         });
 
         const parametrosSeleccionados = form$.value.el$(`parametros_seleccionados_${number}`);
-        parametrosSeleccionados.select(values);
+        nextTick(() => parametrosSeleccionados.select(values));
 
     };
 
@@ -459,7 +461,7 @@
                                 :name="`parametros_seleccionados_${i}`"
                                 v-for="i in createRange(inicioMuestras, numeroMuestras)"
                                 :native="false"
-                                :items="selectedParams[i - 1]"
+                                :items="allParams"
                                 :search="true"
                                 @search-change="() => handleGetExtraParams(i - 1)"/>
                             <RadiogroupElement
