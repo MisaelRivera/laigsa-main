@@ -4,22 +4,41 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import EditLink from '@/Components/Shared/EditLink.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
+    import IndexTitle from '@/Components/Shared/IndexTitle.vue';
 
     const props = defineProps({
         paramsDescription: Array,
     });
 
     const deleteParamDescription = ref(null);
+    const isDeleteModalVisible = ref(false);
+
+    const handleOpenDeleteModal = (paramDescription) => {
+        isDeleteModalVisible.value = true;
+        deleteParamDescription.value = paramDescription;
+    };
+
+    const handleCloseDeleteModal = () => {
+        isDeleteModalVisible.value = false;
+        deleteParamDescription.value = null;
+    };
+
+    const handleDeleteParamDescription = () => {
+
+    };
 </script>
 <template>
     <AuthenticatedLayout>
-        <div class="w-5/12 mx-auto">
-            <table>
+        <div class="w-7/12 mx-auto">
+            <IndexTitle 
+                title="Descripcion de parametros"
+                :own-link="route('params_description.index')"
+                :add-link="route('params_description.create')"/>
+            <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="border py-2 px-4">Descripcion</th>
-                        <th class="border py-2 px-4">Version</th>
-                        <th class="border py-2 px-4"></th>
+                        <th class="border py-2 px-4 w-9/12">Descripcion</th>
                         <th class="border py-2 px-4"></th>
                     </tr>
                 </thead>
@@ -29,19 +48,28 @@
                             {{ paramDescription.descripcion }}
                         </td>
                         <td class="border py-2 px-4">
-                            {{ paramDescription.version }}
-                        </td>
-                        <td class="border py-2 px-4">
                             <EditLink 
                                 :url="route('params_description.edit', { paramDescription: paramDescription.id })"/>
-                        </td>
-                        <td class="border py-2 px-4">
                             <DeleteButton 
-                                />
+                                :funct="handleOpenDeleteModal"
+                                :args="[paramDescription]"/>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <MyModal
+            v-model="isDeleteModalVisible"
+            title="Eliminar descripcion de parametros"
+            @ok="() => handleDeleteParamDescription()"
+            @close-from="handleCloseDeleteModal"
+            :ok-button-props="{
+                class: ['bg-blue-500', 'text-white']
+            }"
+            :cancel-button-props="{
+                class: ['bg-red-500', 'text-white']
+            }">
+            <p>Estas seguro de que deseas eliminar la descripcion de parametros {{ deleteParamDescription.descripcion }}?</p>
+        </MyModal>
     </AuthenticatedLayout>
 </template>

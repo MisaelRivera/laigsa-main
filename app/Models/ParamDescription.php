@@ -10,4 +10,8 @@ class ParamDescription extends Model
     use HasFactory;
 
     public $table = 'descripcion_parametros';
+
+    protected $fillable = ['descripcion'];
+
+    public $timestamps = false;
 }
