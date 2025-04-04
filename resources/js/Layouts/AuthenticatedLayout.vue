@@ -67,6 +67,12 @@ const isVisibleServiciosAguas = ref(false),
                                 </Link>
                             </li>
                             <li 
+                                class="text-center text-sm">
+                                <Link :href="route('params_description.index')">
+                                    Descripcion de parametros
+                                </Link>
+                            </li>
+                            <li 
                                 class="text-center text-sm"
                                 @click="isVisibleServiciosAlimentos = true">
                                 Análisis de alimentos

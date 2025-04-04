@@ -62,7 +62,7 @@
                 </button>
             </th>
             <th scope="col" class="px-2 py-3 w-[1%]"></th>
-                <th scope="col" class="px-2 py-3 w-[5%]">Fecha de recepcion</th>
+                <th scope="col" class="px-2 py-3 w-[6%]">Fecha de recepcion</th>
                 <th scope="col" class="px-2 py-3 w-[5%]">Hora de recepcion</th>
                 <th scope="col" class="px-2 py-3">
                     Cliente
@@ -90,10 +90,10 @@
                 <th scope="col" class="px-2 py-3 w-[1%]">
                     Croquis
                 </th>
-                <th scope="col" class="px-2 py-3 w-[5%]">
+                <th scope="col" class="px-2 py-3 w-[6%]">
                     Fecha resultados analistas
                 </th>
-                <th scope="col" class="px-2 py-3 w-[5%]">
+                <th scope="col" class="px-2 py-3 w-[6%]">
                     Fecha resultados clientes
                 </th>
                 <th scope="col" class="px-2 py-3 w-[1%]">

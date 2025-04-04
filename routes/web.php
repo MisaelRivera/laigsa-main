@@ -1,5 +1,6 @@
 <?php
 
+use App\Api\ParamsDescriptionApi;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -9,12 +10,14 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\SamplesController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\DescriptionParamController;
 use App\Http\Controllers\FoodSamplesController;
 use App\Http\Controllers\LcpController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\MethodsController;
 use App\Http\Controllers\ParameterCombinationController;
 use App\Http\Controllers\ParametersController;
+use App\Http\Controllers\ParamsDescriptionController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UsersController;
@@ -251,6 +254,17 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'store')->name('tasks.store');
             Route::get('/{id}/edit', 'edit')->name('tasks.edit');
             Route::delete('/{id}', 'destroy')->name('tasks.delete');
+        });
+    });
+
+    Route::controller(ParamsDescriptionController::class)->group(function () {
+        Route::prefix('/params_description')->group(function () {
+            Route::get('/', 'index')->name('params_description.index');
+            Route::get('/create', 'create')->name('params_description.create');
+            Route::post('/', 'store')->name('params_description.store');
+            Route::get('/{paramDescription}/edit', 'edit')->name('params_description.edit');
+            Route::put('/{paramDescription}', 'update')->name('params_description.update');
+            Route::delete('/{paramDescription}', 'delete')->name('params_description.delete');
         });
     });
 

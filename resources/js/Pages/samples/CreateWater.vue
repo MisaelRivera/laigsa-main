@@ -5,7 +5,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import { Validator } from '@vueform/vueform';
-
+    import { useGenerateRepetitive } from '@/composables/generateRepetitiveContent';
 
     const props = defineProps({
         order: Object,
@@ -13,9 +13,13 @@
         inicioMuestras: Number,
         parametersProp: Array,
         previousRouteName: String,
+        createFields: Array,
+        oldParams: Array,
         errors: Object,
     });
     
+    const { generateIndexedNames } = useGenerateRepetitive();
+
     const tabsContainer = ref(null);
     onMounted(() => {
       // Add the class to the FormTabs container
@@ -25,10 +29,6 @@
         return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
     });
     identificaciones_muestra.unshift({ value: null, label: 'Elija una opcion' });
-    const oldParams = [
-        { value: null, label: 'Elija un parametro' },
-        "NOM-001-SEMARNAT-2021", "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales", "Nom-001-semarnat-1996", "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot", "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa", "NOM-127-SSA1-2021, Parte de la Norma",  "Nom-127-ssa1-1994. Parte de la norma", "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor", "Nom-127-ssa1-1994. Norma completa/con olor y sabor", "Nom-002-semarnat-1996", "Nom-003-semarnat-1996", "CT, As, Pb, Fluor", "CF, CT (purificada)", "CT (purificada)", "Salmonella. Contratar toxicidad", "Dureza, alcalinidad, ph, conductividad, metales.",  "E. Coli, cf, ct de nom-127-ssa1-1994.",  "Mesofilicos aerobios",  "Ph, cn",  "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",  "Nom-004-semarnat-2002",  "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",  "Nom-127: cn",  "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",  "Ph, cn", "Otro"
-    ];
 
     const tiposMuestreo = [
         { value: null, label: 'Elija un tipo' },
@@ -60,7 +60,7 @@
 
 <template>
     <AuthenticatedLayout>
-        <div class="w-8/12 mx-auto mt-3">
+        <div class="w-10/12 mx-auto mt-3">
             <CreateTitle
                 title="Crear muestras"
                 :ownLink="`/muestras/create/${order.folio}/${numeroMuestras}`"
@@ -85,36 +85,7 @@
                         <FormTab
                             :name="`muestra_${i}`"
                             :label="`MFQ-${order.folio} - ${i}`"
-                            :elements="[
-                                `tipo_muestra_${i}`, 
-                                `id_identificacion_muestra_${i}`,
-                                `caracteristicas_${i}`,
-                                `muestreador_${i}`,
-                                `ph_${i}`,
-                                `tratada_biologicamente_${i}`,
-                                `cloro_${i}`,
-                                `valor_cloro_${i}`,
-                                `ph_cromo_hexavalente_${i}`,
-                                `tipo_muestreo_${i}`,
-                                `fecha_muestreo_${i}`,
-                                `hora_muestreo_${i}`,
-                                `fecha_final_muestreo_${i}`,
-                                `hora_final_muestreo_${i}`,
-                                `fecha_composicion_${i}`,
-                                `hora_composicion_${i}`,
-                                `flujo_1_${i}`,
-                                `flujo_2_${i}`,
-                                `flujo_3_${i}`,
-                                `flujo_4_${i}`,
-                                `flujo_5_${i}`,
-                                `flujo_6_${i}`,
-                                `parametros_${i}`,
-                                `otros_${i}`,
-                                `preservacion_correcta_${i}`,
-                                `offset_${i}`,
-                                `offset2_${i}`,
-                                'create_water_samples'
-                            ]"
+                            :elements="generateIndexedNames(i, createFields, '_', ['create_water_samples'])"
                             :add-class="{
                                 wrapper_active: ['border-b-4', 'bg-red-100'],
                             }"

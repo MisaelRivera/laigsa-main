@@ -18,6 +18,54 @@ use Illuminate\Support\Facades\URL;
 
 class WaterSamplesController extends Controller
 {
+    public $createFields = [
+        'tipo_muestra', 'id_identificacion_muestra', 'caracteristicas',
+        'muestreador', 'ph', 'tratada_biologicamente', 'cloro', 'valor_cloro',
+        'ph_cromo_hexavalente', 'tipo_muestreo', 'fecha_muestreo', 'hora_muestreo',
+        'fecha_final_muestreo', 'hora_final_muestreo', 'fecha_composicion', 'hora_composicion',
+        'flujo_1', 'flujo_2', 'flujo_3', 'flujo_4', 'flujo_5', 'flujo_6',
+        'parametros', 'otros', 'preservacion_correcta', 'offset', 'offset2'
+    ];
+
+    public $createFieldsV2 = [
+        'tipo_muestra', 'id_identificacion_muestra', 'caracteristicas',
+        'muestreador', 'ph', 'tratada_biologicamente', 'cloro', 'valor_cloro',
+        'ph_cromo_hexavalente', 'tipo_muestreo', 'fecha_muestreo', 'hora_muestreo',
+        'fecha_final_muestreo', 'hora_final_muestreo', 'fecha_composicion', 'hora_composicion',
+        'flujo_1', 'flujo_2', 'flujo_3', 'flujo_4', 'flujo_5', 'flujo_6',
+        'parametros', 'otros', 'norma', 'parametros_seleccionados', 'preservacion_correcta', 'offset', 'offset2'
+    ];
+
+    public $oldParams = [
+        [ 'value' => null, 'label' => 'Elija un parametro' ],
+        "NOM-001-SEMARNAT-2021",
+        "NOM-001-SEMARNAT-2021- incluir DBO5, Solidos Sedimentables, Materia Flotante, Coliformes Fecales",
+        "Nom-001-semarnat-1996",
+        "Nom-001-semarnat-1996/color verd, cloruros, e. coli, enterococos fecales. Contratar toxicidad vibrio fisheri,  cot",
+        "Nom-001-semarnat-1996/sin met y cn", "NOM-127-SSA1-2021 Norma completa",
+        "NOM-127-SSA1-2021, Parte de la Norma",
+        "Nom-127-ssa1-1994. Parte de la norma",
+        "Nom-127-ssa1-1994. Parte de la norma/con olor y sabor",
+        "Nom-127-ssa1-1994. Norma completa/con olor y sabor",
+        "Nom-002-semarnat-1996",
+        "Nom-003-semarnat-1996",
+        "CT, As, Pb, Fluor",
+        "CF, CT (purificada)",
+        "CT (purificada)",
+        "Salmonella. Contratar toxicidad",
+        "Dureza, alcalinidad, ph, conductividad, metales.",
+        "E. Coli, cf, ct de nom-127-ssa1-1994.",
+        "Mesofilicos aerobios",
+        "Ph, cn",
+        "Sst, ss, dqo, ntk, nitratos, nitritos, fosforo total, nitrogeno total",
+        "Nom-004-semarnat-2002",
+        "Nom-004: ph, conductividad, sulfatos, nitratos, cloruros, dt, sdt, cf, ca, na, k",
+        "Nom-127: cn",
+        "Nom-127-ssa1-1994/ contratar: btex, trihalometanos, fenoles, yodo residual",
+        "Ph, cn",
+        "Otro"
+    ];
+
     public function create ($folio, $numero_muestras, $inicio_muestras)
     {
         $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
@@ -37,7 +85,9 @@ class WaterSamplesController extends Controller
             'inicioMuestras' => (int) $inicio_muestras,
             'parametersProp' => Rule::where('aguas', 1)
             ->get(),
-            'previousRouteName' => $previousRouteName
+            'previousRouteName' => $previousRouteName,
+            'createFields' => $this->createFields,
+            'oldParams' => $this->oldParams,
         ];
 
         return Inertia::render('samples/CreateWater', $data);
@@ -85,6 +135,8 @@ class WaterSamplesController extends Controller
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
+            'createFields' => $this->createFields,
+            'oldParams' => $this->oldParams,
         ];
       
         if ($order->aguas_alimentos === 'Aguas') {

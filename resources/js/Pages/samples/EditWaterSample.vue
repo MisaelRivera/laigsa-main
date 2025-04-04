@@ -54,7 +54,7 @@
 </script>
 <template>
     <AuthenticatedLayout>
-        <div class="w-8/12 mx-auto mt-3">
+        <div class="w-10/12 mx-auto mt-3">
             <CreateTitle
                 :title="`Editar muestra ${sample.orden.folio } - ${sample.numero_muestra}`"
                 :own-link="route('water_samples.edit', sample.id)"

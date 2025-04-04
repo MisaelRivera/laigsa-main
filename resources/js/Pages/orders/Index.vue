@@ -64,7 +64,7 @@
                             class="px-2 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <Dropdown
                                 align="center"
-                                width="96">
+                                width="64">
                                 <template #trigger>
                                     <button>
                                         MFQ-{{ order.folio }}
