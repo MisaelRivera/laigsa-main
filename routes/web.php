@@ -264,7 +264,18 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'store')->name('params_description.store');
             Route::get('/{paramDescription}/edit', 'edit')->name('params_description.edit');
             Route::put('/{paramDescription}', 'update')->name('params_description.update');
-            Route::delete('/{paramDescription}', 'delete')->name('params_description.delete');
+            Route::delete('/{paramDescription}', 'destroy')->name('params_description.delete');
+        });
+    });
+
+    Route::controller()->group(function () {
+        Route::prefix('/types')->group(function () {
+            Route::get('/', 'index')->name('types.index');
+            Route::get('/create', 'create')->name('types.create');
+            Route::post('/', 'store')->name('types.store');
+            Route::get('/{type}/edit', 'edit')->name('types.edit');
+            Route::put('/{type}', 'update')->name('types.update');
+            Route::delete('/{type}', 'destroy')->name('types.destroy');
         });
     });
 

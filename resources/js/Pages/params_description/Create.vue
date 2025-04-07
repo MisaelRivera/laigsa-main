@@ -35,6 +35,36 @@
                         </p>
                     </template>
                 </TextareaElement>
+                <SelectElement 
+                    name="tipo"
+                    :columns="{container:4, wrapper:12}"
+                    before="Tipo"
+                    :items="[
+                        'Aguas',
+                        'Alimentos'
+                    ]">
+                    <template #description>
+                        <p v-if="errors['tipo']" class="text-red-500">
+                            {{ errors['tipo'] }}
+                        </p>
+                    </template>
+                </SelectElement>
+                <CheckboxElement
+                    name="cesavedac"
+                    :columns="{ container: 4, wrapper: 12 }"
+                    :add-class="{
+                        wrapper: 'mt-8'
+                    }">
+                    <template #description>
+                        <p v-if="errors['cesavedac']" class="text-red-500">
+                            {{ errors['cesavedac'] }}
+                        </p>
+                    </template>
+                    Cesavedac
+                </CheckboxElement>
+                <StaticElement 
+                    content="<div></div>"
+                    :columns="{ container:12, wrapper:12}"/>
                 <button class="py-2 px-4 rounded text-white bg-green-500 col-span-2">Crear</button>
             </Vueform>
         </div>

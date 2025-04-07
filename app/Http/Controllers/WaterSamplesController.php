@@ -13,8 +13,6 @@ use App\Models\Rule;
 use App\Models\RuleParameterCombinationWater;
 use App\Models\SampleIdentification;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 
 class WaterSamplesController extends Controller
 {
@@ -69,23 +67,13 @@ class WaterSamplesController extends Controller
     public function create ($folio, $numero_muestras, $inicio_muestras)
     {
         $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
-        $previousUrl = URL::previous();
-
-        // Create a request object for the previous URL
-        $previousRequest = Request::create($previousUrl);
-
-        // Match the previous request to a route
-        $previousRoute = Route::getRoutes()->match($previousRequest);
-
-        // Get the name of the previous route, if it has one
-        $previousRouteName = $previousRoute->getName();
         $data = [
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
             'parametersProp' => Rule::where('aguas', 1)
-            ->get(),
-            'previousRouteName' => $previousRouteName,
+                ->get(),
+            'previousRouteName' => getPreviousURL(),
             'createFields' => $this->createFields,
             'oldParams' => $this->oldParams,
         ];
@@ -135,8 +123,9 @@ class WaterSamplesController extends Controller
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
             'inicioMuestras' => (int) $inicio_muestras,
-            'createFields' => $this->createFields,
+            'createFields' => $this->createFieldsV2,
             'oldParams' => $this->oldParams,
+            'previousRouteName' => getPreviousURL()
         ];
       
         if ($order->aguas_alimentos === 'Aguas') {
@@ -177,17 +166,16 @@ class WaterSamplesController extends Controller
 
     public function store (Request $request)
     {
-        $inicio_muestras = $request->query('inicio_muestras');
-        $numero_muestras = $request->query('numero_muestras');
-        $idOrden = $request->query('id_orden');
+        ['inicio_muestras' => $inicio_muestras, 'numero_muestras' => $numero_muestras, 'request_origin' => $requestOrigin, 'id_orden' => $idOrden] = $request->query();
         $orden = Order::find($idOrden);
-        $requestOrigin = $request->query('request_origin');
         $samples = [];
+
         $numeroMuestras = $orden->numero_muestras;
-        if ($requestOrigin === 'orders.show') {
+        if ($requestOrigin === 'orders.show' || $requestOrigin === 'orders.show_v2') {
             $orden->numero_muestras = $numeroMuestras + $numero_muestras;
             $orden->save();
         }
+
         for ($i = $inicio_muestras + 1; $i <= $inicio_muestras + $numero_muestras; $i++) {
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();

@@ -1,18 +1,26 @@
 <script setup>
     import { ref } from 'vue';
-    import { Link } from '@inertiajs/vue3';
+    import { router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import EditLink from '@/Components/Shared/EditLink.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
     import MyModal from '@/Components/Shared/MyModal.vue';
     import IndexTitle from '@/Components/Shared/IndexTitle.vue';
+    import { useMessages } from '@/composables/messages';
+    import { Notivue, Notification, push } from 'notivue';
 
     const props = defineProps({
-        paramsDescription: Array,
+        paramsDescription: Object,
     });
+
+    const { getMessage } = useMessages();
 
     const deleteParamDescription = ref(null);
     const isDeleteModalVisible = ref(false);
+
+    if (getMessage()) {
+        push.success(getMessage());
+    }
 
     const handleOpenDeleteModal = (paramDescription) => {
         isDeleteModalVisible.value = true;
@@ -25,7 +33,13 @@
     };
 
     const handleDeleteParamDescription = () => {
-
+        router.delete(route('params_description.delete', { paramDescription: deleteParamDescription.value.id }), {
+            onSuccess: () => {
+                push.success(getMessage());
+                isDeleteModalVisible.value = false;
+                deleteParamDescription.value = null;
+            }
+        });
     };
 </script>
 <template>
@@ -38,7 +52,9 @@
             <table class="w-full">
                 <thead>
                     <tr>
-                        <th class="border py-2 px-4 w-9/12">Descripcion</th>
+                        <th class="border py-2 px-4 w-8/12">Descripcion</th>
+                        <th class="border py-2 px-2">Tipo</th>
+                        <th class="border py-2 px-2">Cesavedac</th>
                         <th class="border py-2 px-4"></th>
                     </tr>
                 </thead>
@@ -46,6 +62,12 @@
                     <tr v-for="paramDescription in paramsDescription.data">
                         <td class="border py-2 px-4">
                             {{ paramDescription.descripcion }}
+                        </td>
+                        <td class="border py-2 px-2">
+                            {{ paramDescription.tipo }}
+                        </td>
+                        <td class="border py-2 px-2">
+                            {{ paramDescription.cesavedac ? 'Si':'No' }}
                         </td>
                         <td class="border py-2 px-4">
                             <EditLink 
@@ -71,5 +93,9 @@
             }">
             <p>Estas seguro de que deseas eliminar la descripcion de parametros {{ deleteParamDescription.descripcion }}?</p>
         </MyModal>
+        <Notivue v-slot="item">
+            <Notification
+                :item="item"/>
+        </Notivue>
     </AuthenticatedLayout>
 </template>

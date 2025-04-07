@@ -1,6 +1,22 @@
 <?php
     use App\Http\Requests\WaterSampleUpdateRequest;
     use App\Http\Requests\WaterSampleUpdateAllRequest;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Route;
+    use Illuminate\Support\Facades\URL;
+
+    function getPreviousURL () {
+        $previousUrl = URL::previous();
+        // Create a request object for the previous URL
+        $previousRequest = Request::create($previousUrl);
+
+        // Match the previous request to a route
+        $previousRoute = Route::getRoutes()->match($previousRequest);
+
+        // Get the name of the previous route, if it has one
+        return $previousRoute->getName();
+    }
+
     function removeDynamicPostfixFromKeys(array $array): array
     {
         $result = [];

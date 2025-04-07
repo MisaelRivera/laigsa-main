@@ -15,6 +15,7 @@
         createFields: Array,
         oldParams: Array,
         errors: Object,
+        previousRouteName: String,
     });
     const { generateIndexedNames } = useGenerateRepetitive();
 
@@ -50,7 +51,7 @@
 
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
-        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}`, vueFormData);
+        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}&request_origin=${props.previousRouteName}`, vueFormData);
     };
 
     const handleRuleSelect = async(newValue, oldValue, el$) => {
@@ -103,38 +104,7 @@
                         <FormTab
                             :name="`muestra_${i}`"
                             :label="`Muestra ${order.folio} - ${i}`"
-                            :elements="[
-                                `tipo_muestra_${i}`, 
-                                `id_identificacion_muestra_${i}`,
-                                `caracteristicas_${i}`,
-                                `muestreador_${i}`,
-                                `ph_${i}`,
-                                `tratada_biologicamente_${i}`,
-                                `cloro_${i}`,
-                                `valor_cloro_${i}`,
-                                `ph_cromo_hexavalente_${i}`,
-                                `tipo_muestreo_${i}`,
-                                `fecha_muestreo_${i}`,
-                                `hora_muestreo_${i}`,
-                                `fecha_final_muestreo_${i}`,
-                                `hora_final_muestreo_${i}`,
-                                `fecha_composicion_${i}`,
-                                `hora_composicion_${i}`,
-                                `flujo_1_${i}`,
-                                `flujo_2_${i}`,
-                                `flujo_3_${i}`,
-                                `flujo_4_${i}`,
-                                `flujo_5_${i}`,
-                                `flujo_6_${i}`,
-                                `parametros_${i}`,
-                                `otros_${i}`,
-                                `norma_${i}`,
-                                `parametros_seleccionados_${i}`,
-                                `preservacion_correcta_${i}`,
-                                `offset_${i}`,
-                                `offset2_${i}`,
-                                'create_water_samples'
-                            ]"
+                            :elements="generateIndexedNames(i, createFields, '_', ['create_water_samples'])"
                             v-for="i in rangoMuestras"/>
                     </FormTabs>
                     <FormElements>
