@@ -134,7 +134,7 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(WaterSamplesController::class)->group(function () {
         Route::prefix('/water_samples')->group(function () {
-            Route::get('/create/{folio}/{numero_muestras}/{inicio_muestras}', 'create')
+            Route::get('/create/{folio}', 'create')
                 ->name('water_samples.create');
             Route::post('/', 'store')
                 ->name('water_samples.store');
@@ -148,7 +148,7 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.update_all');
             Route::delete('/{waterSample}', 'destroy')
                 ->name('water_samples.destroy');
-                Route::get('/create/v2/{folio}/{numero_muestras}/{inicio_muestras}', 'createV2')
+                Route::get('/create/v2/{folio}', 'createV2')
                 ->name('water_samples.create_v2');
             Route::post('/v2', 'storeV2')
                 ->name('water_samples.store_v2');
@@ -254,6 +254,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'store')->name('tasks.store');
             Route::get('/{id}/edit', 'edit')->name('tasks.edit');
             Route::delete('/{id}', 'destroy')->name('tasks.delete');
+            Route::get('/test', 'test')->name('tasks.test');
+            Route::post('/test', 'testStore')->name('tasks.testStore');
         });
     });
 

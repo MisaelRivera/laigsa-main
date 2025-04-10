@@ -31,6 +31,8 @@
                 <Link :href="route('tasks.create')">
                     <i class="fas fa-plus py-2 px-2 bg-green-500 text-white rounded-full"></i>
                 </Link>
+                <Link
+                    :href="route('tasks.test')">Test</Link>
             </h1>
             <table class="border">
                 <thead>

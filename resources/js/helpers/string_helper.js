@@ -37,3 +37,10 @@ export function explodeCoordinates (coordinates)
         orientacion
     };
 }
+
+export function getLastStringSplit (string, join) {
+    const splits = string.split(join);
+    const len = splits.length;
+    const lastSplit =  splits[len - 1];
+    return lastSplit;
+}

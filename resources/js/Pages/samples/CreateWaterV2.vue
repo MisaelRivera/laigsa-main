@@ -6,7 +6,7 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
     import { useGenerateRepetitive } from '@/composables/generateRepetitiveContent';
-
+    import { getLastStringSplit } from '@/helpers/string_helper';
     const props = defineProps({
         order: Object,
         numeroMuestras: Number,
@@ -49,24 +49,25 @@
         'N/A'
     ];
 
-    const handleSubmit = (form$, FormData) => {
+    const handleSubmit = (form$) => {
         const vueFormData = form$.requestData;
-        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}&request_origin=${props.previousRouteName}`, vueFormData);
+        const url = `/water_samples/v2?id_orden=${props.order.id}`;
+        router.post(url, vueFormData);
     };
 
     const handleRuleSelect = async(newValue, oldValue, el$) => {
-        const len = el$.name.split('_').length;
-        const number = el$.name.split('_')[len - 1];
-        console.log(number);
+        const sampleNumber = getLastStringSplit(el$.name, '_');
+        const parametrosSeleccionados = form$.value.el$(`parametros_seleccionados_${sampleNumber}`);
+        const tabIndex = sampleNumber - 1;
+
+        // REQUESTING params from the rule
         const res = await axios.get(`/water_samples/v2/get_rule_params/${newValue}`);
-        selectedParams.value = selectedParams.value.splice(number - 1, 1, res.data);
-        console.log(selectedParams.value);
-        const values = selectedParams.value[number - 1].map((value) => {
+        selectedParams.value[tabIndex] = res.data;
+        const values = selectedParams.value[tabIndex].map((value) => {
             return value.value;
         });
 
-        const parametrosSeleccionados = form$.value.el$(`parametros_seleccionados_${number}`);
-        nextTick(() => parametrosSeleccionados.select(values));
+        nextTick(() => parametrosSeleccionados.update(values));
 
     };
 

@@ -48,15 +48,15 @@
         let url = '';
         if (props.order.v_libreta_resultados) {
             if (props.order.aguas_alimentos === 'Aguas') {
-                url = `/water_samples/create/v2/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+                url = `/water_samples/create/v2/${props.order.folio}`;
             } else {
-                url = `/food_samples/create/v2/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+                url = `/food_samples/create/v2/${props.order.folio}`;
             }
         } else {
             if (props.order.aguas_alimentos === 'Aguas') {
-                url = `/water_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+                url = `/water_samples/create/${props.order.folio}`;
             } else {
-                url = `/food_samples/create/${props.order.folio}/${numeroMuestras.value}/${props.order.numero_muestras}`;
+                url = `/food_samples/create/${props.order.folio}`;
             }
         }
         router.visit(url);

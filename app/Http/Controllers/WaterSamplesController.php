@@ -64,13 +64,13 @@ class WaterSamplesController extends Controller
         "Otro"
     ];
 
-    public function create ($folio, $numero_muestras, $inicio_muestras)
+    public function create ($folio)
     {
         $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
         $data = [
             'order' => $order,
-            'numeroMuestras' => (int) $numero_muestras,
-            'inicioMuestras' => (int) $inicio_muestras,
+            'numeroMuestras' => $order->numero_muestras,
+            'inicioMuestras' => $order->muestras_aguas->count(),
             'parametersProp' => Rule::where('aguas', 1)
                 ->get(),
             'previousRouteName' => getPreviousURL(),
@@ -160,17 +160,24 @@ class WaterSamplesController extends Controller
     public function getAllParams ()
     {
         $params = RuleParameterCombinationWater::with(['combinacionParametro', 'parametro', 'metodo', 'unidad'])
-            ->get();
+            ->get()
+            ->map(function ($param) {
+                return [
+                    'value' => $param->combinacionParametro->id,
+                    'label' => $param->combinacionParametro->alias
+                ];
+            });
         return response()->json($params);
     }
 
     public function store (Request $request)
     {
-        ['inicio_muestras' => $inicio_muestras, 'numero_muestras' => $numero_muestras, 'request_origin' => $requestOrigin, 'id_orden' => $idOrden] = $request->query();
-        $orden = Order::find($idOrden);
+        $orden = Order::find($request->query('id_orden'));
         $samples = [];
 
-        $numeroMuestras = $orden->numero_muestras;
+        $muestrasExistentes = $orden->muestras_aguas->count();
+        var_dump($numeroMuestras);
+        die();
         if ($requestOrigin === 'orders.show' || $requestOrigin === 'orders.show_v2') {
             $orden->numero_muestras = $numeroMuestras + $numero_muestras;
             $orden->save();
@@ -207,16 +214,23 @@ class WaterSamplesController extends Controller
             WaterSample::create($sampleInstance);
         }
 
-        if ($orden->v_libreta_resultados) {
-            return redirect()
-            ->route('orders.show_v2', ['id' => $idOrden])
+        return redirect()
+            ->route('orders.show', ['id' => $idOrden])
             ->with('message', 'La orden y sus muestras se han creado correctamente');
-        } else {
-            return redirect()
-                ->route('orders.show', ['id' => $idOrden])
-                ->with('message', 'La orden y sus muestras se han creado correctamente');
-        }
+    }
 
+    public function addSamples (Order $order, $numero_muestras)
+    {
+        $order->numero_muestras += $numero_muestras;
+        $order->save();
+        $route = $order->v_libreta_resultados ? 'water_samples.create':'water_samples.create_v2';
+        return redirect()
+            ->route($route, ['folio', $order->folio]);
+    }
+
+    public function storeV2 ()
+    {
+        
     }
 
     public function update (WaterSample $waterSample, WaterSampleUpdateRequest $request)

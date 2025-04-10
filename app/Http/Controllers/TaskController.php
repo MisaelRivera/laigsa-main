@@ -43,4 +43,15 @@ class TaskController extends Controller
             ->route('tasks.index')
             ->with('message', "The task $newTask->name was created successfully");
     }
+
+    public function test ()
+    {
+        return Inertia::render('tasks/Test');
+    }
+
+    public function testStore (Request $request)
+    {
+        var_dump($request->all());
+        die();
+    }
 }
