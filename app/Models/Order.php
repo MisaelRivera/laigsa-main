@@ -35,10 +35,19 @@ class Order extends Model
         'area_recepcion_muestras_limpia' => 'boolean',
     ];
 
+    protected $appends = [
+        'tipo_muestreo_show'
+    ];
+
     protected function horaRecepcion():Attribute {
         return Attribute::make(
             get: fn ($value) => $value ? Carbon::createFromFormat('H:i:s', $value)->format('H:i'):null
         );
+    }
+
+    public function getTipoMuestreoShowAttribute ()
+    {
+        return str_replace(' ', '_', $this->tipo_muestreo);
     }
 
     public function cliente ()

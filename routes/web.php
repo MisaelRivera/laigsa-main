@@ -107,7 +107,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/orders')->group(function () {
         Route::get('/', [OrdersController::class, 'index'])->name('orders.index');
         Route::get('/create', [OrdersController::class, 'create'])->name('orders.create');
-        Route::get('/show/{id}', [OrdersController::class, 'show'])->name('orders.show');
+        Route::get('/show/{order}', [OrdersController::class, 'show'])->name('orders.show');
         Route::get('/edit/{id}', [OrdersController::class, 'edit'])->name('orders.edit');
         Route::get('/change-page', [OrdersController::class, 'changePage']);
         Route::put('/edit-preservation/{waterSample}', [OrdersController::class, 'handlePreservationSubmit']);
@@ -118,7 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/test-dynamic-form', [TestController::class, 'testDynamicForm']);*/
         Route::post('/', [OrdersController::class, 'store'])->name('orders.store');
         Route::put('/{order}', [OrdersController::class, 'update'])->name('orders.update');
-        Route::delete('/{id}', [OrdersController::class, 'delete'])->name('orders.delete');
+        Route::delete('/{order}', [OrdersController::class, 'delete'])->name('orders.delete');
         Route::patch('/editPartialInfo/{id}', [OrdersController::class, 'editPartialInfo'])->name('orders.partialEdit');
         Route::post('/toggle-cesavedac', [OrdersController::class, 'toggleCesavedac']);
         Route::post('/toggle-supervision', [OrdersController::class, 'toggleSupervision']);
@@ -134,8 +134,10 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(WaterSamplesController::class)->group(function () {
         Route::prefix('/water_samples')->group(function () {
-            Route::get('/create/{folio}', 'create')
+            Route::get('/create/{folio}/{numeroMuestras}', 'create')
                 ->name('water_samples.create');
+            Route::post('/add_samples/{order}/{numero_muestras}', 'addSamples')
+                ->name('water_samples.add_samples');
             Route::post('/', 'store')
                 ->name('water_samples.store');
             Route::post('/{waterSample}/update', 'update')

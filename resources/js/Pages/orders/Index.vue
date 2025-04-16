@@ -30,7 +30,7 @@
         supervision: Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp.supervision:null,
         siralab: Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp.siralab:null,
     });
-    console.log(filters);
+    
     if (getMessage()) {
         push.success(getMessage());
     }
@@ -114,7 +114,7 @@
                             </Dropdown>
                         </td>
                         <td class="px-2 py-3 text-xs">
-                            {{ order.numero_muestras }}
+                            {{ order.muestras_count }}
                         </td>
                         <td class="px-2 py-3">
                             <template v-if="order.aguas_alimentos === 'Aguas'">

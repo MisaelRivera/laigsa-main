@@ -57,8 +57,15 @@ class OrdersController extends Controller
     public function store (OrderStoreRequest $request)
     {
         $order = $request->validated();
-
+        $numeroMuestras = $order->numero_muestras;
+        unset($order->numero_muestras);
         $client = Client::where('id', $order['id_cliente'])->first();
+        if (!$client->identificaciones_muestra_activas) {
+            return redirect()
+                ->route('orders.create')
+                ->with('error', "El cliente no tiene identificaciones de muestra asignadas");
+                exit();
+        }
         $order['direccion_muestreo'] = $client->direccion_muestreo;
         $order = Order::create($order);
         $folio = $request->input('folio');
@@ -74,50 +81,31 @@ class OrdersController extends Controller
         }
 
         return redirect()
-            ->route($route_name, [$folio, $numero_muestras, 1])
+            ->route($route_name, [$folio, $numero_muestras])
             ->with('message', 'Se ha creado una nuva orden correctamente. A continuacion cree las muestras de la orden');
     }
 
-    public function show ($id)
+    public function show (Order $order)
     {
-        $order = Order::where('id', $id)
-            ->with(['cliente'])
-            ->first();
-        
-        if(!isset($order)) {
-            return redirect()
-                ->route('orders.index')
-                ->with('error', 'La orden especificada no existe!');
-        } 
+        $order->load(['cliente']);
 
         if ($order->aguas_alimentos === 'Aguas') {
-            $order->muestras = WaterSample::leftJoin('identificacion_muestras', 'muestras_aguas.id_identificacion_muestra', '=', 'identificacion_muestras.id')
-                ->select('muestras_aguas.*', 'identificacion_muestras.identificacion_muestra', 'identificacion_muestras.latitud', 'identificacion_muestras.longitud', 'identificacion_muestras.siralab', 'identificacion_muestras.obsoleta')
-                ->where('id_orden', $order->id)
-                ->get();
-            foreach ($order->muestras as $muestra) {
-                $muestra->tipo_muestreo_show = str_replace(' ', '_', $muestra->tipo_muestreo);
-            }
+            $order->load(['muestras_aguas', 'muestras_aguas.identificacionMuestraRelacion']);
+            $order->muestras = $order->muestras_aguas;
         } else {
             $order->muestras = FoodSample::where('id_orden', $order->id)
                 ->get();
         }
-
+        
         return Inertia::render('orders/Show', ['order' => $order]);
     }
 
-    public function edit ($id)
+    public function edit (Order $order)
     {
-        $order = Order::with(['cliente'])
-            ->where('id', $id)
-            ->first();
+        $order->load(['cliente']);
         $clients = Client::all()->map(function ($client) {
             return ['value' => $client->id, 'label' => $client->cliente ];
         });
-
-        if (!isset($order)) {
-            return back()->with('error', 'La orden indicada no existe');
-        }
 
         $data = [
             'lastOrder' => Order::getOrderWithLastFolio(),
@@ -154,13 +142,8 @@ class OrdersController extends Controller
             ->with('message', 'Se ha editado la orden  correctamente.');
     }
 
-    public function editPartialInfo (Request $request, $id)
+    public function editPartialInfo (Request $request, Order $order)
     {
-        $order = Order::where('id', $id)
-            ->first();
-        if (!isset($order)) {
-            return back()->with('error', 'La orden especificada no existe');
-        }
 
         $order->numero_cotizacion = $request->input('numero_cotizacion');
         $order->numero_termometro = $request->input('numero_termometro');
@@ -169,27 +152,17 @@ class OrdersController extends Controller
         $order->save();
 
         return redirect()
-            ->route('orders.show', $id)
+            ->route('orders.show', $order->id)
             ->with('message', "Se han editado correctamente los datos de la orden MFQ-$order->folio");
     }
 
-    public function delete ($id)
-    {
-        $order = Order::where('id', $id)
-            ->first();
-        
-        if (!isset($order)) {
-            return redirect()
-                ->route('orders.show', $id)
-                ->with('error', 'La orden que intenta borrar no existe');
-        }
-
-        $order
-            ->delete();
-
+    public function delete (Order $order)
+    {        
+        $folio = $order->folio;
+        $order->delete();
         return redirect()
             ->route('orders.index')
-            ->with('message', "Se eliminado la orden $order->folio correctamente");
+            ->with('message', "Se eliminado la orden $folio correctamente");
     }
 
     public function toggleCesavedac (Request $request) 

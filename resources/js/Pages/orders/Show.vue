@@ -48,18 +48,18 @@
         let url = '';
         if (props.order.v_libreta_resultados) {
             if (props.order.aguas_alimentos === 'Aguas') {
-                url = `/water_samples/create/v2/${props.order.folio}`;
+                url = `/water_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
             } else {
-                url = `/food_samples/create/v2/${props.order.folio}`;
+                url = `/food_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
             }
         } else {
             if (props.order.aguas_alimentos === 'Aguas') {
-                url = `/water_samples/create/${props.order.folio}`;
+                url = `/water_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
             } else {
-                url = `/food_samples/create/${props.order.folio}`;
+                url = `/food_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
             }
         }
-        router.visit(url);
+        router.post(url);
     }; 
     const handlePreservationSubmit = (form$) => {
         router.put(`/orders/edit-preservation/${form$.data.id_muestra}`, form$.requestData, {
@@ -310,15 +310,15 @@
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
-                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra }}</p>
+                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.identificacion_muestra }}</p>
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Latitud</p>
-                            <p class="py-1.5 px-2"> {{ sample.latitud }}</p>
+                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.latitud }}</p>
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Longitud</p>
-                            <p class="py-1.5 px-2"> {{ sample.longitud }}</p>
+                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.longitud }}</p>
                         </div>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Parametros:</p>
@@ -486,7 +486,7 @@
                                                 input: 'max-h-3 max-w-3'
                                             },
                                         }"
-                                        :columns="{container: 4, wrapper:12}"
+                                        :columns="{container: 5, wrapper:12}"
                                         :disabled="isPreservationDisable[index]"
                                         :default="sample.preservacion_correcta">  
                                     </RadiogroupElement>

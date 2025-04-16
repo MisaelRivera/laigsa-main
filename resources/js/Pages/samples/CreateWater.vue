@@ -19,7 +19,7 @@
     });
     
     const { generateIndexedNames } = useGenerateRepetitive();
-
+    const rangoMuestras = createRange(props.inicioMuestras + 1, props.numeroMuestras);
     const tabsContainer = ref(null);
     onMounted(() => {
       // Add the class to the FormTabs container
@@ -53,8 +53,8 @@
 
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
-        console.log(vueFormData);
-        router.post(`/water_samples?inicio_muestras=${props.inicioMuestras}&numero_muestras=${props.numeroMuestras}&id_orden=${props.order.id}&request_origin=${props.previousRouteName}`, vueFormData);
+        const url = `/water_samples/${props.order.id}/${numeroMuestras}`;
+        router.post(url, vueFormData);
     };
 </script>
 
@@ -89,13 +89,13 @@
                             :add-class="{
                                 wrapper_active: ['border-b-4', 'bg-red-100'],
                             }"
-                            v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"/>
+                            v-for="i in rangoMuestras"/>
                     </FormTabs>
                     <FormElements>
                             <TextElement 
                                 :name="`tipo_muestra_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                 v-for="i in rangoMuestras">
                                  <template #before>
                                     <div class="text-sm">{{ `Tipo de muestra ${i}` }}</div>
                                 </template>
@@ -103,7 +103,7 @@
                             <SelectElement 
                                 :name="`id_identificacion_muestra_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"
+                                 v-for="i in rangoMuestras"
                                  :items="identificaciones_muestra">
                                  <template #before>
                                     <div class="text-sm">{{ `Identificacion de muestra ${i}` }}</div>
@@ -112,7 +112,7 @@
                             <TextElement 
                                 :name="`caracteristicas_${i}`"
                                 :columns="{container:6, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                 v-for="i in rangoMuestras">
                                  <template #before>
                                     <div class="text-sm">{{ `Caracteristicas ${i}` }}</div>
                                 </template>
@@ -131,7 +131,7 @@
                                     'APPC',
                                     'LMQH',
                                 ]"
-                                :columns="{container:2, wrapper:12}" v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                :columns="{container:2, wrapper:12}" v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Muestreador ${i}` }}</div>
                                 </template> 
@@ -139,14 +139,14 @@
                             <TextElement 
                                 :name="`ph_${i}`"
                                 :columns="{container:1, wrapper:12}"
-                                 v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                 v-for="i in rangoMuestras">
                                  <template #before>
                                     <div class="text-sm">{{ `pH ${i}` }}</div>
                                 </template> 
                             </TextElement>
                             <CheckboxElement
                                 :name="`tratada_biologicamente_${i}`"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"
+                                v-for="i in rangoMuestras"
                                 :columns="{ container:3, wrapper: 12 }">
                                 <p class="text-sm">Tratada biologicamente {{ i }}</p>
                             </CheckboxElement>
@@ -164,7 +164,7 @@
                                     'Ausente',
                                     'Laboratorio',
                                     'N/A',
-                                ]" v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                ]" v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Cloro ${i}` }}</div>
                                 </template>    
@@ -177,7 +177,7 @@
                                     [`tipo_muestreo_${i}`, 'Simple']
                                 ]"
                                 default="N/A"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Valor del cloro ${i}` }}</div>
                                 </template>   
@@ -187,7 +187,7 @@
                                 :rules="[phRange]"
                                 :columns="{ container:2, wrapper:12 }"
                                 default="N/A"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `pH Cr VI ${i}` }}</div>
                                 </template>   
@@ -196,7 +196,7 @@
                                 :name="`tipo_muestreo_${i}`"
                                 :columns="{ container: 2, wrapper: 12}"
                                 :items="tiposMuestreo"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Tipo de muestreo ${i}` }}</div>
                                 </template>
@@ -211,7 +211,7 @@
                                     ]
                                 ]"
                                 :name="`offset_${i}`"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"/>
+                                v-for="i in rangoMuestras"/>
                                 <StaticElement 
                                     content="<div></div>"
                                     :columns="{ container: 1, wrapper:12}"
@@ -220,11 +220,11 @@
                                         [`tipo_muestreo_${i}`, 'Simple'],
                                     ]"
                                     :name="`offset2_${i}`"
-                                    v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"/>
+                                    v-for="i in rangoMuestras"/>
                             <DateElement
                                 :name="`fecha_muestreo_${i}`"
                                 :columns="{ container: 2, wrapper: 12 }"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"
+                                v-for="i in rangoMuestras"
                                 display-format="MMMM DD, YYYY">
                                 <template #before>
                                     <div class="text-sm">{{ `Fecha de muestreo ${i}` }}</div>
@@ -234,7 +234,7 @@
                                 :name="`hora_muestreo_${i}`"
                                 input-type="time"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de muestreo ${i}` }}</div>
                                 </template>
@@ -250,7 +250,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, offset:4, wrapper: 12 }"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"
+                                v-for="i in rangoMuestras"
                                 display-format="MMMM DD, YYYY">
                                 <template #before>
                                     <div class="text-sm">{{ `Fecha de fin de muestreo ${i}` }}</div>
@@ -263,7 +263,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de fin muestreo ${i}` }}</div>
                                 </template>
@@ -274,7 +274,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, offset:4, wrapper: 12 }"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"
+                                v-for="i in rangoMuestras"
                                 display-format="MMMM DD, YYYY">
                                 <template #before>
                                     <div class="text-sm">{{ `Fecha de composicion ${i}` }}</div>
@@ -287,7 +287,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Hora de composicion ${i}` }}</div>
                                 </template>
@@ -298,7 +298,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 1 (l/s) ${i}` }}</div>
                                 </template>
@@ -309,7 +309,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 2 (l/s) ${i}` }}</div>
                                 </template>
@@ -320,7 +320,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 3 (l/s) ${i}` }}</div>
                                 </template>
@@ -331,7 +331,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_4', 'Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 4 (l/s) ${i}` }}</div>
                                 </template>
@@ -342,7 +342,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 5 (l/s) ${i}` }}</div>
                                 </template>
@@ -353,7 +353,7 @@
                                     [`tipo_muestreo_${i}`, ['Compuesto_6']]
                                 ]"
                                 :columns="{ container: 2, wrapper: 12}"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Flujo 6 (l/s) ${i}` }}</div>
                                 </template>
@@ -362,14 +362,14 @@
                                 :items="oldParams"
                                 :name="`parametros_${i}`"
                                 :columns="{ container:12, wrapper:12 }"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                v-for="i in rangoMuestras">
                                 <template #before>
                                     <p class="text-sm">{{ `Parametros ${i}` }}</p>
                                 </template>
                             </SelectElement>
                             <TextareaElement 
                                 :name="`otros_${i}`"
-                                v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)"
+                                v-for="i in rangoMuestras"
                                 :conditions="[
                                     [`parametros_${i}`, 'Otro']
                                 ]"
@@ -391,7 +391,7 @@
                                     'Si',
                                     'No',
                                     'N/A',
-                                ]" v-for="i in createRange(inicioMuestras + 1, inicioMuestras + numeroMuestras)">
+                                ]" v-for="i in rangoMuestras">
                                 <template #before>
                                     <div class="text-sm">{{ `Preservada correctamente ${i}` }}</div>
                                 </template>    

@@ -75,10 +75,23 @@
             foreach ($orders as $order) {
                 if ($order->aguas_alimentos === 'Aguas') {
                     $order->muestras = $order->muestras_aguas;
+                    $order->muestras_count = count($order->muestras_aguas);
                 } else {
                     $order->muestras = $order->muestras_alimentos;
+                    $order->muestras_count = count($order->muestras_alimentos);
                 }
             }
             return $orders;
+        }
+
+        public static function adjustOrderSamplesNumber ($orderId) {
+            $order = Order::find($orderId);
+            $existentSamples = $order->muestras_aguas->count();
+            $expectedSamples = $order->numero_muestras;
+            $diference = $existentSamples - $expectedSamples;
+            if ($diference !== 0) {
+                $order->numero_muestras = $existentSamples;
+                $order->save();
+            }
         }
     }
