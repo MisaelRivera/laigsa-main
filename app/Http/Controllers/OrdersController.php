@@ -57,7 +57,6 @@ class OrdersController extends Controller
     public function store (OrderStoreRequest $request)
     {
         $order = $request->validated();
-        $numeroMuestras = $order->numero_muestras;
         unset($order->numero_muestras);
         $client = Client::where('id', $order['id_cliente'])->first();
         if (!$client->identificaciones_muestra_activas) {
@@ -68,7 +67,6 @@ class OrdersController extends Controller
         }
         $order['direccion_muestreo'] = $client->direccion_muestreo;
         $order = Order::create($order);
-        $folio = $request->input('folio');
         $numero_muestras = $request->input('numero_muestras');
         $order = Order::find($order->id);
         /*$order->v_libreta_resultados = 1;
@@ -81,7 +79,7 @@ class OrdersController extends Controller
         }
 
         return redirect()
-            ->route($route_name, [$folio, $numero_muestras])
+            ->route($route_name, [$order->id, $numero_muestras])
             ->with('message', 'Se ha creado una nuva orden correctamente. A continuacion cree las muestras de la orden');
     }
 
@@ -97,7 +95,10 @@ class OrdersController extends Controller
                 ->get();
         }
         
-        return Inertia::render('orders/Show', ['order' => $order]);
+        return Inertia::render('orders/Show', [
+            'order' => $order,
+            'numeroMuestrasActual' => $order->muestras_aguas->count()
+        ]);
     }
 
     public function edit (Order $order)

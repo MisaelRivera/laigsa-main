@@ -51,7 +51,7 @@
 
     const handleSubmit = (form$) => {
         const vueFormData = form$.requestData;
-        const url = `/water_samples/v2?id_orden=${props.order.id}`;
+        const url = `/water_samples/v2/${props.order.id}/${props.numeroMuestras}`;
         router.post(url, vueFormData);
     };
 
@@ -69,10 +69,6 @@
 
         nextTick(() => parametrosSeleccionados.update(values));
 
-    };
-
-    const handleGetExtraParams = (number) => {
-        
     };
 
 </script>
@@ -413,8 +409,7 @@
                                 v-for="i in rangoMuestras"
                                 :native="false"
                                 :items="allParams"
-                                :search="true"
-                                @search-change="() => handleGetExtraParams(i - 1)"/>
+                                :search="true"/>
                             <RadiogroupElement
                                 :name="`preservacion_correcta_${i}`"
                                 :columns="{ container: 4, wrapper:12 }"

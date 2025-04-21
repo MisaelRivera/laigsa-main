@@ -47,7 +47,7 @@
                 const cliente = await axios.get(`/api/clients/${formState.id_cliente}`);
                 formState.direccion_muestreo = cliente.data.direccion_muestreo;
                 console.log(formState);
-                formState.post('/orders');
+                formState.post(`/orders`);
             } catch (e) {
                 push.error("Ocurrio un error");
             }

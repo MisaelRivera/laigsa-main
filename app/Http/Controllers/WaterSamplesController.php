@@ -65,11 +65,12 @@ class WaterSamplesController extends Controller
         "Otro"
     ];
 
-    public function create (Order $order, $numeroMuestras)
+    public function create (Order $order, $numero_muestras)
     {
+        $order->load(['cliente.identificaciones_muestra', 'muestras_aguas']);
         $data = [
             'order' => $order,
-            'numeroMuestras' => $numeroMuestras,
+            'numeroMuestras' => (int)$numero_muestras,
             'inicioMuestras' => $order->muestras_aguas->count(),
             'parametersProp' => Rule::where('aguas', 1)
                 ->get(),
@@ -116,13 +117,13 @@ class WaterSamplesController extends Controller
        return Inertia::render('samples/EditAllWater', $data);
     }
 
-    public function createV2 ($folio)
+    public function createV2 (Order $order, $numero_muestras)
     {
-        $order = Order::with('cliente.identificaciones_muestra')->where('folio', $folio)->first();
+        $order = $order->load('cliente.identificaciones_muestra');
         $data = [
             'order' => $order,
             'numeroMuestras' => (int) $numero_muestras,
-            'inicioMuestras' => (int) $inicio_muestras,
+            'inicioMuestras' => (int) $order->muestras_aguas->count(),
             'createFields' => $this->createFieldsV2,
             'oldParams' => $this->oldParams,
             'previousRouteName' => getPreviousURL()
@@ -172,7 +173,7 @@ class WaterSamplesController extends Controller
 
     public function store (Order $order, $numero_muestras, Request $request)
     {
-
+        $order->load('muestras_aguas');
         $samples = [];
 
         $existentSamples = $order->muestras_aguas->count();
@@ -208,10 +209,8 @@ class WaterSamplesController extends Controller
             WaterSample::create($sampleInstance);
         }
 
-        OrdersApi::adjustOrderSamplesNumber($request->query('id_orden'));
-
         return redirect()
-            ->route('orders.show', ['id' => $order->id])
+            ->route('orders.show', ['order' => $order->id])
             ->with('message', 'La orden y sus muestras se han creado correctamente');
     }
 
@@ -226,9 +225,55 @@ class WaterSamplesController extends Controller
             ->route($route, ['folio' => $order->folio]);
     }*/
 
-    public function storeV2 ()
+    public function storeV2 (Order $order, $numero_muestras, Request $request)
     {
-        
+        $order->load('muestras_aguas');
+        $samples = [];
+
+        $existentSamples = $order->muestras_aguas->count();
+        for ($i = $existentSamples + 1; $i <= $numero_muestras; $i++) {
+
+            // Create an instance of the request and set the iteration
+            $waterSampleRequest = new WaterSampleStoreRequest();
+            $waterSampleRequest->setIteration($i);
+            // Use Validator::make to validate the data
+            $validator = Validator::make($waterSampleRequest->values($request), $waterSampleRequest->rules(), $waterSampleRequest->messages());
+            
+            // If validation fails, handle the errors
+            if ($validator->fails()) {
+                return redirect()
+                    ->back()
+                    ->withErrors($validator);
+            }
+            $parametrosSeleccionados = $request->input("parametros_seleccionados_$i");
+            $validatedData = $validator->validate();
+
+            if (count($parametrosSeleccionados) === 0) {
+                return redirect()
+                        ->back()
+                        ->withErrors([
+                            'errors' => "Elije parametros para la muestra $i"
+                        ]);
+            }
+
+            if ($validatedData["parametros_$i"] === "Otro") {
+                $validatedData["parametros_$i"] = $request->input("otros_$i");
+                $validatedData["otros_$i"] = 1;
+            }
+
+            $validatedData["id_orden_$i"] = $order->id;
+            $validatedData["numero_muestra_$i"] = $i;
+            $sample = removeDynamicPostfixFromKeys($validatedData);
+            array_push($samples, $sample);
+        }
+
+        foreach ($samples as $sampleInstance) {
+            WaterSample::create($sampleInstance);
+        }
+
+        return redirect()
+            ->route('orders.show', ['order' => $order->id])
+            ->with('message', 'La orden y sus muestras se han creado correctamente');
     }
 
     public function update (WaterSample $waterSample, WaterSampleUpdateRequest $request)
@@ -291,8 +336,6 @@ class WaterSamplesController extends Controller
         $sampleNumber = $waterSample->numero_muestra;
         $order = Order::findOrFail($waterSample->id_orden);
         $waterSample->delete();
-        $order->numero_muestras = $order->numero_muestras - 1;
-        $order->save();
         $samples = $order->muestras_aguas;
         for ($i = 0; $i < count($samples); $i++) {
             $samples[$i]->numero_muestra = ($i + 1);
@@ -300,7 +343,7 @@ class WaterSamplesController extends Controller
         }
         return redirect()
             ->route('orders.show', [
-                'id' => $order->id
+                'order' => $order->id
             ])
             ->with('message', "Se ha eliminado la muestra $sampleNumber");
     }

@@ -134,11 +134,11 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(WaterSamplesController::class)->group(function () {
         Route::prefix('/water_samples')->group(function () {
-            Route::get('/create/{folio}/{numeroMuestras}', 'create')
+            Route::get('/create/{order}/{numero_muestras}', 'create')
                 ->name('water_samples.create');
             Route::post('/add_samples/{order}/{numero_muestras}', 'addSamples')
                 ->name('water_samples.add_samples');
-            Route::post('/', 'store')
+            Route::post('/{order}/{numero_muestras}', 'store')
                 ->name('water_samples.store');
             Route::post('/{waterSample}/update', 'update')
                 ->name('water_samples.update');
@@ -150,9 +150,9 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.update_all');
             Route::delete('/{waterSample}', 'destroy')
                 ->name('water_samples.destroy');
-                Route::get('/create/v2/{folio}', 'createV2')
+                Route::get('/create/v2/{order}/{numero_muestras}', 'createV2')
                 ->name('water_samples.create_v2');
-            Route::post('/v2', 'storeV2')
+            Route::post('/v2/{order}/{numero_muestras}', 'storeV2')
                 ->name('water_samples.store_v2');
             Route::delete('/v2/{waterSample}', 'destroyV2')
                 ->name('water_samples.destroy_v2');

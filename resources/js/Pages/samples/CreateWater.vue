@@ -53,7 +53,7 @@
 
     const handleSubmit = (form$, FormData) => {
         const vueFormData = form$.requestData;
-        const url = `/water_samples/${props.order.id}/${numeroMuestras}`;
+        const url = `/water_samples/${props.order.id}/${props.numeroMuestras}`;
         router.post(url, vueFormData);
     };
 </script>

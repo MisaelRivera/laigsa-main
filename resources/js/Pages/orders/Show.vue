@@ -13,6 +13,7 @@
 
     const props = defineProps({
         order: Object,
+        numeroMuestrasActual: Number,
     });
 
     const { getMessage, getError } = useMessages();
@@ -48,18 +49,18 @@
         let url = '';
         if (props.order.v_libreta_resultados) {
             if (props.order.aguas_alimentos === 'Aguas') {
-                url = `/water_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
+                url = route(`water_samples.create_v2`, { order:props.order.id, numero_muestras: numeroMuestras.value});
             } else {
                 url = `/food_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
             }
         } else {
             if (props.order.aguas_alimentos === 'Aguas') {
-                url = `/water_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
+                url = route(`water_samples.create`, { order:props.order.id, numero_muestras: numeroMuestras.value});
             } else {
-                url = `/food_samples/add_samples/${props.order.id}/${numeroMuestras.value}`;
+                url = `/food_samples/create/${props.order.id}/${numeroMuestras.value}`;
             }
         }
-        router.post(url);
+        router.get(url);
     }; 
     const handlePreservationSubmit = (form$) => {
         router.put(`/orders/edit-preservation/${form$.data.id_muestra}`, form$.requestData, {
@@ -219,7 +220,7 @@
                                 {{ order.cliente.cliente }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                                {{ order.numero_muestras }}
+                                {{ numeroMuestrasActual }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.direccion_muestreo }}
