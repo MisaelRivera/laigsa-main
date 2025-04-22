@@ -32,7 +32,7 @@ class WaterSamplesController extends Controller
         'ph_cromo_hexavalente', 'tipo_muestreo', 'fecha_muestreo', 'hora_muestreo',
         'fecha_final_muestreo', 'hora_final_muestreo', 'fecha_composicion', 'hora_composicion',
         'flujo_1', 'flujo_2', 'flujo_3', 'flujo_4', 'flujo_5', 'flujo_6',
-        'parametros', 'otros', 'norma', 'parametros_seleccionados', 'preservacion_correcta', 'offset', 'offset2'
+        'parametros', 'otros', 'norma', 'parametros_seleccionados', 'preservacion_correcta', 'offset', 'tiene_incertidumbre', 'incertidumbre'
     ];
 
     public $oldParams = [

@@ -51,8 +51,9 @@
 
     const handleSubmit = (form$) => {
         const vueFormData = form$.requestData;
+        console.log(vueFormData);
         const url = `/water_samples/v2/${props.order.id}/${props.numeroMuestras}`;
-        router.post(url, vueFormData);
+        //router.post(url, vueFormData);
     };
 
     const handleRuleSelect = async(newValue, oldValue, el$) => {
@@ -223,26 +224,36 @@
                                     <div class="text-sm">{{ `Conductividad ${i}` }}</div>
                                 </template>   
                             </TextElement>
-                            <StaticElement 
-                                content="<div></div>"
-                                :columns="{ container: 3, wrapper:12}"
+                            <CheckboxElement 
+                                :columns="{ container:2, wrapper:12 }"
+                                :name="`tiene_incertidumbre_${i}`"
+                                :static="true"
+                                v-for="i in rangoMuestras"
+                                :add-class="{
+                                    container: ['flex', 'items-center']
+                                }">
+                                Con incertidumbre
+                            </CheckboxElement>
+                            <TextElement
+                                :name="`incertidumbre_${i}`"
+                                :columns="{container:2, wrapper:12}"
+                                :before="`Incertidumbre ${i}`"
+                                v-for="i in rangoMuestras"
                                 :conditions="[
                                     [
-                                        [`cloro_${i}`, '!=', ['Presente', 'Ausente']],
-                                        [`tipo_muestreo_${i}`, '!=', 'Simple'],
+                                        [`tiene_incertidumbre_${i}`, true],
+                                    ]
+                                ]"/>
+                            <StaticElement 
+                                content="<div></div>"
+                                :columns="{ container: 1, wrapper:12}"
+                                :conditions="[
+                                    [
+                                        [`tiene_incertidumbre_${i}`, false],
                                     ]
                                 ]"
                                 :name="`offset_${i}`"
                                 v-for="i in rangoMuestras"/>
-                                <StaticElement 
-                                    content="<div></div>"
-                                    :columns="{ container: 1, wrapper:12}"
-                                    :conditions="[
-                                        [`cloro_${i}`, ['Presente', 'Ausente']],
-                                        [`tipo_muestreo_${i}`, 'Simple'],
-                                    ]"
-                                    :name="`offset2_${i}`"
-                                    v-for="i in rangoMuestras"/>
                             <DateElement
                                 :name="`fecha_muestreo_${i}`"
                                 :columns="{ container: 2, wrapper: 12 }"
