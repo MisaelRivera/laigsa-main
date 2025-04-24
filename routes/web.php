@@ -23,6 +23,8 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VueFormController;
 use App\Http\Controllers\WaterSamplesController;
+use App\Http\Controllers\WaterSamplesResults;
+use App\Http\Controllers\WaterSamplesResultsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -280,6 +282,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/{type}/edit', 'edit')->name('types.edit');
             Route::put('/{type}', 'update')->name('types.update');
             Route::delete('/{type}', 'destroy')->name('types.destroy');
+        });
+    });
+
+    Route::controller(WaterSamplesResultsController::class)->group(function () {
+        Route::prefix('/water_samples_results')->group(function () {
+            Route::get('/', 'index')->name('water_samples_results.index');
+            Route::get('/insert', 'insert')->name('water_samples_results.insert');
         });
     });
 

@@ -141,7 +141,10 @@ class ParameterCombinationController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $parameterCombination = ParameterCombination::with(['parametro', 'metodo', 'unidad', 'lcp'])->findOrFail($id);
+        return Inertia::render('parameters_combinations/Show', [
+            'parameterCombination' => $parameterCombination
+        ]);
     }
 
     public function addParamCombination (Request $request, Rule $rule)

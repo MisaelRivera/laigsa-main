@@ -14,6 +14,7 @@ use App\Models\RuleParameterCombinationWater;
 use App\Models\SampleIdentification;
 use App\Api\OrdersApi;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Entities\WaterSampleResultEntity;
 
 class WaterSamplesController extends Controller
 {
@@ -32,7 +33,7 @@ class WaterSamplesController extends Controller
         'ph_cromo_hexavalente', 'tipo_muestreo', 'fecha_muestreo', 'hora_muestreo',
         'fecha_final_muestreo', 'hora_final_muestreo', 'fecha_composicion', 'hora_composicion',
         'flujo_1', 'flujo_2', 'flujo_3', 'flujo_4', 'flujo_5', 'flujo_6',
-        'parametros', 'otros', 'norma', 'parametros_seleccionados', 'preservacion_correcta', 'offset', 'tiene_incertidumbre', 'incertidumbre'
+        'parametros', 'otros', 'id_norma', 'parametros_seleccionados', 'preservacion_correcta', 'offset', 'tiene_incertidumbre', 'incertidumbre'
     ];
 
     public $oldParams = [
@@ -229,7 +230,6 @@ class WaterSamplesController extends Controller
     {
         $order->load('muestras_aguas');
         $samples = [];
-
         $existentSamples = $order->muestras_aguas->count();
         for ($i = $existentSamples + 1; $i <= $numero_muestras; $i++) {
 
@@ -264,12 +264,18 @@ class WaterSamplesController extends Controller
             $validatedData["id_orden_$i"] = $order->id;
             $validatedData["numero_muestra_$i"] = $i;
             $sample = removeDynamicPostfixFromKeys($validatedData);
+            
             array_push($samples, $sample);
         }
 
         foreach ($samples as $sampleInstance) {
-            WaterSample::create($sampleInstance);
+            $createdSample = WaterSample::create($sampleInstance);
+            $parametrosSeleccionados = $request->input("parametros_seleccionados_" . $createdSample->numero_muestra);
+            for ($i = 0; $i < count($parametrosSeleccionados); $i++) {
+                WaterSampleResultEntity::parseParameterToResult($parametrosSeleccionados[$i], $request, $i, $createdSample->id);
+            }
         }
+
 
         return redirect()
             ->route('orders.show', ['order' => $order->id])

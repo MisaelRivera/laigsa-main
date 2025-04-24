@@ -51,9 +51,8 @@
 
     const handleSubmit = (form$) => {
         const vueFormData = form$.requestData;
-        console.log(vueFormData);
         const url = `/water_samples/v2/${props.order.id}/${props.numeroMuestras}`;
-        //router.post(url, vueFormData);
+        router.post(url, vueFormData);
     };
 
     const handleRuleSelect = async(newValue, oldValue, el$) => {
@@ -410,7 +409,7 @@
                             </TextareaElement>
                             <SelectElement
                                 :items="rules"
-                                :name="`norma_${i}`"
+                                :name="`id_norma_${i}`"
                                 @change="handleRuleSelect"
                                 :columns="{ container:12, wrapper:12 }"
                                 before="Normas"

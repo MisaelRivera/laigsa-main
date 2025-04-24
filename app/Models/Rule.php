@@ -30,4 +30,9 @@ class Rule extends Model
     {
         return $this->belongsToMany(ParameterCombination::class, 'normas_combinaciones_parametros_aguas', 'id_combinacion_parametro', 'id_norma');
     }
+
+    public function muestras_agua ()
+    {
+        return $this->hasMany(WaterSample::class, 'id', 'id_norma');
+    }
 }

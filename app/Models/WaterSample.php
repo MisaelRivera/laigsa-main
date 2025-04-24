@@ -16,6 +16,7 @@ class WaterSample extends Model
         'caracteristicas',
         'numero_muestra',
         'id_orden',
+        'id_norma',
         'muestreador',
         'pH',
         'tratada_biologicamente',
@@ -89,5 +90,15 @@ class WaterSample extends Model
     public function identificacionMuestraRelacion ()
     {   
         return $this->hasOne(SampleIdentification::class, 'id', 'id_identificacion_muestra');
+    }
+
+    public function norma () 
+    {
+        return $this->hasOne(Rule::class, 'id', 'id_norma');
+    }
+
+    public function resultados_aguas ()
+    {
+        return $this->hasMany(WaterSamplesResults::class, 'id', 'id_muestra');
     }
 }

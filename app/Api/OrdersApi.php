@@ -6,7 +6,7 @@
 
     class OrdersApi
     {
-        public static function getIndexOrders ($filters)
+        public static function getIndexOrders ($filters, $results = false)
         {
             $orders = Order::with([
                 'muestras_aguas.identificacionMuestraRelacion',  // Eager load water samples and their identification
@@ -69,6 +69,8 @@
                             }
                         });
                     });
+                })->when($results, function ($query) {
+                    $query->where('v_libreta_resultados', 1);
                 })
                 ->paginate(40)
                 ->withQueryString();

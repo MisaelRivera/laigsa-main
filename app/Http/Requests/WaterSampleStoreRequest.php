@@ -40,7 +40,7 @@ class WaterSampleStoreRequest extends FormRequest
                 "fecha_composicion_{$this->i}", "hora_composicion_{$this->i}",
                 "flujo_1_{$this->i}", "flujo_2_{$this->i}", "flujo_3_{$this->i}", 
                 "flujo_4_{$this->i}", "flujo_5_{$this->i}", "flujo_6_{$this->i}", "parametros_{$this->i}",
-                "otros_{$this->i}", "preservacion_correcta_{$this->i}"
+                "otros_{$this->i}", "preservacion_correcta_{$this->i}", "incertidumbre_{$this->i}", "id_norma_{$this->i}"
         ]);
     }
 
@@ -72,6 +72,8 @@ class WaterSampleStoreRequest extends FormRequest
             "parametros_{$this->i}" => "required",
             "otros_{$this->i}" => "sometimes|required",
             "preservacion_correcta_{$this->i}" => "required",
+            "incertidumbre_{$this->i}" => 'sometimes|required',
+            "id_norma_{$this->i}" => 'sometimes|required',
         ];
     }
 
@@ -118,6 +120,8 @@ class WaterSampleStoreRequest extends FormRequest
             "parametros_{$this->i}.required" => "Ingrese los parametros " . $this->i,
             "otros_{$this->i}.required" => "Indique los parametros en el campo otros " . $this->i,
             "preservacion_correcta_{$this->i}.required" => "Elija una opcion de preservada correctamente " . $this->i,
+            "incertidumbre_{$this->i}" => "Ingrese la incertidumbre",
+            "id_norma_{$this->i}" => "Seleccione la norma",
         ];
     }
 }
