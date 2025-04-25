@@ -10,7 +10,9 @@
     import TableHeader from '@/Components/pages/ordenes/TableHeader.vue';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
+    import { usePermission } from '@/composables/permissions';
     const { getMessage, getError } = useMessages();
+    const { getRoles } = usePermission();
 
     const props = defineProps(
         {
@@ -137,49 +139,51 @@
                         <td class="px-2 py-3 text-xs">
                             {{ order.hora_recepcion ? order.hora_recepcion:'---' }}
                         </td>
-                        <td class="px-2 py-3 text-xs">
+                        <td class="px-2 py-3 text-xs" v-if="!getRoles().includes('analist')">
                             {{ order.cliente.cliente }}
                         </td>
-                        <td class="px-2 py-3">
-                            <CircleSwitch
-                                v-if="order.cesavedac"
-                                :value="order.reporte_cesavedac_entregado"
-                                :key="order.id"
-                                url="/orders/toggle-cesavedac"
-                                :orderId="order.id"/>
-                        </td>
-                        <td class="px-2 py-3">
-                            <CircleSwitch
-                                v-if="order.supervision !== false"
-                                :value="order.supervision"
-                                :key="order.id"
-                                url="/orders/toggle-supervision"
-                                :orderId="order.id"/>
-                        </td>
-                        <td class="px-2 py-3">
-                            <CircleSwitch
-                                v-if="order.siralab"
-                                :value="order.siralab.hoja_campo"
-                                :key="order.id"
-                                url="/orders/toggle-hoja-campo"
-                                :orderId="order.id"/>
-                        </td>
-                        <td class="px-2 py-3">
-                            <CircleSwitch
-                                v-if="order.siralab"
-                                :value="order.siralab.cadena_custodia"
-                                :key="order.id"
-                                url="/orders/toggle-cadena-custodia"
-                                :orderId="order.id"/>
-                        </td>
-                        <td class="px-2 py-3">
-                            <CircleSwitch
-                                v-if="order.siralab"
-                                :value="order.siralab.croquis"
-                                :key="order.id"
-                                url="/orders/toggle-croquis"
-                                :orderId="order.id"/>
-                        </td>
+                        <template v-if="!getRoles().includes('analist')">
+                            <td class="px-2 py-3">
+                                <CircleSwitch
+                                    v-if="order.cesavedac"
+                                    :value="order.reporte_cesavedac_entregado"
+                                    :key="order.id"
+                                    url="/orders/toggle-cesavedac"
+                                    :orderId="order.id"/>
+                            </td>
+                            <td class="px-2 py-3">
+                                <CircleSwitch
+                                    v-if="order.supervision !== false"
+                                    :value="order.supervision"
+                                    :key="order.id"
+                                    url="/orders/toggle-supervision"
+                                    :orderId="order.id"/>
+                            </td>
+                            <td class="px-2 py-3">
+                                <CircleSwitch
+                                    v-if="order.siralab"
+                                    :value="order.siralab.hoja_campo"
+                                    :key="order.id"
+                                    url="/orders/toggle-hoja-campo"
+                                    :orderId="order.id"/>
+                            </td>
+                            <td class="px-2 py-3">
+                                <CircleSwitch
+                                    v-if="order.siralab"
+                                    :value="order.siralab.cadena_custodia"
+                                    :key="order.id"
+                                    url="/orders/toggle-cadena-custodia"
+                                    :orderId="order.id"/>
+                            </td>
+                            <td class="px-2 py-3">
+                                <CircleSwitch
+                                    v-if="order.siralab"
+                                    :value="order.siralab.croquis"
+                                    :key="order.id"
+                                    url="/orders/toggle-croquis"
+                                    :orderId="order.id"/>
+                            </td>
+                        </template>
                         <td class="px-2 py-3 text-xs">
                             {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 8):'---' }}
                         </td>

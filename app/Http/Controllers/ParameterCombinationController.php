@@ -13,6 +13,7 @@ use App\Models\Rule;
 use App\Models\LCP;
 use App\Models\ParameterCombination;
 use App\Models\RuleParameterCombinationWater;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 
@@ -143,7 +144,7 @@ class ParameterCombinationController extends Controller
     {
         $parameterCombination = ParameterCombination::with(['parametro', 'metodo', 'unidad', 'lcp'])->findOrFail($id);
         return Inertia::render('parameters_combinations/Show', [
-            'parameterCombination' => $parameterCombination
+            'parameterCombination' => $parameterCombination,
         ]);
     }
 

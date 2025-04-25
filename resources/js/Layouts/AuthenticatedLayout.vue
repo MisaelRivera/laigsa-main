@@ -1,9 +1,14 @@
 <script setup>
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import Dropdown from '@/Components/Dropdown.vue';
 import { useImages } from '@/composables/images';
-const { getLogoUri, getBgUri } = useImages(); 
+import { usePermission } from '@/composables/permissions';
+const page = usePage();
+const { getRoles } = usePermission();
+const { getLogoUri } = useImages(); 
+console.log(getRoles());
+const userName = page.props.auth.user.name;
 const isVisibleServiciosAguas = ref(false), 
       isVisibleServiciosAlimentos = ref(false), 
       isVisibleServiciosResiduos = ref(false); 
@@ -48,50 +53,60 @@ const isVisibleServiciosAguas = ref(false),
                             </span>
                         </template>
                         <template #content>
-                            <li 
-                                class="text-center text-sm">
-                                <Link :href="route('orders.index')">
-                                    Ordenes
-                                </Link>
-                            </li>
-                            <li 
-                                class="text-center text-sm">
-                                <Link :href="route('water_samples_results.index')">
-                                    Resultados
-                                </Link>
-                            </li>
-                            <li 
-                                class="text-center text-sm">
-                                <Link :href="route('vue_form_test.test2')">
-                                    Vue form
-                                </Link>
-                            </li>
-                            <li 
-                                class="text-center text-sm">
-                                <Link :href="route('users.index')">
-                                    Administracion de usuarios
-                                </Link>
-                            </li>
-                            <li 
-                                class="text-center text-sm">
-                                <Link :href="route('params_description.index')">
-                                    Descripcion de parametros
-                                </Link>
-                            </li>
-                            <li 
-                                class="text-center text-sm"
-                                @click="isVisibleServiciosAlimentos = true">
-                                Análisis de alimentos
-                            </li>
-                            <li 
-                                class="text-center text-sm"
-                                @click="isVisibleServiciosResiduos = true">
-                                Análisis de residuos
-                            </li>
-                            <!--<DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
-                            <DropdownLink :href="route('logout')" method="post" as="button">
-                                Log Out
-                            </DropdownLink>-->
+                            <template v-if="getRoles().includes('admin')">
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('orders.index')">
+                                        Ordenes
+                                    </Link>
+                                </li>
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('water_samples_results.index')">
+                                        Resultados
+                                    </Link>
+                                </li>
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('vue_form_test.test2')">
+                                        Vue form
+                                    </Link>
+                                </li>
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('users.index')">
+                                        Administracion de usuarios
+                                    </Link>
+                                </li>
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('params_description.index')">
+                                        Descripcion de parametros
+                                    </Link>
+                                </li>
+                                <li 
+                                    class="text-center text-sm"
+                                    @click="isVisibleServiciosAlimentos = true">
+                                    Análisis de alimentos
+                                </li>
+                                <li 
+                                    class="text-center text-sm"
+                                    @click="isVisibleServiciosResiduos = true">
+                                    Análisis de residuos
+                                </li>
+                                <!--<DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                <DropdownLink :href="route('logout')" method="post" as="button">
+                                    Log Out
+                                </DropdownLink>-->
+                            </template>
+                            <template v-else-if="getRoles().includes('analist')">
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('orders.index')">
+                                        Ordenes
+                                    </Link>
+                                </li>
+                            </template>
                         </template>
                     </Dropdown>
                 </li>
@@ -165,9 +180,7 @@ const isVisibleServiciosAguas = ref(false),
                     </Dropdown>
                 </li>
                 <li class="text-green-600 text-md mr-2">
-                    <Link :href="route('contact')" class="text-sm">
-                        Contacto
-                    </Link>
+                    {{ userName }}
                 </li>
                 <li class="text-green-600 text-md">
                     <Link 

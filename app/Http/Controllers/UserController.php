@@ -104,7 +104,9 @@ class UserController extends Controller
             'email.email' => 'Ingrese un correo valido',
             'email.max' => 'El correo no puede tener mas de 255 caracteres',
         ]);
-
+        
+        $user->syncRoles($request->input('roles'));
+        
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
         $user->update();

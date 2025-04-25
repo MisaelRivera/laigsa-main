@@ -1,8 +1,22 @@
 <script setup>
+    import { ref } from 'vue';
+    import MyModal from '@/Components/Shared/MyModal.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
         parameterCombination: Object,
     });
+
+    const isAddAnalistModalVisible = ref(false);
+
+    const handleOpenAddAnalistModal = () => {
+        isAddAnalistModalVisible.value = true;
+    };
+
+    const handleCloseAddAnalistModal = () => {
+        isAddAnalistModalVisible.value = false;
+    };
+
+    const handleAddAnalist = (ev) => {};
 </script>
 <template>
     <AuthenticatedLayout>
@@ -46,11 +60,28 @@
             <table class="border bg-slate-100 w-5/12 mt-10">
                 <thead>
                     <tr>
-                        <th class="border py-1 px-2">Analistas</th>
+                        <th class="border py-1 px-2">
+                            Analistas
+                            <i 
+                                class="fas fa-plus text-white bg-green-500 p-2 rounded-full cursor-pointer"
+                                @click="handleOpenAddAnalistModal"></i>
+                         </th>
                         <th class="border py-1 px-2">Acciones</th>
                     </tr>
                 </thead>
+                <tbody>
+                    
+                </tbody>
             </table>
         </div>
+        <MyModal
+            title="Agregar analista">
+            <Vueform
+                @submit="handleAddAnalist">
+                <SelectElement 
+                    />
+                <button class="bg-blue-400 text-white rounded px-2 py-1">Agregar</button>
+            </Vueform>
+        </MyModal>
     </AuthenticatedLayout>
 </template>
