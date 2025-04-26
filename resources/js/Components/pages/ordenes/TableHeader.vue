@@ -1,11 +1,12 @@
 <script setup>
     import { ref } from 'vue';
     import { router } from '@inertiajs/vue3';
+    import { usePermission } from '@/composables/permissions';
     const props = defineProps({
         filters: Object,
         filtersProp: Object
     });
-
+    const { getRoles } = usePermission();
     const clientFilter = ref(Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp:null);
     const folioFilter = ref(Object.keys(props.filtersProp).includes('folio') ? props.filtersProp:null);
 
@@ -64,7 +65,10 @@
             <th scope="col" class="px-2 py-3 w-[1%]"></th>
                 <th scope="col" class="px-2 py-3 w-[6%]">Fecha de recepcion</th>
                 <th scope="col" class="px-2 py-3 w-[5%]">Hora de recepcion</th>
-                <th scope="col" class="px-2 py-3">
+                <th 
+                    scope="col" 
+                    class="px-2 py-3"
+                    v-if="!getRoles().includes('analist')">
                     Cliente
                     <input 
                         type="text"
@@ -75,34 +79,38 @@
                         v-model="props.filters['cliente']"
                         @input="handleClientFilter">
                 </th>
-                <th scope="col" class="px-2 py-3 w-[1%]">
-                    Cesavedac
-                </th>
-                <th scope="col" class="px-2 py-3 w-[1%]">
-                    Supervisar
-                </th>
-                <th scope="col" class="px-2 py-3">
-                    H. C.
-                </th>
-                <th scope="col" class="px-2 py-3">
-                    C. C.
-                </th>
-                <th scope="col" class="px-2 py-3 w-[1%]">
-                    Croquis
-                </th>
+                <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                    <th scope="col" class="px-2 py-3 w-[1%]">
+                        Cesavedac
+                    </th>
+                    <th scope="col" class="px-2 py-3 w-[1%]">
+                        Supervisar
+                    </th>
+                    <th scope="col" class="px-2 py-3">
+                        H. C.
+                    </th>
+                    <th scope="col" class="px-2 py-3">
+                        C. C.
+                    </th>
+                    <th scope="col" class="px-2 py-3 w-[1%]">
+                        Croquis
+                    </th>
+                </template>
                 <th scope="col" class="px-2 py-3 w-[6%]">
                     Fecha resultados analistas
                 </th>
-                <th scope="col" class="px-2 py-3 w-[6%]">
-                    Fecha resultados clientes
-                </th>
-                <th scope="col" class="px-2 py-3 w-[1%]">
-                    Reporte entregado
-                </th>
+                <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                    <th scope="col" class="px-2 py-3 w-[6%]">
+                        Fecha resultados clientes
+                    </th>
+                    <th scope="col" class="px-2 py-3 w-[1%]">
+                        Reporte entregado
+                    </th>
+                </template>
                 <th scope="col" class="px-2 py-3 w-[5%]">
                     Desecho de muestras
                 </th>
-                <th scope="col" class="px-2 py-3">
+                <th scope="col" class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
                     PDF
                 </th>
         </tr>

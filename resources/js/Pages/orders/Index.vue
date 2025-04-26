@@ -48,12 +48,15 @@
 </script>
 <template>
     <AuthenticatedLayout>
-        <div class="w-full mx-auto mt-3">
+        <div 
+            class="mx-auto mt-3">
             <FiltersHeader
                 :links="ordersProp.links"
                 :filters-prop="filtersProp"
                 :filters="filters"/>
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <table 
+                class="text-sm text-left text-gray-500 dark:text-gray-400 mx-auto"
+                :class="{'w-full': getRoles().includes('admin'), 'w-5/12': getRoles().includes('analist')}">
                 <TableHeader
                     :filters="filters"
                     :filters-prop="filtersProp"/>
@@ -142,7 +145,7 @@
                         <td class="px-2 py-3 text-xs" v-if="!getRoles().includes('analist')">
                             {{ order.cliente.cliente }}
                         </td>
-                        <template v-if="!getRoles().includes('analist')">
+                        <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
                             <td class="px-2 py-3">
                                 <CircleSwitch
                                     v-if="order.cesavedac"
@@ -187,18 +190,20 @@
                         <td class="px-2 py-3 text-xs">
                             {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 8):'---' }}
                         </td>
-                        <td class="px-2 py-3 text-xs">
-                            {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 10):'---' }}
-                        </td>
-                        <td class="px-2 py-3">
-                            <CircleSwitch
-                                :value="order.reporte_entregado"
-                                :key="order.id"
-                                url="/orders/toggle-reporte-entregado"
-                                :orderId="order.id"/>
-                        </td>
+                        <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                            <td class="px-2 py-3 text-xs">
+                                {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 10):'---' }}
+                            </td>
+                            <td class="px-2 py-3">
+                                <CircleSwitch
+                                    :value="order.reporte_entregado"
+                                    :key="order.id"
+                                    url="/orders/toggle-reporte-entregado"
+                                    :orderId="order.id"/>
+                            </td>
+                        </template>
                         <td class="px-2 py-3"></td>
-                        <td class="px-2 py-3">
+                        <td class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
                             <a 
                                 class="text-white bg-green-500 py-1 px-2 rounded-lg"
                                 :href="`/orders/generate-pdf/${order.id}`">

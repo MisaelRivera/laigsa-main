@@ -9,6 +9,7 @@
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
+    import { usePermission } from '@/composables/permissions';
     import MyModal from '@/Components/Shared/MyModal.vue';
 
     const props = defineProps({
@@ -24,6 +25,8 @@
     if (getError()) {
         push.error(getError());
     }
+
+    const { getRoles } = usePermission();
 
     const isDeleteModalVisible = ref(false);
     const isDeleteSampleModalVisible = ref(false);
@@ -109,7 +112,7 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-full mx-auto mt-8">
-            <div class="w-9/12 mx-auto">
+            <div class="w-9/12 mx-auto" v-if="getRoles().includes('admin')">
                 <CreateTitle 
                     title="Datos de la orden"
                     backLink="/orders"
@@ -192,13 +195,13 @@
                     <tbody>
                         <tr class="border-b dark:border-gray-700">
                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                                    MFQ-{{ order.folio }}
+                                MFQ-{{ order.folio }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 {{ order.cliente.cuarto_transitorio ? 'Si':'No' }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                                    {{ order.numero_cotizacion }}
+                                {{ order.numero_cotizacion }}
                             </td>
                             <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
                                 <template v-if="order.aguas_alimentos === 'Aguas'">
