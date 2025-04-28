@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderStoreRequest;
 use App\Models\Order;
+use App\Filters\Order\OrderFiltersResolver;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -21,9 +22,11 @@ class OrdersController extends Controller
 {
     //
     public function index (Request $request)
-    {
-       $orders = OrdersApi::getIndexOrders($request->all());
+    {   
         $filters = $request->all();
+        $orders = (new OrderFiltersResolver($request))
+            ->apply(Order::query())
+            ->paginate(40);
         return Inertia::render('orders/Index', [
             'ordersProp' => $orders,
             'filtersProp' => $filters

@@ -21,7 +21,7 @@
                 ->when($filters['cesavedac'] ?? false, fn ($query, $filter) => $query->where('cesavedac', urldecode($filter) === "true" ? 1:0))
                 ->when($filters['cliente'] ?? false, fn ($query, $filter) => $query->whereHas('cliente', function($query) use ($filter) {
                     // Apply filter on the 'clientes' table's 'cliente' column
-                    $query->where('clientes.cliente', 'like', '%' . urldecode($filter) . '%');
+                    $query->where('cliente', 'like', '%' . urldecode($filter) . '%');
                 }))
                 ->when($filters['muestreador'] ?? false, function ($query, $filter) {
                     $query->where(function ($query) use ($filter) {
