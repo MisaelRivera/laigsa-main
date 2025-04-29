@@ -7,9 +7,10 @@
     import CustomCheckbox from '@/Components/Shared/CustomCheckbox.vue';
     const props = defineProps({
         links: Array,
-        filtersProp: Object,
         filters: Object,
     });
+
+    const emit = defineEmits(['update:filters']);
 
     const filterOptions = ref([
         'cesavedac',
@@ -17,73 +18,37 @@
         'siralab'
     ]);
     const activeFilters = ref([]);
-    const muestreadorFilter = ref(Object.keys(props.filtersProp).includes('muestreador') ? props.filtersProp:null);
-    const supervisionFilter = ref(Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp:null);
-    const siralabFilter = ref(Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp:null);
+    const models = reactive({
+       muestreador: Object.keys(props.filters).includes('muestreador') ? props.filters['muestreador']:null,
+       supervision: Object.keys(props.filters).includes('supervision') ? props.filters['supervision']:null,
+       siralab: Object.keys(props.filters).includes('siralab') ? props.filters['siralab']:null,
+       cesavedac: Object.keys(props.filters).includes('cesavedac') ? props.filters['cesavedac']:null
+    });
+
     const handleMuestreadorFilter = (ev) => {
-        const filtersCopy = {};
+        emit('update:filters', { key: 'muestreador', value: ev.target.value });
+    };
+
+    const handleCesavedacFilter = (ev) => {
         const value = ev.target.value;
-        props.filters['muestreador'] = value;
-        Array.from(Object.keys(props.filters)).forEach(item => {
-            if (props.filters[item] !== null && props.filters[item] !== '') {
-                filtersCopy[item] = props.filters[item];
-            }
-        });
-        router.visit(route('orders.index', filtersCopy), {
-            preserveState: true,
-            method: 'get',
-        });
+        console.log(value);
+        emit('update:filters', { key: 'cesavedac', value });
+        if (!activeFilters.value.includes('cesavedac'))
+        activeFilters.value.push('cesavedac');
     };
 
-    const handleCesavedacFilter = (value) => {
-        const filtersCopy = {};
-        if (!activeFilters.value.includes('cesavedac')) {
-            activeFilters.value.push('cesavedac');
-        }
-        props.filters['cesavedac'] = value;
-        Array.from(Object.keys(props.filters)).forEach(item => {
-            if (props.filters[item] !== null && props.filters[item] !== '') {
-                filtersCopy[item] = props.filters[item];
-            }
-        });
-        router.visit(route('orders.index', filtersCopy), {
-            preserveState: true,
-            method: 'get',
-        });
+    const handleSiralabFilter = (ev) => {
+        const value = ev.target.value;
+        emit('update:filters', { key: 'siralab', value });
+        if (!activeFilters.value.includes('siralab'))
+        activeFilters.value.push('siralab');
     };
 
-    const handleSiralabFilter = (value) => {
-        const filtersCopy = {};
-        if (!activeFilters.value.includes('siralab')) {
-            activeFilters.value.push('siralab');
-        }
-        props.filters['siralab'] = value;
-        Array.from(Object.keys(filters)).forEach(item => {
-            if (props.filters[item] !== null && props.filters[item] !== '') {
-                filtersCopy[item] = props.filters[item];
-            }
-        });
-        router.visit(route('orders.index', filtersCopy), {
-            preserveState: true,
-            method: 'get',
-        });
-    };
-
-    const handleSupervisionFilter = (value) => {
-        const filtersCopy = {};
-        if (!activeFilters.value.includes('supervision')) {
-            activeFilters.value.push('supervision');
-        }
-        props.filters['supervision'] = value;
-        Array.from(Object.keys(props.filters)).forEach(item => {
-            if (props.filters[item] !== null && props.filters[item] !== '') {
-                filtersCopy[item] = props.filters[item];
-            }
-        });
-        router.visit(route('orders.index', filtersCopy), {
-            preserveState: true,
-            method: 'get',
-        });
+    const handleSupervisionFilter = (ev) => {
+        const value = ev.target.value;
+        emit('update:filters', { key: 'supervision', value });
+        if (!activeFilters.value.includes('supervision'))
+        activeFilters.value.push('supervision');
     };
 
     const handleRemove = (removedOption) => {
@@ -94,6 +59,9 @@
                 filtersCopy[item] = props.filters[item];
             }
         });
+        console.log(removedOption);
+        models[removedOption] = null;
+        console.log(models);
         router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
             method: 'get',
@@ -127,36 +95,41 @@
                 <input 
                     type="text"
                     id="muestreador-filter"
-                    ref="muestreadorFilter"
+                    v-model="models.muestreador"
                     @input="handleMuestreadorFilter"
                     class="border rounded-md w-20">
             </div>
             <div class="flex items-center ml-2">
-                <CustomCheckbox
-                    name="cesavedac_filter"
-                    id="cesavedac-filter"
-                    v-model="filters['cesavedac']"
-                    label-text="cesavedac"
-                    :label-classes="['text-xs']"
-                    @change-state="handleCesavedacFilter"/>
+                <input
+                    type="checkbox"
+                    name="cesavedac"
+                    class="border-2 p-2 rounded"
+                    v-model="models.cesavedac"
+                    value="1"
+                    @change="handleCesavedacFilter"/>
+                <label for="cesavedac" class="text-xs">Cesavedac</label>
             </div>
             <div class="flex items-center ml-2">
-                <CustomCheckbox
-                    name="supervision_filter"
-                    id="supervision-filter"
-                    label-text="supervision"
-                    v-model="supervisionFilter"
-                    :label-classes="['text-xs']"
-                    @change-state="handleSupervisionFilter"/>
+                <input
+                    type="checkbox"
+                    name="supervision"
+                    class="border-2 p-2 rounded"
+                    v-model="models.supervision"
+                    value="1"
+                    id="supervision"
+                    @change="handleSupervisionFilter"/>
+                <label for="supervision" class="text-xs">Supervision</label>
             </div>
             <div class="flex items-center ml-2">
-                <CustomCheckbox
-                    name="siralab_filter"
-                    id="siralab-filter"
-                    label-text="siralab"
-                    v-model="siralabFilter"
-                    :label-classes="['text-xs']"
-                    @change-state="handleSiralabFilter"/>
+                <input
+                    type="checkbox"
+                    name="siralab"
+                    class="border-2 p-2 rounded"
+                    v-model="models.siralab"
+                    value="1"
+                    id="siralab"
+                    @change="handleSiralabFilter"/>
+                <label for="siralab" class="text-xs">Siralab</label>
             </div>
         </div>
     </div>

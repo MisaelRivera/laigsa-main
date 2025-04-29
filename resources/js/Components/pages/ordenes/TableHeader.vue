@@ -4,40 +4,21 @@
     import { usePermission } from '@/composables/permissions';
     const props = defineProps({
         filters: Object,
-        filtersProp: Object
     });
+
+    const emit = defineEmits(['update:filters']);
     const { getRoles } = usePermission();
-    const clientFilter = ref(Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp:null);
-    const folioFilter = ref(Object.keys(props.filtersProp).includes('folio') ? props.filtersProp:null);
+    const clientFilter = ref(Object.keys(props.filters).includes('cliente') ? props.filters['cliente']:null);
+    const folioFilter = ref(Object.keys(props.filters).includes('folio') ? props.filters['folio']:null);
 
     const handleClientFilter = (ev) => {
-        const filtersCopy = {};
         const value = ev.target.value;
-        props.filters['cliente'] = value;
-        Array.from(Object.keys(props.filters)).forEach(item => {
-            if (props.filters[item] !== null && props.filters[item] !== '') {
-                filtersCopy[item] = props.filters[item];
-            }
-        });
-        router.visit(route('orders.index', filtersCopy), {
-            preserveState: true,
-            method: 'get',
-        });
+        emit('update:filters', { key: 'cliente', value });
     };
 
     const handleFolioFilter = (ev) => {
-        const filtersCopy = {};
         const value = ev.target.value;
-        props.filters['folio'] = value;
-        Array.from(Object.keys(props.filters)).forEach(item => {
-            if (props.filters[item] !== null && props.filters[item] !== '') {
-                filtersCopy[item] = props.filters[item];
-            }
-        });
-        router.visit(route('orders.index', filtersCopy), {
-            preserveState: true,
-            method: 'get',
-        });
+        emit('update:filters', { key: 'folio', value });
     };
 </script>
 <template>
@@ -51,9 +32,8 @@
                     type="text"
                     id="busqueda"
                     name="busqueda"
-                    ref="folioFilter"
                     class="h-8 w-20 rounded border px-3"
-                    v-model="props.filters['folio']"
+                    v-model="folioFilter"
                     @input="handleFolioFilter">
             </th>
             <th scope="col" class="px-2 py-3 w-[1%]">No.</th>
@@ -74,9 +54,8 @@
                         type="text"
                         id="busqueda"
                         name="busqueda"
-                        ref="clientFilter"
                         class="h-8 w-40 rounded border px-3"
-                        v-model="props.filters['cliente']"
+                        v-model="clientFilter"
                         @input="handleClientFilter">
                 </th>
                 <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
