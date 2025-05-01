@@ -17,6 +17,7 @@
     const props = defineProps(
         {
             ordersProp: {
+                type: Object,
                 required: true,
             },
             
@@ -25,6 +26,8 @@
     );
 
     const filtersCopy = reactive({ ...props.filters });
+
+    console.log(props.ordersProp.data);
 
     const applyFilters = () => {
         router.visit(route('orders.index', filtersCopy), {
@@ -151,7 +154,7 @@
                         <td class="px-2 py-3 text-xs" v-if="!getRoles().includes('analist')">
                             {{ order.cliente.cliente }}
                         </td>
-                        <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                        <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                             <td class="px-2 py-3">
                                 <CircleSwitch
                                     v-if="order.cesavedac"
@@ -196,7 +199,7 @@
                         <td class="px-2 py-3 text-xs">
                             {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 8):'---' }}
                         </td>
-                        <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                        <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                             <td class="px-2 py-3 text-xs">
                                 {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 10):'---' }}
                             </td>
@@ -209,7 +212,7 @@
                             </td>
                         </template>
                         <td class="px-2 py-3"></td>
-                        <td class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                        <td class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                             <a 
                                 class="text-white bg-green-500 py-1 px-2 rounded-lg"
                                 :href="`/orders/generate-pdf/${order.id}`">

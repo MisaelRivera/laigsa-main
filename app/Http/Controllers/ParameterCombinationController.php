@@ -145,6 +145,11 @@ class ParameterCombinationController extends Controller
         $parameterCombination = ParameterCombination::with(['parametro', 'metodo', 'unidad', 'lcp'])->findOrFail($id);
         return Inertia::render('parameters_combinations/Show', [
             'parameterCombination' => $parameterCombination,
+            'analists' => User::role(['analist', 'sampler'])
+                ->get()
+                ->map(function ($analist) {
+                    return ['value' => $analist->id, 'label'=> $analist->name];
+                }),
         ]);
     }
 

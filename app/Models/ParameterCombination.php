@@ -49,5 +49,13 @@ class ParameterCombination extends Model
         return $this->belongsToMany(Rule::class, 'normas_combinaciones_parametros_aguas', 'id_norma', 'id_combinacion_parametro');
     }
 
-    
+    public function analistas ()
+    {
+        return $this->hasManyThrough(User::class, ParameterCombination::class, ParameterCombinationAnalist::class);
+    }
+
+    public function supervisores ()
+    {
+        return $this->hasManyThrough(User::class, ParameterCombination::class, ParameterCombinationSupervisor::class);
+    }
 }

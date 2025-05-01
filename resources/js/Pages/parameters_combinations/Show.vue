@@ -4,7 +4,10 @@
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
         parameterCombination: Object,
+        analists: Array,
     });
+
+    console.log(props.analists);
 
     const isAddAnalistModalVisible = ref(false);
 
@@ -75,12 +78,22 @@
             </table>
         </div>
         <MyModal
-            title="Agregar analista">
+            title="Agregar analista"
+            :model-value="isAddAnalistModalVisible"
+            :ok-button-props="{
+                class: ['hidden']
+            }"
+            :cancel-button-props="{
+                class: ['bg-gray-500', 'text-white']
+            }"
+            @close-from="handleCloseAddAnalistModal">
             <Vueform
                 @submit="handleAddAnalist">
                 <SelectElement 
-                    />
-                <button class="bg-blue-400 text-white rounded px-2 py-1">Agregar</button>
+                    name="analista"
+                    :items="analists"
+                    :native="false"/>
+                <button class="bg-blue-500 text-white rounded px-2 py-1 col-span-2">Agregar</button>
             </Vueform>
         </MyModal>
     </AuthenticatedLayout>

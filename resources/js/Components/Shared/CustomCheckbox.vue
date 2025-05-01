@@ -8,7 +8,7 @@
 
         name: {
             type: String,
-            required: true,
+            required: false,
         },
 
         id: {
@@ -33,12 +33,10 @@
             type: Array,
         }
     });
-    const propsChecked = ref(props.checked);
     const handleChangeState = () => {
-        propsChecked.value = !propsChecked.value;
-        emits('update:modelValue', propsChecked.value);
-        emits('change-state', propsChecked.value);
-        console.log(propsChecked.value);
+        const checkedValue = !props.checked;
+        emits('update:modelValue', checkedValue);
+        emits('change-state', checkedValue);
     };
 </script>
 <template>
@@ -47,11 +45,11 @@
         :name="name"
         :id="id"
         :disabled="disabled"
-        :checked="propsChecked">
+        :checked="checked">
     <label 
         :for="id"
         class="border rounded w-5 h-5 flex justify-center"
-        :class="{'bg-[#07bf9b]':propsChecked, 'bg-white':!propsChecked}"
+        :class="{'bg-[#07bf9b]':checked, 'bg-white':!checked}"
         @click="handleChangeState">
         <i class="fas fa-check text-white text-sm"></i>    
     </label>

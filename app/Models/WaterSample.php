@@ -99,6 +99,6 @@ class WaterSample extends Model
 
     public function resultados_aguas ()
     {
-        return $this->hasMany(WaterSamplesResults::class, 'id', 'id_muestra');
+        return $this->hasMany(WaterSamplesResults::class, 'id_muestra', 'id');
     }
 }

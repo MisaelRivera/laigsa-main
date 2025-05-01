@@ -18,18 +18,24 @@
                 required: true,
             },
             
-            filtersProp: Object
+            filters: Object
         }
     );
 
-    const filters = reactive({
-        cliente: Object.keys(props.filtersProp).includes('cliente') ? props.filtersProp.cliente:null,
-        folio: Object.keys(props.filtersProp).includes('folio') ? props.filtersProp.folio:null,
-        muestreador: Object.keys(props.filtersProp).includes('muestreador') ? props.filtersProp.muestreador:null,
-        cesavedac: Object.keys(props.filtersProp).includes('cesavedac') ? props.filtersProp.cesavedac:null,
-        supervision: Object.keys(props.filtersProp).includes('supervision') ? props.filtersProp.supervision:null,
-        siralab: Object.keys(props.filtersProp).includes('siralab') ? props.filtersProp.siralab:null,
-    });
+    const filtersCopy = reactive({...props.filters });
+
+    const applyFilters = () => {
+        router.visit(route('water_samples_results.index', filtersCopy), {
+            preserveState: true,
+            preserveScroll: true,
+            method: 'get',
+        });
+    };
+
+    const updateFilter = ({ key, value }) => {
+        filtersCopy[key] = value;
+        applyFilters();
+    };
     
     if (getMessage()) {
         push.success(getMessage());
@@ -49,12 +55,12 @@
         <div class="w-full mx-auto mt-3">
             <FiltersHeaderResults
                 :links="ordersProp.links"
-                :filters-prop="filtersProp"
-                :filters="filters"/>
+                :filters="filtersCopy"
+                @update:filters="updateFilter"/>
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <TableHeader
-                    :filters="filters"
-                    :filters-prop="filtersProp"/>
+                    :filters="filtersCopy"
+                    @update:filters="updateFilter"/>
                 <tbody>
                     <tr 
                         class="border-b dark:border-gray-700" 

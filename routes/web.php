@@ -288,7 +288,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(WaterSamplesResultsController::class)->group(function () {
         Route::prefix('/water_samples_results')->group(function () {
             Route::get('/', 'index')->name('water_samples_results.index');
-            Route::get('/insert', 'insert')->name('water_samples_results.insert');
+            Route::get('/insert/{order}', 'insert')->name('water_samples_results.insert');
         });
     });
 

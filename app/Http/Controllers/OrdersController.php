@@ -27,6 +27,15 @@ class OrdersController extends Controller
         $orders = (new OrderFiltersResolver($request))
             ->apply(Order::query())
             ->paginate(40);
+        foreach ($orders as $order) {
+            if ($order->aguas_alimentos === 'Aguas') {
+                $order->muestras = $order->muestras_aguas;
+                $order->muestras_count = count($order->muestras_aguas);
+            } else {
+                $order->muestras = $order->muestras_alimentos;
+                $order->muestras_count = count($order->muestras_alimentos);
+            }
+        }
         return Inertia::render('orders/Index', [
             'ordersProp' => $orders,
             'filtersProp' => $filters

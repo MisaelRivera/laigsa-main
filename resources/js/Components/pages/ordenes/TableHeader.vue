@@ -58,7 +58,7 @@
                         v-model="clientFilter"
                         @input="handleClientFilter">
                 </th>
-                <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                     <th scope="col" class="px-2 py-3 w-[1%]">
                         Cesavedac
                     </th>
@@ -78,7 +78,7 @@
                 <th scope="col" class="px-2 py-3 w-[6%]">
                     Fecha resultados analistas
                 </th>
-                <template v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                     <th scope="col" class="px-2 py-3 w-[6%]">
                         Fecha resultados clientes
                     </th>
@@ -89,7 +89,7 @@
                 <th scope="col" class="px-2 py-3 w-[5%]">
                     Desecho de muestras
                 </th>
-                <th scope="col" class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('general')">
+                <th scope="col" class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                     PDF
                 </th>
         </tr>

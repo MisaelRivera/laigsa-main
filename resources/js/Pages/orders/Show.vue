@@ -312,18 +312,20 @@
                             <p class="font-bold py-1.5 px-2">Tipo de muestra</p>
                             <p class="py-1.5 px-2"> {{ sample.tipo_muestra }}</p>
                         </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
-                            <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
-                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.identificacion_muestra }}</p>
-                        </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
-                            <p class="font-bold py-1.5 px-2">Latitud</p>
-                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.latitud }}</p>
-                        </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
-                            <p class="font-bold py-1.5 px-2">Longitud</p>
-                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.longitud }}</p>
-                        </div>
+                        <template v-if="!getRoles().includes('analist')">
+                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
+                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.identificacion_muestra }}</p>
+                            </div>
+                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Latitud</p>
+                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.latitud }}</p>
+                            </div>
+                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                <p class="font-bold py-1.5 px-2">Longitud</p>
+                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.longitud }}</p>
+                            </div>
+                        </template>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
                             <p class="font-bold py-1.5 px-2">Parametros:</p>
                             <p class="py-1.5 px-2"> {{ sample.parametros }}</p>
@@ -366,7 +368,7 @@
                             <p class="font-bold py-1.5 px-2">Hora de fin de muestreo:</p>
                             <p class="py-1.5 px-2"> {{ sample.hora_final_muestreo }}</p>
                         </div>
-                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="!getRoles().includes('analist')">
                             <p class="font-bold py-1.5 px-2">Muestreador:</p>
                             <p class="py-1.5 px-2"> {{ sample.muestreador }}</p>
                         </div>
