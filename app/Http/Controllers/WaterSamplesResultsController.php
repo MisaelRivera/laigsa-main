@@ -6,6 +6,7 @@ use App\Filters\Order\OrderFiltersResolver;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class WaterSamplesResultsController extends Controller
@@ -35,10 +36,11 @@ class WaterSamplesResultsController extends Controller
     public function insert (Order $order)
     {
         $order->load(['muestras_aguas.resultados_aguas']);
-        $users = User::role(['analist', 'sampler'])->get();
+        $user = Auth::user();
+       
         return Inertia::render('results/WaterInsert', [
             'order' => $order,
-            'users' => $users
+            'user' => $user
         ]);
     }
 }

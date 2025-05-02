@@ -25,32 +25,35 @@ const toggleLowerLimit = (index) => {
 </script>
 
 <template>
-  <div class="border rounded p-4">
+  <div class="border rounded p-4 w-3/12">
     <h3 class="font-bold">{{ result.name }}</h3>
 
     <div class="flex flex-col space-y-2">
+      <p>{{ result.parametro }}</p>
       <template v-for="(res, idx) in isComposed ? composedCount : 1" :key="idx">
-        <div class="flex items-center space-x-2">
-          <span v-if="showLimitField[idx]" class="cursor-pointer" @click="toggleLowerLimit(idx)">
-            &lt;
-          </span>
-
-          <input
-            v-if="!showLimitField[idx]"
-            type="number"
-            :step="1 / (10 ** result.decimals)"
-            v-model.number="results[idx]"
-            :readonly="!isAnalyst && !isSupervisor && !isQualityManager"
-            class="border p-1 rounded w-32"
-          />
-
-          <input
-            v-else
-            type="text"
-            :value="result.lower_limit"
-            readonly
-            class="bg-gray-100 border p-1 rounded w-32"
-          />
+        <div class="grid grid-cols-2">
+          <div :class="{'col-span-1': isComposed}">
+            <span v-if="showLimitField[idx]" class="cursor-pointer" @click="toggleLowerLimit(idx)">
+              &lt;
+            </span>
+  
+            <input
+              v-if="!showLimitField[idx]"
+              type="number"
+              :step="1 / (10 ** result.decimals)"
+              v-model.number="results[idx]"
+              :readonly="!isAnalyst && !isSupervisor && !isQualityManager"
+              class="border p-1 rounded w-32"
+            />
+  
+            <input
+              v-else
+              type="text"
+              :value="result.lower_limit"
+              readonly
+              class="bg-gray-100 border p-1 rounded w-32"
+            />
+          </div>
         </div>
       </template>
     </div>
