@@ -106,6 +106,12 @@ const isVisibleServiciosAguas = ref(false),
                                         Ordenes
                                     </Link>
                                 </li>
+                                <li 
+                                    class="text-center text-sm">
+                                    <Link :href="route('water_samples_results.index')">
+                                        Resultados
+                                    </Link>
+                                </li>
                             </template>
                         </template>
                     </Dropdown>

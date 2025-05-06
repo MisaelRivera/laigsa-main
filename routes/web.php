@@ -25,6 +25,7 @@ use App\Http\Controllers\VueFormController;
 use App\Http\Controllers\WaterSamplesController;
 use App\Http\Controllers\WaterSamplesResults;
 use App\Http\Controllers\WaterSamplesResultsController;
+use App\Models\ParameterCombination;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -242,6 +243,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/parameters-combinations/{parameter}/get-lcps', [ParameterCombinationController::class, 'getLCPs']);
     Route::post('/parameters-combinations/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
         ->name('parameters-combinations.add_param_combination');
+    Route::post('/parameters-combinations-add-analyst/{user}/{parameterCombination}', [ParameterCombinationController::class, 'addAnalyst']);
     Route::delete('/parameters-combinations/{ruleParametersCombination}/remove-param-combination', [ParameterCombinationController::class, 'removeParamCombination'])
         ->name('parameters-combinations.remove_param_combination');
     

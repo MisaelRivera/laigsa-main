@@ -1,10 +1,12 @@
 <script setup>
     import { ref } from 'vue';
+    import { router } from '@inertiajs/vue3';
     import MyModal from '@/Components/Shared/MyModal.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     const props = defineProps({
         parameterCombination: Object,
         analists: Array,
+        parameterCombinationAnalists: Array
     });
 
     console.log(props.analists);
@@ -19,7 +21,9 @@
         isAddAnalistModalVisible.value = false;
     };
 
-    const handleAddAnalist = (ev) => {};
+    const handleAddAnalist = (form$) => {
+        router.post(`/parameters-combinations-add-analyst/${form$.requestData.analista}/${props.parameterCombination.id}`);
+    };
 </script>
 <template>
     <AuthenticatedLayout>
@@ -73,7 +77,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr></tr>
+                    <tr v-for="parameterCombinationAnalist in parameterCombinationAnalists">
+                        <td class="border py-1 px-2">
+                            {{ parameterCombinationAnalist.usuario.name }}
+                        </td>
+                        <td class="border py-1 px-2"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -88,7 +97,8 @@
             }"
             @close-from="handleCloseAddAnalistModal">
             <Vueform
-                @submit="handleAddAnalist">
+                @submit="handleAddAnalist"
+                :endpoint="false">
                 <SelectElement 
                     name="analista"
                     :items="analists"

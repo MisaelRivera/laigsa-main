@@ -17,7 +17,28 @@ const results = ref(props.result.resultados ?? []);
 const isComposed = computed(() => props.result.es_compuesto);
 const composedCount = computed(() => props.sample.tipo_muestreo === 'compuesto_4' ? 4 : 6);
 const showLimitField = ref(results.value.map(r => r !== null && r < props.result.lcp));
+let analistAvailability = ref(false);
+let supervisorAvailability = ref(false);
+let qualityAvailability = ref(false);
 
+switch (props.result.status) {
+  case 'pending':
+    analistAvailability = isAnalyst;
+  break;
+  case 'supervised':
+    qualityAvailability = isQualityManager;
+  break;
+  case 'reopened_by_supervisor':
+    analistAvailability = isAnalyst && props.result.results.length > 0;
+  break;
+  case 'reopened_by_qm':
+    supervisorAvailability = isSupervisor;
+  break;
+  case 'pending_supervision':
+    analistAvailability = isSupervisor;
+  break;
+}
+console.log(props.result.resultados);
 // Logic to handle "<" toggle and editing
 const toggleLowerLimit = (index) => {
   showLimitField.value[index] = false;
@@ -25,37 +46,34 @@ const toggleLowerLimit = (index) => {
 </script>
 
 <template>
-  <div class="border rounded p-4 w-3/12">
+  <div class="border rounded p-4 w-2/12">
     <h3 class="font-bold">{{ result.name }}</h3>
 
     <div class="flex flex-col space-y-2">
       <p>{{ result.parametro }}</p>
+      <div :class="{'grid': isComposed, 'grid-cols-2': isComposed}" class="w-9/12">
       <template v-for="(res, idx) in isComposed ? composedCount : 1" :key="idx">
-        <div class="grid grid-cols-2">
           <div :class="{'col-span-1': isComposed}">
             <span v-if="showLimitField[idx]" class="cursor-pointer" @click="toggleLowerLimit(idx)">
               &lt;
             </span>
   
             <input
-              v-if="!showLimitField[idx]"
+              v-if="!showLimitField[idx] && analistAvailability"
               type="number"
               :step="1 / (10 ** result.decimals)"
-              v-model.number="results[idx]"
-              :readonly="!isAnalyst && !isSupervisor && !isQualityManager"
+              v-model.number="result.results[idx]"
               class="border p-1 rounded w-32"
             />
-  
-            <input
-              v-else
-              type="text"
-              :value="result.lower_limit"
-              readonly
-              class="bg-gray-100 border p-1 rounded w-32"
-            />
+            <div v-else-if="!showLimitField[idx] && !analistAvailability">
+              {{ result.resultados ? result.resultados[idx]:"" }}
+            </div>
+            <div v-else-if="showLimitField[idx]">
+              {{ result.lcp }}
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
 
     <!-- Metadata -->

@@ -12,6 +12,7 @@ use App\Models\Parameter;
 use App\Models\Rule;
 use App\Models\LCP;
 use App\Models\ParameterCombination;
+use App\Models\ParameterCombinationAnalist;
 use App\Models\RuleParameterCombinationWater;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
@@ -150,6 +151,8 @@ class ParameterCombinationController extends Controller
                 ->map(function ($analist) {
                     return ['value' => $analist->id, 'label'=> $analist->name];
                 }),
+            'parameterCombinationAnalists' => ParameterCombinationAnalist::with('usuario')
+                ->where('id_combinacion_parametro', $id)->get()
         ]);
     }
 
@@ -262,6 +265,17 @@ class ParameterCombinationController extends Controller
         return redirect()
             ->route('parameters-combinations.index')
             ->with('message', 'Se ha editado una combinacion del parametro ' . $parameter->parametro . ' correctamente');
+    }
+
+    public function addAnalyst (User $user, ParameterCombination $parameterCombination)
+    {
+        ParameterCombinationAnalist::create([
+            'id_usuario' => $user->id,
+            'id_combinacion_parametro' => $parameterCombination->id
+        ]);
+        return redirect()
+            ->route('parameters-combinations.show', ['id' => $parameterCombination->id])
+            ->with('message', "Se ha agregado el analista correctamente");
     }
 
     /**

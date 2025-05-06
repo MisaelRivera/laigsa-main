@@ -1,4 +1,7 @@
 <script setup>
+    const props = defineProps({
+
+    });
 </script>
 <template>
     <span v-if="showLimitField[idx]" class="cursor-pointer" @click="toggleLowerLimit(idx)">
