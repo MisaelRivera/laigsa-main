@@ -20,6 +20,7 @@ use App\Http\Controllers\ParametersController;
 use App\Http\Controllers\ParamsDescriptionController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TypesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VueFormController;
 use App\Http\Controllers\WaterSamplesController;
@@ -244,8 +245,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/parameters-combinations/{rule}/add-param-combination', [ParameterCombinationController::class, 'addParamCombination'])
         ->name('parameters-combinations.add_param_combination');
     Route::post('/parameters-combinations-add-analyst/{user}/{parameterCombination}', [ParameterCombinationController::class, 'addAnalyst']);
+    Route::post('/parameters-combinations-add-supervisor/{user}/{parameterCombination}', [ParameterCombinationController::class, 'addSupervisor']);
     Route::delete('/parameters-combinations/{ruleParametersCombination}/remove-param-combination', [ParameterCombinationController::class, 'removeParamCombination'])
         ->name('parameters-combinations.remove_param_combination');
+    Route::delete('/parameters-combinations/{analyst}/{parameterCombination}/remove-param-combination-analyst', [ParameterCombinationController::class, 'removeParamCombinationAnalyst'])
+        ->name('parameters-combinations.remove_param_combination_analyst');
+    Route::delete('/parameters-combinations/{supervisor}/{parameterCombination}/remove-param-combination-supervisor', [ParameterCombinationController::class, 'removeParamCombinationSupervisor'])
+        ->name('parameters-combinations.remove_param_combination_supervisor');
     
     Route::prefix('/vue-form-tests')->group(function () {
         Route::get('/test1', [VueFormController::class, 'test1'])->name('vue_form_test.test1');
@@ -276,7 +282,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::controller()->group(function () {
+    Route::controller(TypesController::class)->group(function () {
         Route::prefix('/types')->group(function () {
             Route::get('/', 'index')->name('types.index');
             Route::get('/create', 'create')->name('types.create');

@@ -51,11 +51,11 @@ class ParameterCombination extends Model
 
     public function analistas ()
     {
-        return $this->hasManyThrough(User::class, ParameterCombination::class, ParameterCombinationAnalist::class);
+        return $this->hasManyThrough(User::class, ParameterCombinationAnalist::class, 'id_combinacion_parametro', 'id', 'id', 'id_usuario');
     }
 
     public function supervisores ()
     {
-        return $this->hasManyThrough(User::class, ParameterCombination::class, ParameterCombinationSupervisor::class);
+        return $this->hasManyThrough(User::class, ParameterCombinationSupervisor::class, 'id_combinacion_parametro', 'id', 'id', 'id_usuario');
     }
 }

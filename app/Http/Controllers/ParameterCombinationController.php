@@ -13,6 +13,7 @@ use App\Models\Rule;
 use App\Models\LCP;
 use App\Models\ParameterCombination;
 use App\Models\ParameterCombinationAnalist;
+use App\Models\ParameterCombinationSupervisor;
 use App\Models\RuleParameterCombinationWater;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
@@ -143,7 +144,7 @@ class ParameterCombinationController extends Controller
      */
     public function show(string $id)
     {
-        $parameterCombination = ParameterCombination::with(['parametro', 'metodo', 'unidad', 'lcp'])->findOrFail($id);
+        $parameterCombination = ParameterCombination::with(['parametro', 'metodo', 'unidad', 'lcp', 'analistas', 'supervisores'])->findOrFail($id);
         return Inertia::render('parameters_combinations/Show', [
             'parameterCombination' => $parameterCombination,
             'analists' => User::role(['analist', 'sampler'])
@@ -151,8 +152,6 @@ class ParameterCombinationController extends Controller
                 ->map(function ($analist) {
                     return ['value' => $analist->id, 'label'=> $analist->name];
                 }),
-            'parameterCombinationAnalists' => ParameterCombinationAnalist::with('usuario')
-                ->where('id_combinacion_parametro', $id)->get()
         ]);
     }
 
@@ -185,6 +184,28 @@ class ParameterCombinationController extends Controller
         return redirect()
             ->route('rules.show', $rule->id)
             ->with('message', 'Se ha removido la combinacion  del parametro correctamente!');
+    }
+
+    public function removeParamCombinationAnalyst (User $analyst, ParameterCombination $parameterCombination)
+    {
+        $parameterCombinationAnalyst = ParameterCombinationAnalist::where('id_usuario', $analyst->id)
+            ->where('id_combinacion_parametro', $parameterCombination->id)
+            ->get();
+        $parameterCombinationId = $parameterCombinationAnalyst[0]->id_combinacion_parametro;
+        $parameterCombinationAnalyst[0]->delete();
+        return redirect()
+            ->route('parameters-combinations.show', ['parameters_combination' => $parameterCombinationId]);
+    }
+
+    public function removeParamCombinationSupervisor (User $supervisor, ParameterCombination $parameterCombination)
+    {
+        $parameterCombinationSupervisor = ParameterCombinationSupervisor::where('id_usuario', $supervisor->id)
+            ->where('id_combinacion_parametro', $parameterCombination->id)
+            ->get();
+        $parameterCombinationId = $parameterCombinationSupervisor[0]->id_combinacion_parametro;
+        $parameterCombinationSupervisor[0]->delete();
+        return redirect()
+            ->route('parameters-combinations.show', ['parameters_combination' => $parameterCombinationId]);
     }
 
     /**
@@ -274,8 +295,19 @@ class ParameterCombinationController extends Controller
             'id_combinacion_parametro' => $parameterCombination->id
         ]);
         return redirect()
-            ->route('parameters-combinations.show', ['id' => $parameterCombination->id])
+            ->route('parameters-combinations.show', ['parameters_combination' => $parameterCombination->id])
             ->with('message', "Se ha agregado el analista correctamente");
+    }
+
+    public function addSupervisor (User $user, ParameterCombination $parameterCombination)
+    {
+        ParameterCombinationSupervisor::create([
+            'id_usuario' => $user->id,
+            'id_combinacion_parametro' => $parameterCombination->id
+        ]);
+        return redirect()
+            ->route('parameters-combinations.show', ['parameters_combination' => $parameterCombination->id])
+            ->with('message', "Se ha agregado el supervisor correctamente");
     }
 
     /**

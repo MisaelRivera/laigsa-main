@@ -46,4 +46,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function parameterCombinationAnalysts ()
+    {
+        return $this->hasMany(ParameterCombinationAnalist::class, 'id', 'id_combinacion_parametro');
+    }
+
+    public function parameterCombinationSupervisors ()
+    {
+        return $this->hasMany(ParameterCombinationSupervisor::class, 'id', 'id_combinacion_parametro');
+    }
 }

@@ -13,8 +13,20 @@ class ParameterCombinationAnalist extends Model
     protected $guarded = [];
 
 
-    public function usuario ()
+    public function usuarios ()
     {
-        return $this->hasOne(User::class, 'id', 'id_usuario');
+        return $this->hasMany(User::class, 'id', 'id_usuario');
     }
+
+    public function parameterCombination ()
+    {
+        return $this->hasMany(ParameterCombination::class, 'id', 'id_combinacion_parametro');
+    }
+    
+    public function usuariosIds ()
+    {
+        return $this->usuarios()->map(function ($usuario) {
+            return ['id' => $usuario->id];
+        });
+    } 
 }
