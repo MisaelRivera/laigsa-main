@@ -99,7 +99,7 @@ const isVisibleServiciosAguas = ref(false),
                                     Log Out
                                 </DropdownLink>-->
                             </template>
-                            <template v-else-if="getRoles().includes('analist')">
+                            <template v-else-if="getRoles().includes('analist') || getRoles().includes('sampler')">
                                 <li 
                                     class="text-center text-sm">
                                     <Link :href="route('orders.index')">

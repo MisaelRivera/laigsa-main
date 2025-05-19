@@ -271,6 +271,7 @@ class WaterSamplesController extends Controller
         foreach ($samples as $sampleInstance) {
             $createdSample = WaterSample::create($sampleInstance);
             $parametrosSeleccionados = $request->input("parametros_seleccionados_" . $createdSample->numero_muestra);
+            
             for ($i = 0; $i < count($parametrosSeleccionados); $i++) {
                 WaterSampleResultEntity::parseParameterToResult($parametrosSeleccionados[$i], $request, $i, $createdSample->id);
             }

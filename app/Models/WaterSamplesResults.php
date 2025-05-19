@@ -21,6 +21,9 @@ class WaterSamplesResults extends Model
         'tiene_fecha_resultado_final' => 'boolean',
         'es_parametro_campo' => 'boolean',
         'tiene_incertidumbre' => 'boolean',
+        'analistas_habilitados' => 'array',
+        'supervisores_habilitados' => 'array',
+        'resultados' => 'array',
     ];
 
     public function muestra_agua ()

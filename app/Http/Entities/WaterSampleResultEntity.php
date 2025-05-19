@@ -10,9 +10,17 @@
 
         public static function parseParameterToResult ($parameterCombinationId, Request $request, $index, $id_muestra)
         {
-            $parameterCombination = ParameterCombination::with(['parametro', 'unidad', 'metodo', 'lcp'])
+            $parameterCombination = ParameterCombination::with(['parametro', 'unidad', 'metodo', 'lcp', 'analistas', 'supervisores'])
                 ->where('id', $parameterCombinationId)
                 ->first();
+            $analistasIds = $parameterCombination->analistas
+                ->map(function ($analista) {
+                    return $analista->id;
+                })->toArray();
+            $supervisoresIds = $parameterCombination->supervisores
+                ->map(function ($analista) {
+                    return $analista->id;
+                })->toArray();
             $muestra = WaterSample::with('norma')->where('id', $id_muestra)->first();
             $resultado = [
                 'parametro' => $parameterCombination->parametro->parametro,
@@ -33,6 +41,8 @@
                 'tiene_supervision' => $parameterCombination->supervisar,
                 'norma' => $muestra->norma->norma,
                 'id_muestra' => $id_muestra,
+                'analistas_habilitados' => $analistasIds,
+                'supervisores_habilitados' => $supervisoresIds
             ];
             
             if ($resultado['tiene_incertidumbre'] === 1) {

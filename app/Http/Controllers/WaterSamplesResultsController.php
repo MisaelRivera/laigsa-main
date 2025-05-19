@@ -37,6 +37,7 @@ class WaterSamplesResultsController extends Controller
     {
         $order->load(['muestras_aguas.resultados_aguas']);
         $user = Auth::user();
+
         return Inertia::render('results/WaterInsert', [
             'order' => $order,
             'user' => $user
