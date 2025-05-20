@@ -232,6 +232,169 @@
                     <Notification :item="item" />
                 </Notivue>
             </div>
+            <div class="flex flex-col">
+                <div class="-m-1.5 overflow-x-auto">
+                    <div class="p-1.5 min-w-full inline-block align-middle">
+                        <div class="border border-gray-200 rounded-lg shadow-xs overflow-hidden dark:border-neutral-700 dark:shadow-gray-900">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                                <TableHeader
+                                    :filters="filtersCopy"
+                                    @update:filters="updateFilter"/>
+                            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+                                <tr class="border-b dark:border-gray-700" 
+                                    v-for="order in ordersProp.data"
+                                    :key="order.id">
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                        <Dropdown
+                                            align="center"
+                                            width="64">
+                                            <template #trigger>
+                                                <button>
+                                                    MFQ-{{ order.folio }}
+                                                </button>
+                                            </template> 
+                                            <template #content>
+                                                <template v-for="muestra in order.muestras" :key="muestra.id">
+                                                    <ul class="list-none max-w-full" style="white-space: normal; word-wrap: break-word;">
+                                                        <li class="px-3 py-1 font-black max-w-full">
+                                                            MFQ-{{ order.folio }}-{{ muestra.numero_muestra }}
+                                                        </li>
+                                                        <li class="px-3 py-1 max-w-full">
+                                                        <span class="font-black">Identificacion de la muestra:</span>
+                                                        {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:muestra.identificacion_muestra_relacion.identificacion_muestra }} 
+                                                        </li>
+                                                        <li class="px-3 py-1 max-w-full">
+                                                            <span class="font-black">Caracteriticas: </span>
+                                                            {{ muestra.caracteristicas }}
+                                                        </li>
+                                                        <li class="px-3 py-1 max-w-full">
+                                                            <span class="font-black">Muestreador: </span>
+                                                            {{ muestra.muestreador }}
+                                                        </li>
+                                                        <li class="px-3 py-1 max-w-full" v-if="order.aguas_alimentos === 'Aguas'">
+                                                            <span class="font-black">pH: </span>
+                                                            {{ muestra.pH }}
+                                                        </li>
+                                                        <li class="px-3 py-1 max-w-full">
+                                                            <span class="font-black">Parametros: </span>
+                                                            {{ muestra.parametros }}
+                                                        </li>
+                                                        <li 
+                                                            class="px-3 py-1 max-w-full" 
+                                                            v-if="order.aguas_alimentos === 'Aguas'">
+                                                            <span class="font-black">Cloro: </span>
+                                                            {{ muestra.cloro }}
+                                                        </li>
+                                                        <li 
+                                                            class="px-3 py-1 max-w-full" 
+                                                            v-if="order.aguas_alimentos === 'Aguas'">
+                                                            <span class="font-black">Valor cloro: </span>
+                                                            {{ muestra.valor_cloro }}
+                                                        </li>
+                                                    </ul>
+                                                </template>
+                                            </template>
+                                        </Dropdown>
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                        {{ order.muestras_count }}
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                        <template v-if="order.aguas_alimentos === 'Aguas'">
+                                            <div class="w-6 h-6 bg-blue-500 rounded-full">
+
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="w-6 h-6 bg-yellow-500 rounded-full">
+
+                                            </div>
+                                        </template>
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                        <ShowLink :url="`/orders/show/${order.id}`"/>
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+                                        {{ order.fecha_recepcion ?? '---' }}
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-end text-sm font-medium">
+                                        {{ order.hora_recepcion ? order.hora_recepcion:'---' }}
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                        {{ order.cliente.cliente }}
+                                    </td>
+                                    <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            <CircleSwitch
+                                                v-if="order.cesavedac"
+                                                :value="order.reporte_cesavedac_entregado"
+                                                :key="order.id"
+                                                url="/orders/toggle-cesavedac"
+                                                :orderId="order.id"/>
+                                        </td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            <CircleSwitch
+                                                v-if="order.supervision !== false"
+                                                :value="order.supervision"
+                                                :key="order.id"
+                                                url="/orders/toggle-supervision"
+                                                :orderId="order.id"/>
+                                        </td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            <CircleSwitch
+                                                v-if="order.siralab"
+                                                :value="order.siralab.hoja_campo"
+                                                :key="order.id"
+                                                url="/orders/toggle-hoja-campo"
+                                                :orderId="order.id"/>
+                                        </td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            <CircleSwitch
+                                                v-if="order.siralab"
+                                                :value="order.siralab.cadena_custodia"
+                                                :key="order.id"
+                                                url="/orders/toggle-cadena-custodia"
+                                                :orderId="order.id"/>
+                                        </td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            <CircleSwitch
+                                                v-if="order.siralab"
+                                                :value="order.siralab.croquis"
+                                                :key="order.id"
+                                                url="/orders/toggle-croquis"
+                                                :orderId="order.id"/>
+                                        </td>
+                                    </template>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                        {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 8):'---' }}
+                                    </td>
+                                    <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            {{ order.fecha_recepcion ? addDaysWithoutSundays(order.fecha_recepcion, 10):'---' }}
+                                        </td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+                                            <CircleSwitch
+                                                :value="order.reporte_entregado"
+                                                :key="order.id"
+                                                url="/orders/toggle-reporte-entregado"
+                                                :orderId="order.id"/>
+                                        </td>
+                                    </template>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200"></td>
+                                    <td class="px-2 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200" v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
+                                        <a 
+                                            class="text-white bg-green-500 py-1 px-2 rounded-lg"
+                                            :href="`/orders/generate-pdf/${order.id}`">
+                                            PDF
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>
