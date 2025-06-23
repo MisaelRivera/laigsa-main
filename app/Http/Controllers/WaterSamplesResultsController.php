@@ -43,4 +43,9 @@ class WaterSamplesResultsController extends Controller
             'user' => $user
         ]);
     }
+
+    public function store (Request $request)
+    {
+        dd($request->all());
+    }
 }

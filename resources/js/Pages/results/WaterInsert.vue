@@ -16,16 +16,17 @@ const currentTab = ref(0); // selected sample tab
   <AuthenticatedLayout>
     <SampleTabs :tabs="order.muestras_aguas.map(s => s.numero_muestra)" v-model="currentTab">
       <template #tab-content="{ tabIndex }">
-          
-        <div v-for="result in order.muestras_aguas[tabIndex].resultados_aguas" :key="result.id" class="mb-4">
-          <div v-if="order.muestras_aguas[tabIndex]">
-              <ParamCard
-                :result="result"
-                :sample="order.muestras_aguas[tabIndex]"
-                :user="user"
-              />
+        <template v-if="order.muestras_aguas[tabIndex].resultados_aguas">
+          <div v-for="result in order.muestras_aguas[tabIndex].resultados_aguas" :key="result.id" class="mb-4">
+            <div v-if="order.muestras_aguas[tabIndex]">
+                <ParamCard
+                  :result="result"
+                  :sample="order.muestras_aguas[tabIndex]"
+                  :user="user"
+                />
+            </div>
           </div>
-        </div>
+        </template>
       </template>
     </SampleTabs>
   </AuthenticatedLayout>

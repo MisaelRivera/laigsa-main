@@ -297,6 +297,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/water_samples_results')->group(function () {
             Route::get('/', 'index')->name('water_samples_results.index');
             Route::get('/insert/{order}', 'insert')->name('water_samples_results.insert');
+            Route::post('/store', 'store')->name('water_samples_results.store');
         });
     });
 
