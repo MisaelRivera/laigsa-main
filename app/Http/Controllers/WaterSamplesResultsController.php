@@ -46,6 +46,11 @@ class WaterSamplesResultsController extends Controller
 
     public function store (Request $request)
     {
-        dd($request->all());
+        $request->validate([
+            'resultados' => 'required|array',
+            'resultados.*' => 'nullable|numeric', // si permites vacíos
+            'fecha_resultado' => 'required|date'
+        ]);
+
     }
 }

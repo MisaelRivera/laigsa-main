@@ -8,6 +8,6 @@ class CesavedacFilter implements Filter
 {
     public function apply($query, $value)
     {
-        return $query->where('cesavedac', urldecode($value) === 'true' ? 1 : 0);
+        return $query->where('cesavedac', (int)$value);
     }
 }

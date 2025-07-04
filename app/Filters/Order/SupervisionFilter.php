@@ -6,8 +6,8 @@
     class SupervisionFilter implements Filter
     {
         protected $cesavedacMuestreadores = [
-            'Irving (CESAVEDAC)', 'Pedro (CESAVEDAC)', 'Crisanta (CESAVEDAC)',
-            'Julio (CESAVEDAC)', 'Miguel (CESAVEDAC)', 'Lizeth (CESAVEDAC)', 'Cliente'
+            'Irving', 'Pedro', 'Crisanta',
+            'Julio', 'Miguel', 'Lizeth', 'Cliente'
         ];
     
         public function apply($query, $value)
@@ -23,7 +23,7 @@
     
         protected function applySupervisionCondition($query, $value)
         {
-            if (urldecode($value) === 'true') {
+            if ((int) $value) {
                 $query->whereNotIn('muestreador', $this->cesavedacMuestreadores);
             } else {
                 $query->whereIn('muestreador', $this->cesavedacMuestreadores);

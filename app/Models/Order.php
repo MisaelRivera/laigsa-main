@@ -76,11 +76,11 @@ class Order extends Model
         return $this->hasMany(FoodSample::class, 'id_orden');
     }
 
-    /*protected function supervision (): Attribute {
+    protected function supervision (): Attribute {
         return Attribute::make(
             get: function ($value) {
                $result = DB::table('ordenes')
-                ->selectRaw("IF((SELECT cesavedac FROM ordenes WHERE id = ?) = 1 OR (SELECT COUNT(id) FROM muestras WHERE muestras.id_orden = ? AND muestras.muestreador = 'Cliente') > 0, true, false) as result", [$this->attributes['id'], $this->attributes['id']])
+                ->selectRaw("IF((SELECT cesavedac FROM ordenes WHERE id = ?) = 1 OR (SELECT COUNT(id) FROM muestras_aguas WHERE muestras_aguas.id_orden = ? AND muestras_aguas.muestreador = 'Cliente') > 0, true, false) as result", [$this->attributes['id'], $this->attributes['id']])
                 ->first();
                 if ((int)$result->result === 1) {
                     return false;
@@ -89,7 +89,7 @@ class Order extends Model
                 }
             }
         );
-    } */
+    }
 
     public static function getOrderWithLastFolio()
     {
