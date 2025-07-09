@@ -1,20 +1,22 @@
 <script setup>
     import { ref, reactive } from 'vue';
-    import { usePage, router, Link } from '@inertiajs/vue3';
+    import { router, Link } from '@inertiajs/vue3';
     import EditLink from '@/Components/Shared/EditLink.vue';
     import DeleteButton from '@/Components/Shared/DeleteButton.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';  
     import CreateTitle from '@/Components/Shared/CreateTitle.vue';
-    import CustomInput from '@/Components/Shared/CustomInput.vue';
     import { addDaysWithoutSundays } from '@/helpers/time_helper.js';
     import { Notivue, Notification, push } from 'notivue';
     import { useMessages } from '@/composables/messages';
     import { usePermission } from '@/composables/permissions';
+    import { useUserData } from '@/composables/userData';
     import MyModal from '@/Components/Shared/MyModal.vue';
 
     const props = defineProps({
         order: Object,
         numeroMuestrasActual: Number,
+        previousOrderId: Number,
+        nextOrderId: Number,
     });
 
     const { getMessage, getError } = useMessages();
@@ -27,6 +29,7 @@
     }
 
     const { getRoles } = usePermission();
+    const { getName } = useUserData();
 
     const isDeleteModalVisible = ref(false);
     const isDeleteSampleModalVisible = ref(false);
@@ -112,7 +115,7 @@
 <template>
     <AuthenticatedLayout>
         <div class="w-full mx-auto mt-8">
-            <div class="w-9/12 mx-auto" v-if="getRoles().includes('admin')">
+            <div class="mx-auto p-3" v-if="getRoles().includes('admin')">
                 <CreateTitle 
                     title="Datos de la orden"
                     backLink="/orders"
@@ -146,11 +149,48 @@
                         </table>
                     </section>
             </div>
+            <div class="grid grid-cols-12">
+                <div class="col-span-6">
+                    <table 
+                        class="col-span-12 text-sm text-left text-gray-500 dark:text-gray-400 border border-slate-300" 
+                        v-if="order.observaciones && order.observaciones.length > 0">
+                        <thead class="text-xs text-gray-700 bg-gray-200">
+                            <tr class="px-4 py-3 w-64 border border-slate-300">
+                                <th>Observaciones orden</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b dark:border-gray-700">
+                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white bg-gray-50">
+                                    {{ order.observaciones }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-span-6">
+
+                </div>
+            </div>
             <div class="p-3">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border-slate-300 border">
                     <thead class="text-xs text-gray-700 bg-gray-200">
                         <tr>
-                            <th scope="col" class="px-4 py-3 border border-slate-300">Folio</th>
+                            <th 
+                                scope="col" 
+                                class="px-4 py-3 border border-slate-300">
+                                <Link 
+                                    :href="route('orders.show', { order: previousOrderId})"
+                                    v-if="previousOrderId">
+                                    <i class="fas fa-angle-left"></i>
+                                </Link>
+                                Folio
+                                <Link 
+                                    v-if="nextOrderId"
+                                    :href="route('orders.show', { order: nextOrderId})">
+                                    <i class="fas fa-angle-right"></i>
+                                </Link>
+                            </th>
                             <th scope="col" class="px-4 py-3 border border-slate-300">C. T.</th>
                             <th scope="col" class="px-4 py-3 border border-slate-300"></th>
                             <th scope="col" class="px-4 py-3 border border-slate-300"></th>
@@ -341,9 +381,11 @@
                             v-if="order.numero_cotizacion">
                             PDF
                         </button>
-                        <button class="btn btn-primary self-center ml-3">
+                        <Link
+                            :href="route(`water_samples.edit_all`, {folio: order.folio})" 
+                            class="btn btn-primary self-center ml-3">
                             Editar muestras
-                        </button>
+                        </Link>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4 items-start">
@@ -368,18 +410,32 @@
                             <p class="font-bold py-1.5 px-2">Tipo de muestra</p>
                             <p class="py-1.5 px-2"> {{ sample.tipo_muestra }}</p>
                         </div>
-                        <template v-if="!getRoles().includes('analist')">
-                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                        <template v-if="order.aguas_alimentos === 'Aguas'">
+                            <template v-if="!getRoles().includes('analist')">
+                                <template v-if="sample.identificacion_muestra_relacion">
+                                    <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                        <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
+                                        <p class="py-1.5 px-2"> 
+                                            {{ sample.identificacion_muestra_relacion.identificacion_muestra }}
+                                        </p>
+                                    </div>
+                                    <template v-if="getName() !== 'Juan Pablo' && !getRoles().includes('analist')">
+                                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                            <p class="font-bold py-1.5 px-2">Latitud</p>
+                                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion }}</p>
+                                        </div>
+                                        <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
+                                            <p class="font-bold py-1.5 px-2">Longitud</p>
+                                            <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion }}</p>
+                                        </div>
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
+                        <template v-else>
+                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300" v-if="!getRoles().includes('analist')">
                                 <p class="font-bold py-1.5 px-2">Identificación de muestra</p>
-                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.identificacion_muestra }}</p>
-                            </div>
-                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
-                                <p class="font-bold py-1.5 px-2">Latitud</p>
-                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.latitud }}</p>
-                            </div>
-                            <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">
-                                <p class="font-bold py-1.5 px-2">Longitud</p>
-                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra_relacion.longitud }}</p>
+                                <p class="py-1.5 px-2"> {{ sample.identificacion_muestra }}</p>
                             </div>
                         </template>
                         <div class="grid grid-cols-2 odd:bg-gray-200 even:bg-gray-300">

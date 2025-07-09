@@ -133,7 +133,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/filter', [OrdersController::class, 'filter']);
         Route::get('/generate-pdf/{order}', [OrdersController::class, 'generatePDF']);
         Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
-        Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
+        //Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
     });
 
     Route::controller(WaterSamplesController::class)->group(function () {
@@ -144,7 +144,7 @@ Route::middleware('auth')->group(function () {
                 ->name('water_samples.add_samples');
             Route::post('/{order}/{numero_muestras}', 'store')
                 ->name('water_samples.store');
-            Route::post('/{waterSample}/update', 'update')
+            Route::put('/{waterSample}', 'update')
                 ->name('water_samples.update');
             Route::get('/{sample}/edit', 'edit')
                 ->name('water_samples.edit');

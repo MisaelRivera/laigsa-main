@@ -9,6 +9,8 @@ use Carbon\Carbon;
 
 class WaterSample extends Model
 {
+    use HasFactory;
+    public $timestamps = false;
     protected $table = 'muestras_aguas';
     protected $fillable = [
         'tipo_muestra',
@@ -41,8 +43,6 @@ class WaterSample extends Model
         'otros_parametros',
         'preservacion_correcta'
     ];
-
-    protected $dateFormat = 'H:i:s';
 
     protected $casts = [
         'tratada_biologicamente' => 'boolean',
@@ -79,8 +79,14 @@ class WaterSample extends Model
         );
     }
 
-    public $timestamps = false;
-    use HasFactory;
+    protected function simple ():Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::createFromFormat('H:i:s', $value)->format('H:i'):null
+        );
+    }
+
+    
 
     public function orden ()
     {

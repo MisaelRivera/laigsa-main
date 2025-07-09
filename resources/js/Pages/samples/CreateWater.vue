@@ -19,7 +19,7 @@
     });
     
     const { generateIndexedNames } = useGenerateRepetitive();
-    const rangoMuestras = createRange(props.inicioMuestras + 1, props.numeroMuestras);
+    const rangoMuestras = createRange(props.inicioMuestras + 1, props.inicioMuestras + props.numeroMuestras);
     const tabsContainer = ref(null);
     onMounted(() => {
       // Add the class to the FormTabs container

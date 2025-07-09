@@ -46,7 +46,7 @@ class OrdersController extends Controller
         $waterSample->preservacion_correcta = $request->input('preservacion_correcta');
         $waterSample->save();
         return redirect()
-            ->route('orders.show', ['id' => $waterSample->id_orden])
+            ->route('orders.show', ['order' => $waterSample->id_orden])
             ->with('message', "La preservacion correcta de la muestra $waterSample->numero_muestra ha sido editada correctamente");
     }
 
@@ -97,7 +97,6 @@ class OrdersController extends Controller
     public function show (Order $order)
     {
         $order->load(['cliente']);
-
         if ($order->aguas_alimentos === 'Aguas') {
             $order->load(['muestras_aguas', 'muestras_aguas.identificacionMuestraRelacion']);
             $order->muestras = $order->muestras_aguas;
@@ -105,9 +104,13 @@ class OrdersController extends Controller
             $order->muestras = FoodSample::where('id_orden', $order->id)
                 ->get();
         }
-        
+
         return Inertia::render('orders/Show', [
             'order' => $order,
+            'previousOrderId' => Order::where('id', '<', $order->id)
+                ->max('id'),
+            'nextOrderId' => Order::where('id', '>', $order->id)
+                ->min('id'),
             'numeroMuestrasActual' => $order->muestras_aguas->count()
         ]);
     }

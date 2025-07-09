@@ -51,7 +51,7 @@
             $filteredData['flujo_4'] = 'NA';
             $filteredData['flujo_5'] = 'NA';
             $filteredData['flujo_6'] = 'NA';
-        }
+        } 
 
         if (!$isSimple || (!$isCloroAusente && !$isCloroPresente)) {
             $filteredData['valor_cloro'] = 'N/A';
@@ -63,7 +63,6 @@
             $filteredData['otros_parametros'] = 1;
             $filteredData['parametros'] = $otros_parametros;
         }
-
         return $filteredData;
     }
 

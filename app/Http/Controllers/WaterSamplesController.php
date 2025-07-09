@@ -15,6 +15,7 @@ use App\Models\SampleIdentification;
 use App\Api\OrdersApi;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Entities\WaterSampleResultEntity;
+use Carbon\Carbon;
 
 class WaterSamplesController extends Controller
 {
@@ -178,7 +179,7 @@ class WaterSamplesController extends Controller
         $samples = [];
 
         $existentSamples = $order->muestras_aguas->count();
-        for ($i = $existentSamples + 1; $i <= $numero_muestras; $i++) {
+        for ($i = $existentSamples + 1; $i <= $existentSamples + $numero_muestras; $i++) {
 
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
@@ -231,7 +232,7 @@ class WaterSamplesController extends Controller
         $order->load('muestras_aguas');
         $samples = [];
         $existentSamples = $order->muestras_aguas->count();
-        for ($i = $existentSamples + 1; $i <= $numero_muestras; $i++) {
+        for ($i = $existentSamples + 1; $i <= $existentSamples + $numero_muestras; $i++) {
 
             // Create an instance of the request and set the iteration
             $waterSampleRequest = new WaterSampleStoreRequest();
@@ -289,13 +290,17 @@ class WaterSamplesController extends Controller
         $editedSample['id_orden'] = $waterSample->id_orden;
         $editedSample = handleSingularCasesOnUpdateWaterSample($request, $editedSample);
         foreach ($editedSample as $key => $value) {
-            $waterSample->{$key} = $value;
+            if ($key === 'hora_muestreo' || $key === 'hora_final_muestreo' || $key === 'hora_composicion') {
+                $waterSample->{$key} = Carbon::createFromFormat('H:i', $value)->format('H:i:s');
+            } else {
+                $waterSample->{$key} = $value;
+            }
             echo $waterSample->{$key} . '<br>';
         }
-        die();
+        
         $waterSample->save();
         return redirect()
-            ->route('orders.show', ['id' => $waterSample->id_orden])
+            ->route('orders.show', ['order' => $waterSample->id_orden])
             ->with('message', "Muestra editada correctamente");
 
     }
@@ -334,7 +339,7 @@ class WaterSamplesController extends Controller
         });
         
         return redirect()
-            ->route('orders.show', ['id' => $id_orden])
+            ->route('orders.show', ['order' => $id_orden])
             ->with('message', 'La orden y sus muestras se han editado correctamente');
     }
 

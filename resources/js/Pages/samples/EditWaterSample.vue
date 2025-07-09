@@ -47,7 +47,7 @@
     ];
 
     const handleEdit = (form$) => {
-       router.post(`/water_samples/${props.sample.id}/update`, form$.requestData);
+       router.put(`/water_samples/${props.sample.id}`, form$.requestData);
     };
 
     console.log(props.sample)
