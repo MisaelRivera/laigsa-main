@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderStoreRequest;
 use App\Models\Order;
 use App\Filters\Order\OrderFiltersResolver;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\WaterSample;
@@ -13,7 +12,6 @@ use App\Models\FoodSample;
 use App\Models\Client;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
-use App\Api\OrdersApi;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\View;
 
@@ -23,10 +21,11 @@ class OrdersController extends Controller
     //
     public function index (Request $request)
     {   
-        /*$filters = $request->all();
+        $filters = $request->all();
         $orders = (new OrderFiltersResolver($request))
             ->apply(Order::query())
-            ->paginate(40);
+            ->paginate(40)
+            ->appends($filters);
         foreach ($orders as $order) {
             if ($order->aguas_alimentos === 'Aguas') {
                 $order->muestras = $order->muestras_aguas;
@@ -39,46 +38,6 @@ class OrdersController extends Controller
         return Inertia::render('orders/Index', [
             'ordersProp' => $orders,
             'filtersProp' => $filters
-        ]);*/
-        $filters = $request->only(['muestreador', 'cesavedac', 'siralab', 'supervision']);
-
-        $orders = Order::query()
-            ->with(['muestras_aguas.identificacionMuestraRelacion', 'muestras_alimentos']) // eager load
-            ->when(isset($filters['cesavedac']) && (int)$filters['cesavedac'] === 1 ? true:null, fn($q) => $q->where('cesavedac', true))
-
-            // Filter by sampler (search in both water and food samples)
-            ->when($filters['muestreador'] ?? null, function ($q, $muestreador) {
-                $q->where(function ($q) use ($muestreador) {
-                    $q->whereHas('muestras_aguas', fn($q) => $q->where('muestreador', $muestreador))
-                    ->orWhereHas('muestras_alimentos', fn($q) => $q->where('muestreador', $muestreador));
-                });
-            })
-
-            // Filter orders that have Siralab water samples
-            ->when(isset($filters['siralab']) && (int)$filters['siralab'] === 1 ? true:null, function ($q) {
-                $q->whereHas('muestras_aguas.identificacionMuestraRelacion', fn($q) => $q->where('siralab', true));
-            })
-
-            // Filter orders that require supervision
-            ->when(isset($filters['supervision']) && (int)$filters['supervision'] === 1 ? true:null, function ($q) {
-                $muestreadoresForaneos = ['Irving', 'Pedro', 'Crisanta',
-            'Julio', 'Miguel', 'Lizeth', 'Cliente']; // update as needed
-                $q->where(function ($q) use ($muestreadoresForaneos) {
-                    $q->whereHas('muestras_aguas', fn($q) =>
-                            $q->whereNotIn('muestreador', $muestreadoresForaneos)
-                        )
-                    ->orWhereHas('muestras_alimentos', fn($q) =>
-                            $q->whereNotIn('muestreador', $muestreadoresForaneos)
-                        );
-                })->where('cesavedac', false);
-            })
-
-            ->paginate(10)
-            ->appends($filters); // preserve filters in pagination links
-
-        return Inertia::render('orders/Index', [
-            'orders' => $orders,
-            'filters' => $filters,
         ]);
     }
 

@@ -123,7 +123,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [OrdersController::class, 'store'])->name('orders.store');
         Route::put('/{order}', [OrdersController::class, 'update'])->name('orders.update');
         Route::delete('/{order}', [OrdersController::class, 'delete'])->name('orders.delete');
-        Route::patch('/editPartialInfo/{id}', [OrdersController::class, 'editPartialInfo'])->name('orders.partialEdit');
+        Route::patch('/editPartialInfo/{order}', [OrdersController::class, 'editPartialInfo'])->name('orders.partialEdit');
         Route::post('/toggle-cesavedac', [OrdersController::class, 'toggleCesavedac']);
         Route::post('/toggle-supervision', [OrdersController::class, 'toggleSupervision']);
         Route::post('/toggle-hoja-campo', [OrdersController::class, 'toggleHojaCampo']);

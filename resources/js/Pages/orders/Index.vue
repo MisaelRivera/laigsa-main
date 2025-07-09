@@ -1,5 +1,5 @@
 <script setup>
-    /*import { ref, reactive } from 'vue';
+    import { ref, reactive } from 'vue';
     import { router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     import ShowLink from '@/Components/Shared/ShowLink.vue';
@@ -53,95 +53,11 @@
     const handleClick = () => {
         if (!multiselectTest.value.includes('Texas'))
         multiselectTest.value.push('Texas');
-    };*/
-    import { reactive } from 'vue'
-import { router } from '@inertiajs/vue3'
-import OrdersTable from '@/Components/OrdersTable.vue'
-import MyPagination2 from '@/Components/MyPagination2.vue'
-
-const props = defineProps({
-  orders: Object,
-  filters: Object,
-})
-
-const filters = reactive({
-  sampler: props.filters.sampler || '',
-  cesavedac: !!props.filters.cesavedac,
-  siralab: !!props.filters.siralab,
-  supervision: !!props.filters.supervision,
-})
-
-const samplerList = [
-  'Irving', 'Pedro', 'Crisanta',
-    'Julio', 'Miguel', 'Lizeth', 'Cliente',
-    'RCHH', 'JHM', 'FESR', 'JPMS', 'QSM', 'ACL', 'APPC', 'LMQH' 
-];
-
-const applyFilters = () => {
-  router.get(route('orders.index'), filters, {
-    preserveState: true,
-    replace: true,
-  })
-}
-
-const clearFilters = () => {
-  filters.sampler = ''
-  filters.cesavedac = false
-  filters.siralab = false
-  filters.supervision = false
-  applyFilters()
-}
+    };
+    
 </script>
 <template>
-    <div class="p-6">
-    <h1 class="text-2xl font-bold mb-4">Orders</h1>
-
-    <div class="bg-white p-4 rounded-lg shadow mb-6">
-      <h2 class="text-lg font-semibold mb-2">Filters</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-        <!-- Sampler Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Sampler</label>
-          <select v-model="filters.sampler" class="w-full border-gray-300 rounded">
-            <option value="">All</option>
-            <option v-for="name in samplerList" :key="name" :value="name">{{ name }}</option>
-          </select>
-        </div>
-
-        <!-- CESAVEDAC Filter -->
-        <div class="flex items-center space-x-2">
-          <input id="cesavedac" type="checkbox" v-model="filters.cesavedac" class="h-4 w-4 text-blue-600 border border-gray-300 rounded focus:ring-blue-500" value="1"/>
-          <label for="cesavedac" class="text-sm font-medium">CESAVEDAC Orders</label>
-        </div>
-
-        <!-- Siralab Filter -->
-        <div class="flex items-center space-x-2">
-          <input id="siralab" type="checkbox" v-model="filters.siralab" class="h-4 w-4 text-blue-600 border border-gray-300 rounded focus:ring-blue-500" value="1"/>
-          <label for="siralab" class="text-sm font-medium">Siralab Samples</label>
-        </div>
-
-        <!-- Supervision Filter -->
-        <div class="flex items-center space-x-2">
-          <input id="supervision" type="checkbox" v-model="filters.supervision" class="h-4 w-4 text-blue-600 border border-gray-300 rounded focus:ring-blue-500" value="1"/>
-          <label for="supervision" class="text-sm font-medium">Requires Supervision</label>
-        </div>
-      </div>
-
-      <div class="mt-4 flex space-x-3">
-        <button @click="applyFilters" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Apply Filters
-        </button>
-        <button @click="clearFilters" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-          Clear
-        </button>
-      </div>
-    </div>
-
-    <OrdersTable :orders="orders.data" />
-    <MyPagination2 :links="orders.links" />
-  </div>
-    <!--<AuthenticatedLayout>
+   <AuthenticatedLayout>
         <div 
             class="mx-auto mt-3">
             <FiltersHeader
@@ -318,5 +234,5 @@ const clearFilters = () => {
                 </Notivue>
             </div>
         </div>
-    </AuthenticatedLayout>-->
+    </AuthenticatedLayout>
 </template>
