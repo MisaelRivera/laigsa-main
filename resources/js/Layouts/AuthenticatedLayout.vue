@@ -7,7 +7,6 @@ import { usePermission } from '@/composables/permissions';
 const page = usePage();
 const { getRoles } = usePermission();
 const { getLogoUri } = useImages(); 
-console.log(getRoles());
 const userName = page.props.auth.user.name;
 const isVisibleServiciosAguas = ref(false), 
       isVisibleServiciosAlimentos = ref(false), 

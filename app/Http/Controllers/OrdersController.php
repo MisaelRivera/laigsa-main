@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Models\WaterSample;
 use App\Models\FoodSample;
 use App\Models\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
@@ -97,6 +98,8 @@ class OrdersController extends Controller
     public function show (Order $order)
     {
         $order->load(['cliente']);
+        $user = Auth::user();
+        $roles = $user->getRoleNames()->toArray();
         if ($order->aguas_alimentos === 'Aguas') {
             $order->load(['muestras_aguas', 'muestras_aguas.identificacionMuestraRelacion']);
             $order->muestras = $order->muestras_aguas;
@@ -104,15 +107,29 @@ class OrdersController extends Controller
             $order->muestras = FoodSample::where('id_orden', $order->id)
                 ->get();
         }
-
-        return Inertia::render('orders/Show', [
-            'order' => $order,
-            'previousOrderId' => Order::where('id', '<', $order->id)
-                ->max('id'),
-            'nextOrderId' => Order::where('id', '>', $order->id)
-                ->min('id'),
-            'numeroMuestrasActual' => $order->muestras_aguas->count()
-        ]);
+        $previousOrder = Order::whereRaw('folio = (SELECT MAX(folio) FROM ordenes WHERE folio < ?)', [$order->folio])
+                        ->first();
+        $nextOrder = Order::whereRaw('folio = (SELECT MIN(folio) FROM ordenes WHERE folio > ?)', [$order->folio])
+                        ->first();
+        if ($order->aguas_alimentos === 'Aguas') {
+            if (in_array('admin', $roles)) {
+                return Inertia::render('orders/ShowWater', [
+                    'order' => $order,
+                    'previousOrder' =>$previousOrder,
+                    'nextOrder' =>$nextOrder,
+                    'numeroMuestrasActual' => $order->muestras_aguas->count()
+                ]);
+            }
+        } else {
+            if (in_array('admin', $roles)) {
+                return Inertia::render('orders/ShowFood', [
+                    'order' => $order,
+                    'previousOrder' =>$previousOrder,
+                    'nextOrder' =>$nextOrder,
+                    'numeroMuestrasActual' => $order->muestras_aguas->count()
+                ]);
+            }
+        }
     }
 
     public function edit (Order $order)
