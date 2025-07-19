@@ -79,7 +79,7 @@
                             class="px-2 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <Dropdown
                                 align="center"
-                                width="96">
+                                width="64">
                                 <template #trigger>
                                     <button>
                                         MFQ-{{ order.folio }}
@@ -91,13 +91,9 @@
                                             <li class="px-3 py-1 font-black max-w-full">
                                                 MFQ-{{ order.folio }}-{{ muestra.numero_muestra }}
                                             </li>
-                                             <li class="px-3 py-1 max-w-full">
+                                            <li class="px-3 py-1 max-w-full">
                                                <span class="font-black">Tipo de muestra:</span>
                                                {{ muestra.tipo_muestra }} 
-                                            </li>
-                                            <li class="px-3 py-1 max-w-full">
-                                               <span class="font-black">Identificacion de la muestra:</span>
-                                               {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:muestra.identificacion_muestra_relacion.identificacion_muestra }} 
                                             </li>
                                             <li class="px-3 py-1 max-w-full">
                                                 <span class="font-black">Parametros: </span>
@@ -115,14 +111,6 @@
                                                 <span class="font-black">Hora de muestreo: </span>
                                                 {{ muestra.hora_muestreo }}
                                             </li>
-                                            <li class="px-3 py-1 max-w-full">
-                                                <span class="font-black">Tipo de muestreo: </span>
-                                                {{ muestra.tipo_muestreo }}
-                                            </li>
-                                            <li class="px-3 py-1 max-w-full">
-                                                <span class="font-black">Muestreador: </span>
-                                                {{ muestra.muestreador }}
-                                            </li>
                                             <li 
                                                 class="px-3 py-1 max-w-full" 
                                                 v-if="order.aguas_alimentos === 'Aguas'">
@@ -139,13 +127,10 @@
                                                 <span class="font-black">pH: </span>
                                                 {{ muestra.pH }}
                                             </li>
-                                            <li 
-                                                class="px-3 py-1 max-w-full" 
-                                                v-if="order.aguas_alimentos === 'Aguas'">
-                                                <span class="font-black">Tratado biologicamente: </span>
+                                            <li class="px-3 py-1 max-w-full" v-if="order.aguas_alimentos === 'Aguas'">
+                                                <span class="font-black">Tratada biologicamente: </span>
                                                 {{ muestra.tratada_biologicamente ? 'Si':'No' }}
                                             </li>
-                                            <hr class="h-[2px] bg-sky-800 border-0">
                                         </ul>
                                     </template>
                                 </template>
