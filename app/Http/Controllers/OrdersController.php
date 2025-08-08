@@ -27,6 +27,7 @@ class OrdersController extends Controller
             ->apply(Order::query())
             ->paginate(40)
             ->appends($filters);
+        $roles = Auth::user()->getRoleNames()->toArray();
         foreach ($orders as $order) {
             if ($order->aguas_alimentos === 'Aguas') {
                 $order->muestras = $order->muestras_aguas;
@@ -49,6 +50,29 @@ class OrdersController extends Controller
         return redirect()
             ->route('orders.show', ['order' => $waterSample->id_orden])
             ->with('message', "La preservacion correcta de la muestra $waterSample->numero_muestra ha sido editada correctamente");
+    }
+
+    public function info (Request $request)
+    {
+        $filters = $request->all();
+        $orders = (new OrderFiltersResolver($request))
+            ->apply(Order::query())
+            ->paginate(40)
+            ->appends($filters);
+        foreach ($orders as $order) {
+            if ($order->aguas_alimentos === 'Aguas') {
+                $order->muestras = $order->muestras_aguas;
+                $order->muestras_count = count($order->muestras_aguas);
+            } else {
+                $order->muestras = $order->muestras_alimentos;
+                $order->muestras_count = count($order->muestras_alimentos);
+            }
+        }
+        
+        return Inertia::render('orders/Info', [
+            'orders' => $orders,
+            'filters' => $filters
+        ]);
     }
 
     public function create ()

@@ -79,6 +79,7 @@ Route::controller(PagesController::class)->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::controller(ClientsController::class)->group(function () {
+        Route::get('/clientes/repeated', 'repeated');
         Route::get('/clientes/filter_sample_identifications/{idCliente}', 'filterSampleIdentification');
         Route::prefix('clientes')->group(function () {
             Route::get('/', 'index')->name('clients.index');
@@ -116,6 +117,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/change-page', [OrdersController::class, 'changePage']);
         Route::put('/edit-preservation/{waterSample}', [OrdersController::class, 'handlePreservationSubmit']);
         Route::get('/get-client-for-order', [OrdersController::class, 'getClientForOrder']);
+        Route::get('/info', [OrdersController::class, 'info'])->name('orders.info');
         /*Route::get('/test', [TestController::class, 'test']);
         Route::get('/test-dynamic-form', [TestController::class, 'viewTestDynamicForm']);
         Route::get('/testing', [TestController::class, 'viewTestingForm']);

@@ -61,6 +61,12 @@ const isVisibleServiciosAguas = ref(false),
                                 </li>
                                 <li 
                                     class="text-center text-sm">
+                                    <Link :href="route('orders.info')">
+                                        Ordenes info
+                                    </Link>
+                                </li>
+                                <li 
+                                    class="text-center text-sm">
                                     <Link :href="route('water_samples_results.index')">
                                         Resultados
                                     </Link>

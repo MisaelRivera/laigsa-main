@@ -59,6 +59,35 @@ class ClientsController extends Controller
         ]);
     }
 
+    public function repeated ()
+    {
+        $clientes = Client::orderBy('id')->get();
+
+        $posiblesDuplicados = [];
+
+        foreach ($clientes as $a) {
+            foreach ($clientes as $b) {
+                if ($a->id >= $b->id) continue;
+
+                $similaridadNombre = 0;
+                similar_text($a->cliente, $b->cliente, $similaridadNombre);
+
+
+                if ($similaridadNombre > 80) {
+                    $posiblesDuplicados[] = [
+                        'cliente_a_id' => $a->id,
+                        'cliente_b_id' => $b->id,
+                        'nombre_a' => $a->cliente,
+                        'nombre_b' => $b->cliente,
+                        'similitud_nombre' => round($similaridadNombre),
+                    ];
+                }
+            }
+        }
+
+        dd($posiblesDuplicados);
+    }
+
     public function clientsByName ()
     {
         try {

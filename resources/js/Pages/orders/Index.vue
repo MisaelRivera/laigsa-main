@@ -95,7 +95,7 @@
                                                <span class="font-black">Tipo de muestra:</span>
                                                {{ muestra.tipo_muestra }} 
                                             </li>
-                                            <li class="px-3 py-1 max-w-full">
+                                            <li class="px-3 py-1 max-w-full" v-if="!getRoles().includes('analist')">
                                                <span class="font-black">Identificacion de la muestra:</span>
                                                {{ muestra.identificacion_muestra ?  muestra.identificacion_muestra:muestra.identificacion_muestra_relacion.identificacion_muestra }} 
                                             </li>
@@ -115,11 +115,11 @@
                                                 <span class="font-black">Hora de muestreo: </span>
                                                 {{ muestra.hora_muestreo }}
                                             </li>
-                                            <li class="px-3 py-1 max-w-full">
+                                            <li class="px-3 py-1 max-w-full" v-if="!getRoles().includes('analist')">
                                                 <span class="font-black">Tipo de muestreo: </span>
                                                 {{ muestra.tipo_muestreo }}
                                             </li>
-                                            <li class="px-3 py-1 max-w-full">
+                                            <li class="px-3 py-1 max-w-full" v-if="!getRoles().includes('analist')">
                                                 <span class="font-black">Muestreador: </span>
                                                 {{ muestra.muestreador }}
                                             </li>
@@ -235,7 +235,12 @@
                                     :orderId="order.id"/>
                             </td>
                         </template>
-                        <td class="px-2 py-3"></td>
+                        <td 
+                            class="px-2 py-3">
+                            <i 
+                                class="fas fa-times px-1.5 py-0.5 rounded text-white bg-red-700 text-xl" 
+                                v-if="getRoles().includes('analist')"></i>
+                        </td>
                         <td class="px-2 py-3" v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                             <a 
                                 class="text-white bg-green-500 py-1 px-2 rounded-lg"
