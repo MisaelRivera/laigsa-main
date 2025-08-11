@@ -58,21 +58,21 @@
                         v-model="clientFilter"
                         @input="handleClientFilter">
                 </th>
-                <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
+                <template v-if="getRoles().includes('admin')">
                     <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
+                        Siralab
+                    </th>
+                     <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
                         Cesavedac
                     </th>
-                    <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
+                     <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
                         Supervisar
                     </th>
-                    <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400">
-                        H. C.
+                     <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
+                        No. factura
                     </th>
-                    <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400">
-                        C. C.
-                    </th>
-                    <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
-                        Croquis
+                     <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[1%]">
+                        F. status
                     </th>
                 </template>
                 <th scope="col" class="px-2 py-3 text-start text-xs font-medium text-gray-500 dark:text-neutral-400 w-[6%]">

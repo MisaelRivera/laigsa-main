@@ -11,6 +11,7 @@
         order: Object,
         parametersProp: Array,
         errors: Object,
+        previousOrder: Object,
     });
 
     const form = reactive({});
@@ -67,6 +68,34 @@
                 title="Editar muestras"
                 :ownLink="`/muestras/create/${order.folio}/`"
                 :backLink="'/orders'"/>
+            <div class="grid grid-cols-12">
+                <div class="col-span-6">
+                    <p class="text-xl">Anterior: {{ `MFQ-${previousOrder.folio} | ${previousOrder.fecha_recepcion ?? '---'} | ${previousOrder.hora_recepcion ?? '---'}` }}</p>
+                    <div class="flex mt-2">
+                        <div 
+                            class="w-6 h-6 rounded-full mr-2"
+                            :class="{
+                                'bg-blue-500':previousOrder.aguas_alimentos === 'Aguas',
+                                'bg-yellow-500':previousOrder.aguas_alimentos === 'Alimentos'
+                            }">
+                        </div>
+                        <p class="text-xl">{{ previousOrder.cliente.cliente }}</p>
+                    </div>
+                </div>
+                <div class="col-span-6">
+                    <p class="text-xl">Actual: {{ `MFQ-${order.folio} | ${order.fecha_recepcion ?? '---'} | ${order.hora_recepcion ?? '---'}` }}</p>
+                    <div class="flex mt-2">
+                        <div 
+                            class="w-6 h-6 rounded-full mr-2"
+                            :class="{
+                                'bg-blue-500':order.aguas_alimentos === 'Aguas',
+                                'bg-yellow-500':order.aguas_alimentos === 'Alimentos'
+                            }">
+                        </div>
+                        <p class="text-xl">{{ order.cliente.cliente }}</p>
+                    </div>
+                </div>
+            </div>
             <p 
                 v-for="key in Object.keys(errors)"
                 class="text-red-500">

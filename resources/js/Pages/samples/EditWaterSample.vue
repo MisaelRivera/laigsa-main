@@ -8,6 +8,7 @@
         sample: Object,
         identificacionesMuestras: Object,
         errors: Object,
+        previousOrder: Object,
     });
 
     const formState = useForm({
@@ -50,7 +51,7 @@
        router.put(`/water_samples/${props.sample.id}`, form$.requestData);
     };
 
-    console.log(props.sample)
+    console.log(props.previousOrder);
 </script>
 <template>
     <AuthenticatedLayout>
@@ -59,6 +60,34 @@
                 :title="`Editar muestra ${sample.orden.folio } - ${sample.numero_muestra}`"
                 :own-link="route('water_samples.edit', sample.id)"
                 />
+            <div class="grid grid-cols-12">
+                <div class="col-span-6">
+                    <p class="text-xl">Anterior: {{ `MFQ-${previousOrder.folio} | ${previousOrder.fecha_recepcion ?? '---'} | ${previousOrder.hora_recepcion ?? '---'}` }}</p>
+                    <div class="flex mt-2">
+                        <div 
+                            class="w-6 h-6 rounded-full mr-2"
+                            :class="{
+                                'bg-blue-500':previousOrder.aguas_alimentos === 'Aguas',
+                                'bg-yellow-500':previousOrder.aguas_alimentos === 'Alimentos'
+                            }">
+                        </div>
+                        <p class="text-xl">{{ previousOrder.cliente.cliente }}</p>
+                    </div>
+                </div>
+                <div class="col-span-6">
+                    <p class="text-xl">Actual: {{ `MFQ-${sample.orden.folio} | ${sample.orden.fecha_recepcion ?? '---'} | ${sample.orden.hora_recepcion ?? '---'}` }}</p>
+                    <div class="flex mt-2">
+                        <div 
+                            class="w-6 h-6 rounded-full mr-2"
+                            :class="{
+                                'bg-blue-500':sample.orden.aguas_alimentos === 'Aguas',
+                                'bg-yellow-500':sample.orden.aguas_alimentos === 'Alimentos'
+                            }">
+                        </div>
+                        <p class="text-xl">{{ sample.orden.cliente.cliente }}</p>
+                    </div>
+                </div>
+            </div>
             <Vueform
                 :endpoint="false"
                 @submit="handleEdit"

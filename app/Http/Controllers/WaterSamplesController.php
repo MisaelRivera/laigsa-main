@@ -76,6 +76,9 @@ class WaterSamplesController extends Controller
             'inicioMuestras' => $order->muestras_aguas->count(),
             'parametersProp' => Rule::where('aguas', 1)
                 ->get(),
+            'previousOrder' => Order::with('cliente')
+                ->whereRaw('folio = (SELECT MAX(folio) FROM ordenes WHERE folio < ?)', [$order->folio])
+                ->first(),
             'previousRouteName' => getPreviousURL(),
             'createFields' => $this->createFields,
             'oldParams' => $this->oldParams,
@@ -86,8 +89,7 @@ class WaterSamplesController extends Controller
 
     public function edit (WaterSample $sample)
     {
-        $sample->orden = $sample->orden()->get()[0];
-
+        $sample->orden = $sample->orden()->with(['cliente'])->get()[0];
         $identificacionesMuestras = SampleIdentification::where('id', $sample->id_identificacion_muestra)
             ->get()
             ->map(function ($sampleIdentification) {
@@ -102,18 +104,23 @@ class WaterSamplesController extends Controller
         $sample->tipo_muestreo_show = str_replace(' ', '_', $sample->tipo_muestreo);
         return Inertia::render('samples/EditWaterSample', [
             'sample' => $sample,
-            'identificacionesMuestras' => $identificacionesMuestras
+            'identificacionesMuestras' => $identificacionesMuestras,
+            'previousOrder' => Order::with('cliente')
+                ->whereRaw('folio = (SELECT MAX(folio) FROM ordenes WHERE folio < ?)', [$sample->orden->folio])
+                ->first(),
         ]);
     }
 
     public function editAllWater ($folio) 
     {
         $order = Order::with(['cliente.identificaciones_muestra', 'muestras_aguas'])->where('folio', $folio)->first();
-        
         $data = [
             'order' => $order,
             'parametersProp' => Rule::where('aguas', 1)
-                ->get()
+                ->get(),
+            'previousOrder' => Order::with('cliente')
+                ->whereRaw('folio = (SELECT MAX(folio) FROM ordenes WHERE folio < ?)', [$order->folio])
+                ->first(),
         ];
       
        return Inertia::render('samples/EditAllWater', $data);

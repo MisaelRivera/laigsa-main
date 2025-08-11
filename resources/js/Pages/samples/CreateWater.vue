@@ -13,6 +13,7 @@
         inicioMuestras: Number,
         parametersProp: Array,
         previousRouteName: String,
+        previousOrder: Object,
         createFields: Array,
         oldParams: Array,
         errors: Object,
@@ -60,11 +61,39 @@
 
 <template>
     <AuthenticatedLayout>
-        <div class="w-10/12 mx-auto mt-3">
+        <div class="w-10/12 mx-auto mt-3 shadow-md p-7 rounded-lg border-t-2">
             <CreateTitle
                 title="Crear muestras"
                 :ownLink="`/muestras/create/${order.folio}/${numeroMuestras}`"
                 :backLink="'/orders'"/>
+            <div class="grid grid-cols-12">
+                <div class="col-span-6">
+                    <p class="text-xl">Anterior: {{ `MFQ-${previousOrder.folio} | ${previousOrder.fecha_recepcion ?? '---'} | ${previousOrder.hora_recepcion ?? '---'}` }}</p>
+                    <div class="flex mt-2">
+                        <div 
+                            class="w-6 h-6 rounded-full mr-2"
+                            :class="{
+                                'bg-blue-500':previousOrder.aguas_alimentos === 'Aguas',
+                                'bg-yellow-500':previousOrder.aguas_alimentos === 'Alimentos'
+                            }">
+                        </div>
+                        <p class="text-xl">{{ previousOrder.cliente.cliente }}</p>
+                    </div>
+                </div>
+                <div class="col-span-6">
+                    <p class="text-xl">Actual: {{ `MFQ-${order.folio} | ${order.fecha_recepcion ?? '---'} | ${order.hora_recepcion ?? '---'}` }}</p>
+                    <div class="flex mt-2">
+                        <div 
+                            class="w-6 h-6 rounded-full mr-2"
+                            :class="{
+                                'bg-blue-500':order.aguas_alimentos === 'Aguas',
+                                'bg-yellow-500':order.aguas_alimentos === 'Alimentos'
+                            }">
+                        </div>
+                        <p class="text-xl">{{ order.cliente.cliente }}</p>
+                    </div>
+                </div>
+            </div>
             <p 
                 v-for="key in Object.keys(errors)"
                 class="text-red-500">
