@@ -1,4 +1,5 @@
 <script setup>
+    import axios from 'axios';
     import { ref, reactive } from 'vue';
     import { router } from '@inertiajs/vue3';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -27,8 +28,6 @@
 
     const filtersCopy = reactive({ ...props.filters });
 
-    console.log(props.ordersProp.data);
-
     const applyFilters = () => {
         router.visit(route('orders.index', filtersCopy), {
             preserveState: true,
@@ -53,6 +52,10 @@
     const handleClick = () => {
         if (!multiselectTest.value.includes('Texas'))
         multiselectTest.value.push('Texas');
+    };
+
+    const handleBillStatusChange = async(billStatus, orderId) => {
+        await axios.put(`/orders/change-bill-status/${orderId}`, { billStatus });
     };
     
 </script>
@@ -180,7 +183,14 @@
                         </td>
                         <template v-if="!getRoles().includes('analist') && !getRoles().includes('lector')">
                             <td class="px-2 py-3">
-                                <CircleSwitch
+                               <div 
+                                    class="w-6 h-6 rounded-full mx-auto bg-green-500"
+                                    v-if="order.siralab">
+
+                               </div>
+                            </td>
+                            <td class="px-2 py-3">
+                                 <CircleSwitch
                                     v-if="order.cesavedac"
                                     :value="order.reporte_cesavedac_entregado"
                                     :key="order.id"
@@ -196,28 +206,15 @@
                                     :orderId="order.id"/>
                             </td>
                             <td class="px-2 py-3">
-                                <CircleSwitch
-                                    v-if="order.siralab"
-                                    :value="order.siralab.hoja_campo"
-                                    :key="order.id"
-                                    url="/orders/toggle-hoja-campo"
-                                    :orderId="order.id"/>
+                                {{ order.numero_factura }}                                
                             </td>
                             <td class="px-2 py-3">
-                                <CircleSwitch
-                                    v-if="order.siralab"
-                                    :value="order.siralab.cadena_custodia"
-                                    :key="order.id"
-                                    url="/orders/toggle-cadena-custodia"
-                                    :orderId="order.id"/>
-                            </td>
-                            <td class="px-2 py-3">
-                                <CircleSwitch
-                                    v-if="order.siralab"
-                                    :value="order.siralab.croquis"
-                                    :key="order.id"
-                                    url="/orders/toggle-croquis"
-                                    :orderId="order.id"/>
+                                <div 
+                                    class="w-6 h-6 rounded-full mx-auto"
+                                    :class="{'bg-red-500':order.bill_status === 'unregistered', 'bg-yellow-500':order.bill_status === 'unpaid', 'bg-green-500':order.bill_status === 'paid'}"
+                                    @click="() => handleBillStatusChange(order.bill_status, order.id)">
+
+                                </div>
                             </td>
                         </template>
                         <td class="px-2 py-3 text-xs">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\OrdersApi;
 use App\Http\Requests\OrderStoreRequest;
 use App\Models\Order;
 use App\Filters\Order\OrderFiltersResolver;
@@ -10,6 +11,7 @@ use Inertia\Inertia;
 use App\Models\WaterSample;
 use App\Models\FoodSample;
 use App\Models\Client;
+use App\Models\Siralab;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
@@ -23,22 +25,18 @@ class OrdersController extends Controller
     public function index (Request $request)
     {   
         $filters = $request->all();
-        $orders = (new OrderFiltersResolver($request))
-            ->apply(Order::query())
-            ->paginate(40)
-            ->appends($filters);
-        $roles = Auth::user()->getRoleNames()->toArray();
-        foreach ($orders as $order) {
-            if ($order->aguas_alimentos === 'Aguas') {
-                $order->muestras = $order->muestras_aguas;
-                $order->muestras_count = count($order->muestras_aguas);
-            } else {
-                $order->muestras = $order->muestras_alimentos;
-                $order->muestras_count = count($order->muestras_alimentos);
+
+       /* $orders = OrdersApi::getIndexOrders($request, $filters);
+        foreach($orders as $order) {
+            if ($order->siralab) {
+                var_dump($order->siralab->);
             }
         }
+        
+        die();*/
+
         return Inertia::render('orders/Index', [
-            'ordersProp' => $orders,
+            'ordersProp' => OrdersApi::getIndexOrders($request, $filters),
             'filtersProp' => $filters
         ]);
     }
@@ -318,6 +316,12 @@ class OrdersController extends Controller
               Log::error('Error in toggleReporteEntregado: ' . $e->getMessage());
               return response()->json(['error' => 'Internal Server Error'], 500);
           }
+     }
+
+     public function changeBillStatus(Request $request, Order $order)
+     {
+        return $request->input('billStatus');
+        
      }
  
      public function filter (Request $request) 

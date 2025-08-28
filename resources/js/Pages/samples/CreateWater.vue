@@ -29,6 +29,7 @@
     const identificaciones_muestra = props.order.cliente.identificaciones_muestra.map((identificacion_muestra) => {
         return { value: identificacion_muestra.id, label: identificacion_muestra.identificacion_muestra };
     });
+    
     identificaciones_muestra.unshift({ value: null, label: 'Elija una opcion' });
 
     const tiposMuestreo = [

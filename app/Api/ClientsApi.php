@@ -18,4 +18,17 @@
             
             return $clients;
         }
+
+        public static function getClientsByName ($filteringName)
+        {
+            $clients =  Client::where('cliente', 'like', "%" . $filteringName ."%")
+            ->limit(10)->get();
+            $clients = $clients->map(function ($client) {
+                return [
+                    'label' => $client->cliente,
+                    'value' => $client->cliente,
+                ];
+            });
+            return $clients;
+        }
     }

@@ -4,16 +4,22 @@
     const props = defineProps({
         value: Number,
         orderId: Number,
-        url: String
+        url: String,
+        can: {
+            type: Boolean,
+            default: true,
+        }
     });
     const localValue = ref(props.value);
     const toggleState = async () => {
-        const res = await axios.post(props.url, {
-            value: localValue.value,
-            order_id: props.orderId,
-        });
-        console.log(res.data);
-        localValue.value = res.data ? 1:0;
+        if (props.can) {
+            const res = await axios.post(props.url, {
+                value: localValue.value,
+                order_id: props.orderId,
+            });
+            console.log(res.data);
+            localValue.value = res.data ? 1:0;
+        }
     };
 
     const bgRed = computed(() => {

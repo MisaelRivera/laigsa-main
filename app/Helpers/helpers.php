@@ -189,7 +189,7 @@
         return $filteredData;
     }
 
-    function is_sunday ($date_in_time) {
+function is_sunday ($date_in_time) {
     return getdate($date_in_time)['wday'] == 0;
 }
 

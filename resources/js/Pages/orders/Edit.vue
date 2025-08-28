@@ -28,7 +28,7 @@
 
         errors: Object
     });
-
+    console.log(props.order);
     const clientOptions = ref([]);
 
     onMounted(() => {
@@ -61,7 +61,7 @@
         <div class="w-8/12 mx-auto mt-3">
             <CreateTitle 
                 title="Editar Orden"
-                :ownLink="`/orders/edit/${order.id}`"
+                :ownLink="`/orders/${order.id}/edit`"
                 :backLink="`/orders/show/${order.id}`"/>
                 <Vueform
                     :columns="{ container:12, wrapper:12 }"

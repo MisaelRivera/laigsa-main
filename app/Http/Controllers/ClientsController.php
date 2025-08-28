@@ -59,6 +59,31 @@ class ClientsController extends Controller
         ]);
     }
 
+    public function edit (Client $client)
+    {
+        return Inertia::render('clients/Edit', [
+            'client' => $client
+        ]);
+    }
+
+    public function update (Request $request, Client $client)
+    {
+        $validatedData = $request->validate([
+            'cliente' => 'required|unique:clientes,cliente,except,id',
+            'direccion_muestreo' => 'nullable',
+            'direccion_fiscal' => 'nullable',
+            'observaciones' => 'nullable',
+            'observaciones_analistas' => 'nullable',
+            'encargado' => 'nullable',
+            'telefono' => 'nullable',
+            'correo_electronico' => 'nullable',
+            'cuarto_transitorio' => 'boolean',
+        ], [
+            'cliente.required' => 'Ingrese el cliente',
+            'cliente.unique' => 'El cliente ingresado ya existe'
+        ]);
+    }
+
     public function repeated ()
     {
         $clientes = Client::orderBy('id')->get();
@@ -91,15 +116,7 @@ class ClientsController extends Controller
     public function clientsByName ()
     {
         try {
-        $filterName = request()->query('name');
-        $clients = Client::where('cliente', 'like', "%" . $filterName ."%")
-            ->limit(10)->get();
-        $clients = $clients->map(function ($client) {
-            return [
-                'label' => $client->cliente,
-                'value' => $client->cliente,
-            ];
-        });
+        $clients = ClientsApi::getClientsByName(request()->query('name'));
         return response()->json($clients);
      } catch (\Exception $e) {
             Log::error('Error in clientsByName: ' . $e->getMessage());
@@ -111,7 +128,7 @@ class ClientsController extends Controller
     {
         $client->cesavedac = filter_var($cesavedac, FILTER_VALIDATE_BOOLEAN);;
         $client->save();
-        return response(200);
+        return response(203);
     }
 
     public function createSampleIdentificacion (SampleIdentificationStoreRequest $request)

@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{client}/edit', 'edit')->name('clients.edit');
             Route::get('/{client}', 'show')->name('clients.show');
             Route::get('/clients_by_name', 'clientsByName');
+            Route::put('/{client}', 'update')->name('clients.update');
             Route::put('/{client}/{cesavedac}/set-cesavedac', 'setCesavedac')->name('clients.set-cesavedac');
             Route::get('/get_by_client_id/{clientId}', 'getSampleIdentificationByClientId');
             Route::post('/create_sample_identification', 'createSampleIdentificacion');
@@ -113,7 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [OrdersController::class, 'index'])->name('orders.index');
         Route::get('/create', [OrdersController::class, 'create'])->name('orders.create');
         Route::get('/show/{order}', [OrdersController::class, 'show'])->name('orders.show');
-        Route::get('/edit/{id}', [OrdersController::class, 'edit'])->name('orders.edit');
+        Route::get('{order}/edit/', [OrdersController::class, 'edit'])->name('orders.edit');
         Route::get('/change-page', [OrdersController::class, 'changePage']);
         Route::put('/edit-preservation/{waterSample}', [OrdersController::class, 'handlePreservationSubmit']);
         Route::get('/get-client-for-order', [OrdersController::class, 'getClientForOrder']);
@@ -135,6 +136,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/filter', [OrdersController::class, 'filter']);
         Route::get('/generate-pdf/{order}', [OrdersController::class, 'generatePDF']);
         Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
+        Route::put('/change-bill-status/{order}', [OrdersController::class, 'changeBillStatus'])->name('orders.changeBillStatus');
         //Route::get('/header-pdf', [OrdersController::class, 'headerOrderPDF'])->name('orders.header_pdf');
     });
 

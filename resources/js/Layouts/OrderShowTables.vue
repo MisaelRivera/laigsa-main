@@ -184,7 +184,7 @@
                         </td>
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white bg-gray-50">
                             <EditLink 
-                                :url="`/orders/edit/${order.id}`"/>
+                                :url="`/orders/${order.id}/edit`"/>
                         </td>
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white bg-gray-50">
                             {{ order.cliente.cliente }}
