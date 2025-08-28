@@ -320,8 +320,20 @@ class OrdersController extends Controller
 
      public function changeBillStatus(Request $request, Order $order)
      {
-        return $request->input('billStatus');
-        
+        $newBillStatus = '';
+        if($request->input('billStatus') === 'unregistered') {
+            $order->bill_status = 'unpaid';
+            $newBillStatus = 'unpaid';
+        } else if ($request->input('billStatus') === 'unpaid') {
+            $order->bill_status = 'paid';
+            $newBillStatus = 'paid';
+        } else {
+            $order->bill_status = 'unregistered';
+            $newBillStatus = 'unregistered';
+        }
+
+        $order->save();
+        return response()->json($newBillStatus);
      }
  
      public function filter (Request $request) 

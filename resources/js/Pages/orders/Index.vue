@@ -55,7 +55,7 @@
     };
 
     const handleBillStatusChange = async(billStatus, orderId) => {
-        await axios.put(`/orders/change-bill-status/${orderId}`, { billStatus });
+        const newBillStatus = await axios.put(`/orders/change-bill-status/${orderId}`, { billStatus });
     };
     
 </script>
